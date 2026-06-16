@@ -1,0 +1,379 @@
+/* ============================================
+   BOOTSTRAP CAFE — Animation Keyframes
+   ============================================ */
+
+/* --- Loading Screen Animations --- */
+@keyframes letterFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lineDrawRight {
+  from {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+@keyframes subtitleFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes screenWipeUp {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+/* --- General Section Animations --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+/* --- Floating / Hover Animations --- */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-6px) rotate(0.5deg);
+  }
+  66% {
+    transform: translateY(-3px) rotate(-0.5deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(200, 81, 45, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(200, 81, 45, 0);
+  }
+}
+
+/* --- Reel/Carousel Animations --- */
+@keyframes reelBorderSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Scroll Reveal 3D Animations --- */
+@keyframes revealFromDepth {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) translateZ(-200px) scale(0.8) rotateY(5deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1200px) translateZ(0) scale(1) rotateY(0);
+  }
+}
+
+/* --- Hamburger Morph --- */
+@keyframes topLineToX {
+  0% { transform: translateY(0) rotate(0); width: 18px; }
+  50% { transform: translateY(4px) rotate(0); width: 24px; }
+  100% { transform: translateY(4px) rotate(45deg); width: 24px; }
+}
+
+@keyframes bottomLineToX {
+  0% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-4px) rotate(0); }
+  100% { transform: translateY(-4px) rotate(-45deg); }
+}
+
+@keyframes xToTopLine {
+  0% { transform: translateY(4px) rotate(45deg); width: 24px; }
+  50% { transform: translateY(4px) rotate(0); width: 24px; }
+  100% { transform: translateY(0) rotate(0); width: 18px; }
+}
+
+@keyframes xToBottomLine {
+  0% { transform: translateY(-4px) rotate(-45deg); }
+  50% { transform: translateY(-4px) rotate(0); }
+  100% { transform: translateY(0) rotate(0); }
+}
+
+/* --- Grain Texture Animation (subtle movement) --- */
+@keyframes grainShift {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -2%); }
+  20% { transform: translate(1%, 3%); }
+  30% { transform: translate(-3%, 1%); }
+  40% { transform: translate(3%, -1%); }
+  50% { transform: translate(-1%, 2%); }
+  60% { transform: translate(2%, -3%); }
+  70% { transform: translate(-2%, 1%); }
+  80% { transform: translate(1%, -2%); }
+  90% { transform: translate(3%, 2%); }
+}
+
+/* --- Magnetic Button --- */
+@keyframes magneticPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* --- Counter / Stats --- */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Parallax Reveal --- */
+@keyframes parallaxReveal {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* --- Shimmer Sweep (for cards, borders, labels) --- */
+@keyframes shimmerSweep {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* --- Float Up-Down (for stat cards, decorative elements) --- */
+@keyframes floatUpDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* --- Gradient Shift (for CTA banners, popular card borders) --- */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* --- Glow Pulse (for popular badges, active elements) --- */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(200, 81, 45, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px rgba(200, 81, 45, 0.15);
+  }
+}
+
+/* --- Icon Bounce (for feature card hover) --- */
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-6px) scale(1.15);
+  }
+  60% {
+    transform: translateY(-2px) scale(1.05);
+  }
+}
+
+/* --- Leaf Float (for footer decorative elements) --- */
+@keyframes leafFloat {
+  0% {
+    transform: translateY(-50%) rotate(0deg);
+  }
+  25% {
+    transform: translateY(calc(-50% - 10px)) rotate(5deg);
+  }
+  50% {
+    transform: translateY(calc(-50% + 5px)) rotate(-3deg);
+  }
+  75% {
+    transform: translateY(calc(-50% - 8px)) rotate(4deg);
+  }
+  100% {
+    transform: translateY(-50%) rotate(0deg);
+  }
+}
+
+/* --- Label Shimmer (for hero label text) --- */
+@keyframes labelShimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* --- Particle Burst (for loading screen) --- */
+@keyframes particleBurst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- Quote Mark Fade (for testimonials) --- */
+@keyframes quoteFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-3deg);
+    opacity: 0.08;
+  }
+  50% {
+    transform: translateY(-6px) rotate(-1deg);
+    opacity: 0.12;
+  }
+}
+
+/* --- Slide In Stagger (for sections) --- */
+@keyframes slideInStagger {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

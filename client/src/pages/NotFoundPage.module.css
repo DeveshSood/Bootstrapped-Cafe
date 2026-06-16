@@ -1,0 +1,204 @@
+/* ============================================
+   NotFoundPage — 404 Error Page
+   Warm editorial aesthetic matching the cafe theme
+   ============================================ */
+
+.notFoundPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--warm-cream);
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-xl);
+}
+
+/* Decorative background pattern */
+.notFoundPage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 560px;
+}
+
+/* Giant decorative 404 number */
+.errorCode {
+  font-family: var(--font-display);
+  font-size: clamp(7rem, 18vw, 12rem);
+  font-weight: 700;
+  line-height: 1;
+  color: transparent;
+  background: linear-gradient(
+    135deg,
+    var(--terracotta) 0%,
+    var(--terracotta-light) 40%,
+    var(--forest-green) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  letter-spacing: -0.04em;
+  margin-bottom: var(--space-md);
+  user-select: none;
+}
+
+/* Decorative line */
+.divider {
+  width: 64px;
+  height: 3px;
+  background: var(--terracotta);
+  border-radius: var(--radius-pill);
+  margin: 0 auto var(--space-xl);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  color: var(--espresso);
+  margin-bottom: var(--space-sm);
+  font-weight: 500;
+}
+
+.subtitle {
+  font-size: var(--fs-body);
+  color: var(--espresso-muted);
+  max-width: 420px;
+  margin: 0 auto var(--space-2xl);
+  line-height: 1.7;
+}
+
+/* Action buttons */
+.actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: var(--terracotta);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
+  text-decoration: none;
+}
+
+.primaryBtn:hover {
+  background: var(--terracotta-hover);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: transparent;
+  color: var(--espresso-soft);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1.5px solid var(--matte-gray-dark);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
+  text-decoration: none;
+}
+
+.secondaryBtn:hover {
+  border-color: var(--espresso-muted);
+  color: var(--espresso);
+  transform: translateY(-1px);
+}
+
+/* Floating decorative elements */
+.floatingDecor {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+.decorOne {
+  width: 300px;
+  height: 300px;
+  background: var(--terracotta);
+  top: -80px;
+  right: -60px;
+}
+
+.decorTwo {
+  width: 200px;
+  height: 200px;
+  background: var(--forest-green);
+  bottom: -40px;
+  left: -40px;
+}
+
+.decorThree {
+  width: 140px;
+  height: 140px;
+  background: var(--terracotta-light);
+  top: 30%;
+  left: 8%;
+}
+
+/* Icon */
+.iconWrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-round);
+  background: var(--terracotta-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-lg);
+}
+
+.icon {
+  font-size: 2rem;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+  .errorCode {
+    font-size: clamp(5rem, 25vw, 8rem);
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .primaryBtn,
+  .secondaryBtn {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+}

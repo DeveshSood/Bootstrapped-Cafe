@@ -1,0 +1,156 @@
+/* Part A: Forest Green Feature Cards */
+.greenSection {
+  background-color: var(--forest-green);
+  padding: var(--space-4xl) 0;
+}
+
+.greenGrid {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xl);
+}
+
+.greenCard {
+  text-align: center;
+  padding: var(--space-xl) var(--space-lg);
+  border-right: 1px solid rgba(255,255,255,0.1);
+  opacity: 0; /* Start hidden for anime.js reveal */
+  transition: transform var(--duration-normal) var(--ease-out),
+              background var(--duration-normal) var(--ease-out);
+  border-radius: var(--radius-lg);
+  position: relative;
+}
+
+.greenCard:last-child {
+  border-right: none;
+}
+
+.greenCard:hover {
+  transform: translateY(-6px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Subtle glow line on hover */
+.greenCard::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(200, 81, 45, 0.6), transparent);
+  transition: width var(--duration-normal) var(--ease-out);
+  border-radius: 1px;
+}
+
+.greenCard:hover::after {
+  width: 60%;
+}
+
+.greenIcon {
+  font-size: 1.75rem;
+  display: block;
+  margin-bottom: var(--space-md);
+  filter: grayscale(0.2);
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+.greenCard:hover .greenIcon {
+  animation: iconBounce 0.6s ease forwards;
+}
+
+.greenTitle {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: var(--space-sm);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.greenCard:hover .greenTitle {
+  color: rgba(212, 165, 116, 1);
+}
+
+.greenDesc {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+}
+
+/* Part B: Ingredient Story */
+.storySection {
+  padding: var(--space-section) 0;
+  background-color: var(--warm-cream);
+}
+
+.storyInner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4xl);
+  align-items: center;
+}
+
+.storyLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--terracotta);
+  display: block;
+  margin-bottom: var(--space-lg);
+}
+
+.storyHeading {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--espresso);
+}
+
+.storyBody {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--espresso-soft);
+  line-height: 1.7;
+  margin-bottom: var(--space-lg);
+}
+
+.storyLink {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--terracotta);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
+  display: inline-block;
+}
+
+.storyLink:hover {
+  color: var(--terracotta-hover);
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .greenGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    padding: 0 var(--space-lg);
+  }
+  .greenCard { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: var(--space-lg); }
+  .greenCard:nth-child(3), .greenCard:nth-child(4) { border-bottom: none; }
+  .storyInner { grid-template-columns: 1fr; gap: var(--space-xl); padding: 0 var(--space-lg); }
+}

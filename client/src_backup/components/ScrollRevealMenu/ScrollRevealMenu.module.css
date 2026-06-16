@@ -1,0 +1,396 @@
+/* ============================================
+   ScrollRevealMenu — Cinematic Scroll Interaction
+   ============================================ */
+
+.scrollSection {
+  padding: var(--space-section) 0;
+  background-color: var(--warm-cream);
+  position: relative;
+  min-height: 100vh;
+  perspective: 1200px;
+}
+
+.scrollHeader {
+  text-align: center;
+  margin-bottom: var(--space-4xl);
+  padding: 0 var(--space-xl);
+}
+
+/* Category tabs */
+.categoryTabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-2xl);
+}
+
+.categoryTab {
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--matte-gray-dark);
+  color: var(--espresso-soft);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.categoryTab:hover {
+  border-color: var(--terracotta);
+  color: var(--terracotta);
+}
+
+.categoryTab--active {
+  background-color: var(--terracotta);
+  border-color: var(--terracotta);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(200, 81, 45, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Meal grid */
+.mealGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-2xl);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+}
+
+/* ============================================
+   MealCard — 3D Flip Design
+   ============================================ */
+.mealCardWrapper {
+  background-color: transparent;
+  border-radius: var(--radius-2xl);
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+  min-height: 280px; /* Base height to prevent collapse */
+}
+
+/* Hover state - only keep shadow, no scale/transform */
+.mealCardWrapper:hover .flipCardInner {
+  transform: rotateY(180deg);
+}
+
+.flipCardInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.flipCardFront, .flipCardBack {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+}
+
+/* FRONT SIDE */
+.flipCardFront {
+  background-color: var(--espresso);
+  border: 1px solid rgba(250, 247, 242, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+/* BACK SIDE */
+.flipCardBack {
+  background-color: var(--warm-cream);
+  color: var(--espresso);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid var(--matte-gray-dark);
+}
+
+.mealTitleBack {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--terracotta);
+  margin-bottom: var(--space-xs);
+  line-height: 1.2;
+}
+
+.mealPriceBack {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--espresso);
+  margin-bottom: var(--space-md);
+}
+
+.mealDescription {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--espresso-soft);
+  line-height: 1.4;
+  margin-bottom: var(--space-md);
+}
+
+/* Top Section (Image + Strip) */
+.mealCardTop {
+  background-color: var(--warm-cream); 
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mealImageContainer {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.mealImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flipCardInner:hover .mealImage {
+  transform: scale(1.15) rotate(-2deg);
+}
+
+.vegBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: var(--white);
+  color: var(--forest-green);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.mealPromoBar {
+  background-color: rgba(200, 81, 45, 0.15); /* Terracotta glow */
+  color: var(--terracotta);
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  padding: 8px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mealFrontDetails {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 8px 8px 8px;
+  gap: 12px;
+}
+
+.mealFrontDetailsLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.mealTitle {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--warm-cream);
+  line-height: 1.2;
+}
+
+.mealTagsBox {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mealPillTag {
+  background-color: rgba(250, 247, 242, 0.08);
+  color: rgba(250, 247, 242, 0.6);
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.mealFrontDetailsDivider {
+  width: 1px;
+  background-color: rgba(250, 247, 242, 0.12);
+  margin: 0 4px;
+}
+
+.mealFrontDetailsRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  min-width: 60px;
+}
+
+.mealPriceBox {
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--warm-cream);
+  line-height: 1;
+}
+
+.flipPrompt {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  color: rgba(250, 247, 242, 0.5);
+}
+
+.mealFooterRow {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.mealOrderBtn {
+  background: transparent;
+  color: var(--terracotta);
+  border: 1.5px solid var(--terracotta);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  padding: 8px 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  position: relative;
+  transition: all var(--duration-fast) var(--ease-out);
+  width: 120px;
+  justify-content: center;
+}
+
+.mealOrderBtnText {
+  display: inline-block;
+  transition: transform var(--duration-normal) var(--ease-spring);
+  white-space: nowrap;
+}
+
+.mealOrderBtnIcon {
+  position: absolute;
+  left: -20px;
+  font-size: 1rem;
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+.mealOrderBtn:hover {
+  background: var(--terracotta-glow);
+}
+
+.mealOrderBtn:hover .mealOrderBtnIcon {
+  transform: translateX(28px);
+}
+
+.mealOrderBtn:hover .mealOrderBtnText {
+  transform: translateX(16px);
+}
+
+.mealQuantityControl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--terracotta-glow);
+  border: 1.5px solid var(--terracotta);
+  border-radius: var(--radius-pill);
+  padding: 4px 6px;
+  height: 40px;
+  min-width: 120px;
+}
+
+.mqBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--terracotta);
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.mqBtn:hover {
+  background: var(--terracotta);
+  color: var(--white);
+}
+
+.mqCount {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--espresso);
+  min-width: 16px;
+  text-align: center;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .mealGrid {
+    grid-template-columns: 1fr;
+    padding: 0 var(--space-lg);
+    gap: var(--space-xl);
+  }
+
+  .categoryTabs {
+    padding: 0 var(--space-lg);
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .categoryTabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .categoryTab {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .mealGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

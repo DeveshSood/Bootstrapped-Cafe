@@ -1,0 +1,252 @@
+/* ============================================
+   Hero — Fullscreen Cinematic Hero Section
+   ============================================ */
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  max-height: 1000px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--espresso);
+}
+
+/* Background image */
+.heroBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  filter: brightness(0.65) saturate(1.1);
+}
+
+/* Matte gradient overlay */
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(30, 24, 21, 0.55) 0%,
+    rgba(30, 24, 21, 0.25) 40%,
+    rgba(30, 24, 21, 0.30) 60%,
+    rgba(30, 24, 21, 0.65) 100%
+  );
+}
+
+/* Content */
+.heroContent {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  padding-top: var(--navbar-height);
+}
+
+.heroLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(250, 247, 242, 0.6);
+  margin-bottom: var(--space-xl);
+  /* Shimmer sweep on label */
+  background: linear-gradient(
+    90deg,
+    rgba(250, 247, 242, 0.6) 0%,
+    rgba(250, 247, 242, 0.6) 40%,
+    rgba(212, 165, 116, 0.9) 50%,
+    rgba(250, 247, 242, 0.6) 60%,
+    rgba(250, 247, 242, 0.6) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: labelShimmer 4s ease-in-out infinite;
+}
+
+.heroHeading {
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  font-weight: 500;
+  line-height: 1.08;
+  color: var(--warm-cream);
+  margin-bottom: var(--space-xl);
+  max-width: 680px;
+}
+
+.heroHeading em {
+  font-style: italic;
+  color: var(--terracotta-light);
+}
+
+.heroSubtext {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(250, 247, 242, 0.75);
+  max-width: 420px;
+  margin-bottom: var(--space-2xl);
+}
+
+.heroCtas {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* Slide counter (right side) */
+.heroSlideCounter {
+  position: absolute;
+  right: var(--space-xl);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.heroSlideNumber {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 400;
+  color: var(--warm-cream);
+  line-height: 1;
+}
+
+.heroSlideTotal {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  color: rgba(250, 247, 242, 0.5);
+}
+
+.heroDots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: var(--space-md);
+}
+
+.heroDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-round);
+  background-color: rgba(250, 247, 242, 0.3);
+  transition: background-color var(--duration-normal) var(--ease-out);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.heroDot--active {
+  background-color: var(--warm-cream);
+}
+
+
+
+/* Stats cards */
+.heroStats {
+  position: absolute;
+  bottom: var(--space-2xl);
+  right: var(--space-xl);
+  z-index: 3;
+  display: flex;
+  gap: var(--space-md);
+}
+
+.heroStat {
+  background: rgba(250, 247, 242, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(250, 247, 242, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  text-align: center;
+  animation: floatUpDown 4s ease-in-out infinite;
+  transition: transform var(--duration-normal) var(--ease-out),
+              background var(--duration-normal) var(--ease-out);
+}
+
+.heroStat:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.heroStat:nth-child(2) {
+  animation-delay: 0.8s;
+}
+
+.heroStat:nth-child(3) {
+  animation-delay: 1.6s;
+}
+
+.heroStat:hover {
+  background: rgba(250, 247, 242, 0.14);
+  transform: translateY(-4px);
+}
+
+.heroStatValue {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--warm-cream);
+  white-space: nowrap;
+}
+
+.heroStatLabel {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(250, 247, 242, 0.5);
+  margin-top: 2px;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  .heroContent {
+    padding: 0 var(--space-lg);
+    padding-top: var(--navbar-height-mobile);
+  }
+
+  .heroHeading {
+    font-size: clamp(2.25rem, 8vw, 3.5rem);
+    max-width: 100%;
+  }
+
+  .heroSlideCounter {
+    display: none;
+  }
+
+  .heroStats {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .heroHeading {
+    max-width: 560px;
+  }
+}

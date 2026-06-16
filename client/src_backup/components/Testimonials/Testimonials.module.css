@@ -1,0 +1,147 @@
+.testimonials { padding: var(--space-section) 0; background-color: var(--warm-cream); }
+.testInner { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-xl); }
+.testHeader { display: flex; align-items: baseline; gap: var(--space-2xl); margin-bottom: var(--space-3xl); }
+.testLabel { font-family: var(--font-body); font-size: var(--fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--terracotta); }
+.testHeading { font-family: var(--font-display); font-size: var(--fs-h1); font-weight: 500; color: var(--espresso); }
+
+.testGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); margin-bottom: var(--space-2xl); }
+
+.testCard {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-light);
+  transition: transform var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out),
+              border-color var(--duration-normal) var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.testCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(200, 81, 45, 0.12);
+  border-color: rgba(200, 81, 45, 0.15);
+}
+
+/* Floating quote mark */
+.testQuoteMark {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-family: var(--font-display);
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--terracotta);
+  opacity: 0.06;
+  line-height: 1;
+  animation: quoteFloat 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Hover glow sweep */
+.testCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(200, 81, 45, 0.04),
+    transparent
+  );
+  transition: left 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.testCard:hover::before {
+  left: 150%;
+}
+
+.testQuote { font-family: var(--font-body); font-size: var(--fs-body); color: var(--espresso-soft); line-height: 1.7; font-style: italic; margin-bottom: var(--space-xl); position: relative; z-index: 1; }
+.testAuthor { display: flex; align-items: center; gap: var(--space-md); position: relative; z-index: 1; }
+.testAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-round);
+  background: var(--terracotta);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+.testCard:hover .testAvatar {
+  transform: scale(1.1);
+}
+
+.testName { display: block; font-family: var(--font-body); font-size: var(--fs-small); font-weight: 600; color: var(--espresso); }
+.testRole { display: block; font-family: var(--font-body); font-size: var(--fs-label); color: var(--espresso-muted); }
+
+.testNav { display: flex; gap: var(--space-md); justify-content: flex-end; align-items: center; }
+
+.testDots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.testDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--matte-gray-dark);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.testDot--active {
+  background: var(--terracotta);
+  width: 24px;
+  border-radius: var(--radius-pill);
+}
+
+.testNavBtn, .testNavBtnNext {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-round);
+  border: 1.5px solid var(--matte-gray-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--espresso);
+  background: var(--white);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  font-size: 0.9rem;
+}
+
+.testNavBtn:hover, .testNavBtnNext:hover {
+  background: var(--terracotta);
+  border-color: var(--terracotta);
+  color: var(--white);
+  transform: scale(1.05);
+}
+
+.testNavBtnNext {
+  background: var(--terracotta);
+  border-color: var(--terracotta);
+  color: var(--white);
+}
+
+.testNavBtnNext:hover {
+  background: var(--terracotta-hover);
+  border-color: var(--terracotta-hover);
+}
+
+@media (max-width: 768px) { .testGrid { grid-template-columns: 1fr; } .testHeader { flex-direction: column; gap: var(--space-sm); } .testInner { padding: 0 var(--space-lg); } .testNav { justify-content: center; } }

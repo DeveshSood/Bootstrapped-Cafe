@@ -1,0 +1,197 @@
+/* ============================================
+   Testimonials Section — Cinematic Carousel
+   ============================================ */
+.carouselSection {
+  padding: var(--space-4xl) 0;
+  background-color: var(--warm-cream);
+  position: relative;
+  overflow: hidden;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-4xl);
+}
+
+.label {
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--terracotta);
+  display: block;
+  margin-bottom: var(--space-md);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 500;
+  color: var(--espresso);
+}
+
+.carouselWrapper {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  height: 400px; /* Fixed height to contain animated cards */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.quoteCard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: var(--space-2xl);
+}
+
+.quoteMark {
+  font-family: var(--font-display);
+  font-size: 8rem;
+  font-weight: 700;
+  color: var(--terracotta);
+  opacity: 0.15;
+  line-height: 1;
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+}
+
+.quoteText {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 400;
+  color: var(--espresso);
+  line-height: 1.4;
+  margin-bottom: var(--space-2xl);
+}
+
+.authorArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-round);
+  background: var(--terracotta);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.authorInfo {
+  text-align: left;
+}
+
+.authorName {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--espresso);
+}
+
+.authorRole {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--espresso-muted);
+}
+
+.navControls {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xl);
+  z-index: 10;
+}
+
+.dots {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--matte-gray-dark);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.activeDot {
+  background: var(--terracotta);
+  width: 32px;
+  border-radius: var(--radius-pill);
+}
+
+.navBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-round);
+  border: 1.5px solid var(--matte-gray-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--espresso);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  font-size: 1.2rem;
+}
+
+.navBtn:hover {
+  background: var(--terracotta);
+  border-color: var(--terracotta);
+  color: var(--white);
+}
+
+.arrowIconPrev, .arrowIconNext {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.navBtn:hover .arrowIconPrev {
+  transform: translateX(-4px);
+}
+
+.navBtn:hover .arrowIconNext {
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .carouselWrapper {
+    height: 450px;
+  }
+  
+  .quoteCard {
+    padding: var(--space-xl) 0;
+  }
+}

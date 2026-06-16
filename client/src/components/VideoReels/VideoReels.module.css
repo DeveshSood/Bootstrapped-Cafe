@@ -1,0 +1,342 @@
+/* ============================================
+   Video Reels Section — Soft, Elegant Design
+   ============================================ */
+
+.reelsSection {
+  background: radial-gradient(circle at top left, var(--warm-cream) 0%, #FAF5EF 100%);
+  padding: var(--space-4xl) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.reelsSection::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -5%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(129, 199, 132, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.reelsSectionInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  gap: var(--space-4xl);
+  width: 100%;
+  position: relative;
+}
+
+.sectionHeader {
+  flex: 1;
+  text-align: left;
+  max-width: 500px;
+  position: relative;
+  z-index: 2;
+}
+
+.animatedHeader {
+  position: relative;
+  padding: var(--space-xl) 0;
+}
+
+.watermark {
+  position: absolute;
+  top: -60px;
+  left: -20px;
+  font-family: var(--font-display);
+  font-size: 16rem;
+  font-weight: 700;
+  color: var(--terracotta);
+  opacity: 0.04;
+  line-height: 1;
+  z-index: -1;
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+  transition: opacity 0.5s ease;
+}
+
+.sectionLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--forest-green);
+  display: block;
+  margin-bottom: var(--space-md);
+}
+
+.sectionHeading {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  font-weight: 500;
+  color: var(--espresso);
+  line-height: 1.05;
+  margin-bottom: var(--space-lg);
+  letter-spacing: -0.02em;
+}
+
+.sectionDescription {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: rgba(30, 24, 21, 0.75);
+  max-width: 90%;
+  margin-bottom: var(--space-xl);
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-2xl);
+}
+
+.reelsContainer {
+  width: 100%;
+  max-width: 480px; /* Mobile width for TikTok style */
+  height: 75vh;
+  min-height: 600px;
+  max-height: 850px;
+  background-color: var(--espresso);
+  border-radius: var(--radius-2xl);
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  box-shadow: var(--shadow-xl);
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  position: relative;
+}
+
+.reelsContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.reelWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.videoElement {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-2xl);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: var(--space-xl);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  pointer-events: none; /* allow clicks on video */
+}
+
+.controls {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.iconButton {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-round);
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--white);
+  font-size: 1.25rem;
+  transition: background-color var(--duration-fast);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.iconButton:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.loadingSpinner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--white);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 10;
+}
+
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  background-color: var(--espresso);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+}
+
+.posterImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-2xl);
+}
+
+.loadingOverlay .posterImage {
+  filter: blur(4px) brightness(0.6);
+}
+
+.pauseIndicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 72px;
+  height: 72px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  border-radius: var(--radius-round);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 8;
+  pointer-events: none;
+  animation: fadeIn var(--duration-fast) ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.sectionDescription {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--espresso-muted);
+  margin-top: var(--space-md);
+  line-height: 1.6;
+}
+
+/* Scroll Indicator */
+.scrollIndicator {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  z-index: 10;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  animation: fadeUp 1.5s ease-out infinite alternate;
+}
+
+.scrollHand {
+  font-size: 2.5rem;
+  animation: scrollHandAnim 1.5s ease-out infinite;
+}
+
+@keyframes scrollHandAnim {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-15px); opacity: 0; }
+}
+
+@keyframes fadeUp {
+  0% { transform: translate(-50%, 0); }
+  100% { transform: translate(-50%, -10px); }
+}
+
+/* Vertical Progress Bar */
+.progressContainer {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  z-index: 15;
+  pointer-events: auto;
+  background: rgba(30, 24, 21, 0.2);
+  padding: 12px 8px;
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(8px);
+}
+
+.progressDot {
+  width: 4px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  background-color: rgba(255, 255, 255, 0.3);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all var(--duration-normal) ease;
+}
+
+.progressDot:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+  transform: scaleX(1.5);
+}
+
+.progressDotActive {
+  height: 48px;
+  background-color: var(--terracotta);
+}
+
+@media (max-width: 992px) {
+  .reelsSectionInner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .sectionHeader {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+}
+

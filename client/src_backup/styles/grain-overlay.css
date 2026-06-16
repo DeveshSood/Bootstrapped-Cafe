@@ -1,0 +1,74 @@
+/* ============================================
+   BOOTSTRAP CAFE — Grain / Matte Texture Overlay
+   
+   Creates the signature matte-finish feel by
+   layering a subtle noise texture over the
+   entire page. The texture shifts slightly
+   to prevent banding.
+   ============================================ */
+
+.grain-overlay {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url('/textures/grain-noise.png');
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  animation: grainShift 8s steps(10) infinite;
+  mix-blend-mode: multiply;
+}
+
+/* Darker grain for dark sections (hero, footer) */
+.grain-overlay--dark {
+  opacity: 0.05;
+  mix-blend-mode: soft-light;
+}
+
+/* Fallback: CSS-only noise using SVG filter if PNG not available */
+.grain-overlay--css {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Matte gradient overlays for sections */
+.matte-gradient {
+  background: linear-gradient(
+    180deg,
+    rgba(30, 24, 21, 0.02) 0%,
+    rgba(30, 24, 21, 0.00) 40%,
+    rgba(30, 24, 21, 0.00) 60%,
+    rgba(30, 24, 21, 0.03) 100%
+  );
+}
+
+.matte-gradient--hero {
+  background: linear-gradient(
+    180deg,
+    rgba(30, 24, 21, 0.65) 0%,
+    rgba(30, 24, 21, 0.35) 50%,
+    rgba(30, 24, 21, 0.70) 100%
+  );
+}
+
+/* Matte card surface — subtle inner texture */
+.matte-surface {
+  background-color: var(--white);
+  box-shadow: 
+    var(--shadow-card),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(30, 24, 21, 0.03);
+}

@@ -1,0 +1,95 @@
+.membership { padding: var(--space-section) 0; background-color: var(--cream-dark); }
+.membershipHeader { text-align: center; max-width: 600px; margin: 0 auto var(--space-4xl); padding: 0 var(--space-xl); }
+.membershipLabel { font-family: var(--font-body); font-size: var(--fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--terracotta); display: block; margin-bottom: var(--space-lg); }
+.membershipHeading { font-family: var(--font-display); font-size: var(--fs-h1); font-weight: 500; color: var(--espresso); margin-bottom: var(--space-md); }
+.membershipDesc { font-family: var(--font-body); font-size: var(--fs-body); color: var(--espresso-soft); }
+
+.planGrid { max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-xl); display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); align-items: start; }
+
+.planCard {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  box-shadow: var(--shadow-card);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
+}
+
+/* Shimmer sweep on hover */
+.planCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(200, 81, 45, 0.05), transparent);
+  transition: left 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.planCard:hover::after {
+  left: 160%;
+}
+
+.planCard:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+
+/* Popular card — animated gradient border */
+.planCard--popular {
+  border-color: transparent;
+  transform: scale(1.03);
+  background-image: linear-gradient(var(--white), var(--white)),
+                    linear-gradient(135deg, var(--terracotta), var(--terracotta-light), var(--forest-green), var(--terracotta));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-size: 100% 100%, 300% 300%;
+  animation: gradientShift 4s ease infinite, glowPulse 3s ease-in-out infinite;
+}
+
+.planCard--popular:hover { transform: scale(1.04) translateY(-4px); }
+
+.popularBadge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--terracotta), var(--terracotta-light));
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 16px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(200, 81, 45, 0.3);
+}
+
+.planTitle { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--espresso); margin-bottom: var(--space-lg); position: relative; z-index: 1; }
+.planPrice { margin-bottom: var(--space-xl); position: relative; z-index: 1; }
+.planAmount { font-family: var(--font-display); font-size: 2.25rem; font-weight: 600; color: var(--espresso); }
+.planPeriod { font-family: var(--font-body); font-size: var(--fs-small); color: var(--espresso-muted); margin-left: 4px; }
+.planFeatures { margin-bottom: var(--space-2xl); position: relative; z-index: 1; }
+
+.planFeature {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  color: var(--espresso-soft);
+  padding: var(--space-xs) 0;
+  border-bottom: 1px solid var(--border-light);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.planCard:hover .planFeature {
+  transform: translateX(2px);
+}
+
+.planFeature:last-child { border-bottom: none; }
+
+@media (max-width: 768px) { .planGrid { grid-template-columns: 1fr; padding: 0 var(--space-lg); } .planCard--popular { transform: none; } .planCard--popular:hover { transform: translateY(-6px); } }
+@media (min-width: 769px) and (max-width: 1200px) { .planGrid { grid-template-columns: repeat(2, 1fr); } }

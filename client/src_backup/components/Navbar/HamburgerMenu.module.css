@@ -1,0 +1,146 @@
+/* ============================================
+   HamburgerMenu — Fullscreen Mobile Menu Overlay
+   ============================================ */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-overlay);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
+}
+
+.overlay--open {
+  pointer-events: all;
+  opacity: 1;
+}
+
+/* Dark backdrop behind menu */
+.backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(30, 24, 21, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Menu panel slides in from left */
+.menuPanel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80%;
+  max-width: 360px;
+  height: 100%;
+  background-color: var(--espresso);
+  padding: var(--space-5xl) var(--space-2xl) var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transform: translateX(-100%);
+  transition: transform var(--duration-slow) var(--ease-out);
+  overflow-y: auto;
+}
+
+.overlay--open .menuPanel {
+  transform: translateX(0);
+}
+
+/* Grain on menu panel */
+.menuPanel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+/* Navigation links inside menu */
+.menuNav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  position: relative;
+  z-index: 1;
+}
+
+.menuLink {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7vw, 2.75rem);
+  font-weight: 500;
+  color: var(--warm-cream);
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: 
+    color var(--duration-fast) var(--ease-out),
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+  padding: var(--space-xs) 0;
+  display: block;
+  text-decoration: none;
+}
+
+.menuLink:hover {
+  color: var(--terracotta);
+}
+
+/* Staggered entrance when menu opens */
+.overlay--open .menuLink {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.overlay--open .menuLink:nth-child(1) { transition-delay: 100ms; }
+.overlay--open .menuLink:nth-child(2) { transition-delay: 150ms; }
+.overlay--open .menuLink:nth-child(3) { transition-delay: 200ms; }
+.overlay--open .menuLink:nth-child(4) { transition-delay: 250ms; }
+.overlay--open .menuLink:nth-child(5) { transition-delay: 300ms; }
+.overlay--open .menuLink:nth-child(6) { transition-delay: 350ms; }
+
+/* Bottom section: social links + contact */
+.menuFooter {
+  margin-top: auto;
+  padding-top: var(--space-2xl);
+  border-top: 1px solid rgba(250, 247, 242, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.menuFooterLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(250, 247, 242, 0.4);
+  margin-bottom: var(--space-md);
+}
+
+.menuSocials {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.menuSocialLink {
+  font-family: var(--font-body);
+  font-size: var(--fs-small);
+  color: rgba(250, 247, 242, 0.6);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.menuSocialLink:hover {
+  color: var(--terracotta);
+}

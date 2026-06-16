@@ -1,0 +1,147 @@
+/* ============================================
+   Button — SAVORA-Style CTA
+   ============================================ */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 100px; /* Pill shape */
+  cursor: pointer;
+  transition: 
+    color var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+/* Background expansion layer for creative hover */
+.button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  padding-bottom: 150%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+
+.button:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Magnetic hover micro-interaction */
+.button:active {
+  transform: scale(0.97);
+}
+
+/* --- Sizes --- */
+.button--sm {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.7rem;
+}
+
+.button--md {
+  padding: 0.85rem 2rem;
+  font-size: 0.75rem;
+}
+
+.button--lg {
+  padding: 1rem 2.5rem;
+  font-size: 0.813rem;
+}
+
+/* --- Filled (Terracotta) --- */
+.button--filled {
+  background-color: var(--terracotta);
+  color: var(--white);
+  border: 2px solid var(--terracotta);
+}
+.button--filled::before {
+  background-color: var(--terracotta-hover);
+}
+
+.button--filled:hover {
+  border-color: var(--terracotta-hover);
+  box-shadow: 0 8px 24px rgba(200, 81, 45, 0.3);
+  color: var(--white);
+}
+
+/* --- Outlined (Dark) --- */
+.button--outlined {
+  background-color: transparent;
+  color: var(--espresso);
+  border: 2px solid var(--espresso);
+}
+.button--outlined::before {
+  background-color: var(--espresso);
+}
+
+.button--outlined:hover {
+  color: var(--warm-cream);
+  box-shadow: var(--shadow-md);
+}
+
+/* --- Outlined Light (for dark backgrounds) --- */
+.button--outlined-light {
+  background-color: transparent;
+  color: var(--white);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+.button--outlined-light::before {
+  background-color: var(--white);
+}
+
+.button--outlined-light:hover {
+  color: var(--espresso);
+  border-color: var(--white);
+}
+
+/* --- Text (no border, link-like with arrow) --- */
+.button--text {
+  background: none;
+  color: var(--terracotta);
+  border: none;
+  padding: 0.25rem 0;
+  letter-spacing: 0.06em;
+}
+.button--text::before {
+  display: none; /* No circle expand on text button */
+}
+
+.button--text:hover {
+  color: var(--terracotta-hover);
+}
+
+.button--text .buttonIcon {
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.button--text:hover .buttonIcon {
+  transform: translateX(4px);
+}
+
+/* --- Icon --- */
+.buttonIcon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1em;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.buttonText {
+  position: relative;
+  z-index: 1;
+}

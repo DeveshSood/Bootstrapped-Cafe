@@ -1,0 +1,288 @@
+/* ============================================
+   Navbar — SAVORA-Style Navigation
+   ============================================ */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: var(--z-sticky);
+  padding: 0 var(--space-xl);
+  height: var(--navbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: 
+    background-color var(--duration-slow) var(--ease-out),
+    box-shadow var(--duration-slow) var(--ease-out),
+    backdrop-filter var(--duration-slow) var(--ease-out);
+}
+
+/* Transparent state (on hero) */
+.navbar--transparent {
+  background-color: transparent;
+}
+
+/* Scrolled state (solid cream) */
+.navbar--solid {
+  background-color: rgba(250, 247, 242, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 var(--border-light);
+}
+
+/* --- Left Section: Nav Links (Desktop) --- */
+.navLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  flex: 1;
+}
+
+.navLink {
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--warm-cream);
+  transition: color var(--duration-fast) var(--ease-out);
+  position: relative;
+  padding: 0.25rem 0;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background-color: var(--terracotta);
+  transition: width var(--duration-normal) var(--ease-out);
+}
+
+.navLink:hover::after,
+.navLink--active::after {
+  width: 100%;
+}
+
+/* When navbar is solid, links become dark */
+.navbar--solid .navLink {
+  color: var(--espresso);
+}
+
+.navLink:hover {
+  color: var(--terracotta);
+}
+
+/* --- Center: Brand Logo --- */
+.navCenter {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.brandLogo {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--warm-cream);
+  transition: color var(--duration-slow) var(--ease-out);
+  white-space: nowrap;
+  position: relative;
+}
+
+.navbar--solid .brandLogo {
+  color: var(--espresso);
+}
+
+.brandDivider {
+  display: block;
+  width: 24px;
+  height: 1px;
+  background-color: currentColor;
+  margin: 4px auto 0;
+  opacity: 0.4;
+}
+
+/* --- Right Section: CTA + Cart --- */
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.navCta {
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--terracotta);
+  color: var(--white);
+  transition: background-color var(--duration-fast) var(--ease-out);
+  white-space: nowrap;
+}
+
+.navCta:hover {
+  background-color: var(--terracotta-hover);
+  color: var(--white);
+}
+
+/* Cart Icon */
+.cartButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 40px;
+  padding: 0 10px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.cartButton:hover {
+  background-color: rgba(200, 81, 45, 0.08);
+}
+
+.cartIcon {
+  width: 22px;
+  height: 22px;
+  color: var(--warm-cream);
+  transition: color var(--duration-slow) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.cartTotalLabel {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--warm-cream);
+  transition: color var(--duration-slow) var(--ease-out);
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+}
+
+.navbar--solid .cartIcon,
+.navbar--solid .cartTotalLabel {
+  color: var(--espresso);
+}
+
+.cartBadge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-round);
+  background-color: var(--terracotta);
+  color: var(--white);
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* --- Mobile: Hamburger trigger (hidden on desktop) --- */
+.hamburgerButton {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 8px;
+  cursor: pointer;
+  z-index: calc(var(--z-overlay) + 10);
+}
+
+.hamburgerLine {
+  height: 2px;
+  background-color: var(--warm-cream);
+  border-radius: 2px;
+  transition: 
+    width var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out),
+    background-color var(--duration-slow) var(--ease-out);
+}
+
+.hamburgerLine:first-child {
+  width: 18px;
+}
+
+.hamburgerLine:last-child {
+  width: 24px;
+}
+
+.navbar--solid .hamburgerLine {
+  background-color: var(--espresso);
+}
+
+/* When menu is open, morph to X */
+.hamburgerButton--open .hamburgerLine:first-child {
+  width: 24px;
+  transform: translateY(3.5px) rotate(45deg);
+}
+
+.hamburgerButton--open .hamburgerLine:last-child {
+  transform: translateY(-3.5px) rotate(-45deg);
+}
+
+/* ============================================
+   RESPONSIVE — Mobile / Tablet
+   ============================================ */
+@media (max-width: 768px) {
+  .navbar {
+    height: var(--navbar-height-mobile);
+    padding: 0 var(--space-md);
+  }
+
+  .navLeft {
+    display: none;
+  }
+
+  .navRight .navLink,
+  .navCta {
+    display: none;
+  }
+
+  .hamburgerButton {
+    display: flex;
+    flex: 1;
+  }
+
+  .navCenter {
+    flex: unset;
+  }
+
+  .brandLogo {
+    font-size: 1.1rem;
+  }
+
+  .navRight {
+    flex: 1;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .navLink {
+    font-size: 0.65rem;
+  }
+
+  .navCta {
+    font-size: 0.65rem;
+    padding: 0.4rem 1rem;
+  }
+}
