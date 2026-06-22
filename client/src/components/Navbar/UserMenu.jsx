@@ -18,7 +18,7 @@ const UserMenu = () => {
       const fetchCount = async () => {
         try {
           const token = localStorage.getItem('token');
-          const res = await fetch('http://localhost:5000/api/orders', {
+          const res = await fetch('/api/orders', {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -32,7 +32,7 @@ const UserMenu = () => {
       };
       fetchCount();
 
-      const eventSource = new EventSource('http://localhost:5000/api/orders/stream');
+      const eventSource = new EventSource('/api/orders/stream');
       eventSource.onmessage = (event) => {
         const payload = JSON.parse(event.data);
         if (payload.type === 'new_order' || payload.type === 'status_update') {
