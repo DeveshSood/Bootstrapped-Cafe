@@ -41,31 +41,24 @@ const PageTransition = ({ children }) => {
 
   useEffect(() => {
     // Disable native browser scroll restoration to prevent conflicting jumps
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
     }
 
-    let timer;
     if (navType === 'POP') {
       // Restore previous scroll position on Back/Forward navigation
       const savedY = sessionStorage.getItem(`scroll-${location.pathname}`);
       if (savedY !== null) {
-        // Wait briefly for layout to render before restoring scroll
-        timer = setTimeout(() => {
-          window.scrollTo({ top: parseInt(savedY, 10), left: 0, behavior: 'instant' });
-        }, 10);
+        requestAnimationFrame(() => {
+          window.scrollTo(0, parseInt(savedY, 10));
+        });
       }
     } else {
       // Fresh navigation (PUSH or REPLACE) -> Start at top
-      // Wait briefly for the new layout to render and prevent competing browser behavior
-      timer = setTimeout(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      }, 50);
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+      });
     }
-
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
   }, [location.pathname, navType]);
 
   useEffect(() => {

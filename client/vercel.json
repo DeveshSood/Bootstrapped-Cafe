@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://bootstrapped-cafe.onrender.com/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
