@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://bootstrapped-cafe-api.onrender.com/api/:path*"
+      "destination": "https://bootstrapped-cafe.onrender.com/api/:path*"
     }
   ]
 }
