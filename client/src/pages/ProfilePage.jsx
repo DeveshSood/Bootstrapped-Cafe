@@ -202,6 +202,9 @@ const ProfilePage = () => {
   if (!user) return null;
 
   const avatar = generateAvatar(user.name, 120);
+  const memberDate = user.createdAt
+    ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    : null;
 
   return (
     <>
@@ -212,6 +215,7 @@ const ProfilePage = () => {
             <div className={styles.profileHeader}>
               <div className={styles.avatarWrapper}>
                 <div className={styles.avatarGlow} />
+                <div className={styles.avatarStampRing} />
                 <motion.img
                   src={avatar}
                   alt={user.name}
@@ -223,6 +227,9 @@ const ProfilePage = () => {
               </div>
               <h2 className={styles.userName}>{user.name}</h2>
               <p className={styles.userEmail}>{user.email}</p>
+              {memberDate && (
+                <span className={styles.memberSince}>Patron since {memberDate}</span>
+              )}
               {user.role !== 'user' && (
                 <span className={styles.roleBadge}>{user.role}</span>
               )}
@@ -230,16 +237,29 @@ const ProfilePage = () => {
 
             {/* Tabs */}
             <div className={styles.tabs}>
-              {TABS.map((tab) => (
+              {TABS.map((tab, index) => (
                 <button
                   key={tab}
                   className={`${styles.tab} ${activeTab === tab ? styles.tabActive : ''}`}
                   onClick={() => setParams({ tab })}
                 >
-                  <span className={styles.activeIndicator} />
-                  {TAB_LABELS[tab]}
+                  <span className={styles.tabNumber}>0{index + 1}</span>
+                  <span className={styles.tabText}>{TAB_LABELS[tab]}</span>
+                  <span className={styles.tabLine} />
+                  <span className={styles.tabIndicator}>
+                    {activeTab === tab ? '✦' : ''}
+                  </span>
                 </button>
               ))}
+            </div>
+
+            {/* Vintage Stamp Footer */}
+            <div className={styles.sidebarFooter}>
+              <div className={styles.vintageStamp}>
+                <span className={styles.stampCircle}>EST. 2026</span>
+                <span className={styles.stampBrand}>BOOTSTRAPPED</span>
+                <span className={styles.stampVerified}>LOYAL PATRON</span>
+              </div>
             </div>
           </aside>
 

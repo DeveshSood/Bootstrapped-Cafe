@@ -51,7 +51,7 @@ const Navbar = ({ cartCount = 0, cartTotal = 0, onCartClick, isCartOpen = false 
   }, [menuOpen]);
 
   const navLinks = [
-    { label: 'Menu', path: '/#menu' },
+    { label: 'Menu', path: '/menu' },
     { label: 'Our Story', path: '/#how-we-cook' },
     { label: 'Journal', path: '/#testimonials' },
   ];

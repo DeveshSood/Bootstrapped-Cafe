@@ -39,24 +39,46 @@
 }
 
 .profileSidebar {
-  flex: 0 0 240px;
+  flex: 0 0 260px;
   position: sticky;
-  box-shadow: 0 2px 12px rgba(30, 24, 21, 0.04);
+  top: calc(var(--navbar-height) + var(--space-lg));
+  background: var(--white);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl) var(--space-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
 }
 
 .profileHeader {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: var(--space-2xl);
+  align-items: center;
+  text-align: center;
 }
 
 .avatarWrapper {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarStampRing {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border: 1.5px dashed var(--terracotta);
   border-radius: var(--radius-round);
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 .avatarGlow {
@@ -85,75 +107,169 @@
   font-size: var(--fs-h4);
   color: var(--espresso);
   font-weight: 600;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .userEmail {
   font-family: var(--font-body);
   font-size: var(--fs-small);
   color: var(--espresso-muted);
-  margin-bottom: var(--space-sm);
+  margin-bottom: 4px;
+}
+
+.memberSince {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-small);
+  color: var(--espresso-muted);
+  margin-bottom: 8px;
+  opacity: 0.85;
 }
 
 .roleBadge {
   display: inline-block;
   padding: 2px 10px;
-  background: var(--cream-dark);
+  background: var(--terracotta-glow);
   color: var(--terracotta);
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   border-radius: var(--radius-pill);
+  border: 1px solid rgba(200, 81, 45, 0.2);
 }
 
 .tabs {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+  width: 100%;
 }
 
 .tab {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
+  width: 100%;
+  padding: 10px 4px;
   background: transparent;
   border: none;
-  border-radius: var(--radius-md);
   color: var(--espresso-muted);
   font-family: var(--font-body);
-  font-size: var(--fs-body);
+  font-size: var(--fs-small);
   font-weight: 500;
   cursor: pointer;
-  transition: all var(--duration-fast) var(--ease-out);
+  transition: color var(--duration-fast) var(--ease-out);
   text-align: left;
+  position: relative;
 }
 
 .tab:hover {
-  background: rgba(30, 24, 21, 0.02);
   color: var(--espresso);
+  background: transparent;
 }
 
 .tabActive {
-  background: var(--white);
   color: var(--terracotta);
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(30, 24, 21, 0.04);
+  background: transparent;
+  box-shadow: none;
 }
 
-.activeIndicator {
-  width: 6px;
-  height: 6px;
-  background: var(--terracotta);
-  transform: rotate(45deg);
-  opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease-out);
+.tabNumber {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-small);
+  color: var(--espresso-soft);
+  margin-right: 12px;
+  width: 18px;
+  text-align: right;
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
-.tabActive .activeIndicator {
-  opacity: 1;
-  box-shadow: 0 0 6px var(--terracotta-glow);
+.tabActive .tabNumber {
+  color: var(--terracotta);
+}
+
+.tabText {
+  text-transform: uppercase;
+  font-size: var(--fs-label);
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.tabLine {
+  flex: 1;
+  border-bottom: 1px dotted var(--matte-gray-dark);
+  margin: 0 10px;
+  height: 1px;
+  opacity: 0.6;
+  align-self: center;
+}
+
+.tabActive .tabLine {
+  border-color: var(--terracotta);
+  opacity: 0.8;
+}
+
+.tabIndicator {
+  font-size: 8px;
+  color: var(--terracotta);
+  width: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebarFooter {
+  margin-top: var(--space-md);
+  padding-top: var(--space-lg);
+  border-top: 1px dashed var(--matte-gray-dark);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.vintageStamp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px double rgba(200, 81, 29, 0.45);
+  border-radius: var(--radius-round);
+  width: 95px;
+  height: 95px;
+  transform: rotate(-8deg);
+  padding: 8px;
+  font-family: var(--font-display);
+  color: rgba(200, 81, 29, 0.6);
+  text-align: center;
+  user-select: none;
+  pointer-events: none;
+}
+
+.stampCircle {
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stampBrand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 8px;
+  line-height: 1.1;
+  margin: 2px 0;
+  letter-spacing: 0.02em;
+}
+
+.stampVerified {
+  font-size: 6px;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-top: 1.5px solid rgba(200, 81, 29, 0.45);
+  padding-top: 2px;
 }
 
 .tabDivider {
@@ -813,18 +929,49 @@
   .profileContainer {
     flex-direction: column;
     align-items: stretch;
+    gap: 30px;
   }
   .profileSidebar {
     flex: unset;
     position: static;
+    padding: var(--space-lg);
+    gap: var(--space-md);
+  }
+  .profileHeader {
+    margin-bottom: var(--space-sm);
   }
   .tabs {
     flex-direction: row;
     overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-light);
+    width: 100%;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
   }
   .tab {
-    text-align: center;
+    width: auto;
+    padding: 8px 16px;
+    background: var(--cream-dark);
+    border-radius: var(--radius-pill);
     white-space: nowrap;
+    text-align: center;
+  }
+  .tabActive {
+    background: var(--terracotta);
+    color: var(--white);
+  }
+  .tabActive .tabNumber {
+    color: var(--white);
+  }
+  .tabLine, .tabIndicator {
+    display: none;
+  }
+  .sidebarFooter {
+    display: none;
   }
 }
 
