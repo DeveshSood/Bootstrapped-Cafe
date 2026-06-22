@@ -3,12 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../common/Button';
 import styles from './VideoReels.module.css';
 
-// Local optimized videos (compressed to 720p, ~0.3-0.5MB each)
-import v1Video from '../../assets/videos/optimized/v1.mp4';
-import v2Video from '../../assets/videos/optimized/v2.mp4';
-import v3Video from '../../assets/videos/optimized/v3.mp4';
-import chefVideo from '../../assets/videos/optimized/Chef.mp4';
-import pastaVideo from '../../assets/videos/optimized/pasta_showreel.mp4';
+// External video URLs (stock food videos for production)
+// Replace these with your own CDN-hosted videos for custom content
+const v1Video = 'https://videos.pexels.com/video-files/4252948/4252948-sd_506_960_25fps.mp4';
+const v2Video = 'https://videos.pexels.com/video-files/3195394/3195394-sd_506_960_25fps.mp4';
+const v3Video = 'https://videos.pexels.com/video-files/3298572/3298572-sd_506_960_25fps.mp4';
+const chefVideo = 'https://videos.pexels.com/video-files/2257010/2257010-sd_506_960_30fps.mp4';
+const pastaVideo = 'https://videos.pexels.com/video-files/2911757/2911757-sd_506_960_25fps.mp4';
 
 const VIDEO_DATA = [
   {

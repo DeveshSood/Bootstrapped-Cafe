@@ -7,7 +7,6 @@ import Button from '../common/Button';
 import heroBg1 from '../../assets/images/cafe-bg.jpg';
 import heroBg2 from '../../assets/images/hero-bg-2.jpg';
 import heroBg3 from '../../assets/images/hero-bg-3.jpg';
-import mainVideo from '../../assets/videos/Main Video.mov';
 import styles from './Hero.module.css';
 
 const slides = [heroBg1, heroBg2, heroBg3];
@@ -26,7 +25,7 @@ const slides = [heroBg1, heroBg2, heroBg3];
  */
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [useVideo, setUseVideo] = useState(true);
+  const [useVideo, setUseVideo] = useState(false);
   const [introPlaying, setIntroPlaying] = useState(true);
   const contentRef = useRef(null);
   const statsRef = useRef(null);
