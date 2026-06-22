@@ -45,19 +45,27 @@ const PageTransition = ({ children }) => {
       history.scrollRestoration = 'manual';
     }
 
+    let timer;
     if (navType === 'POP') {
       // Restore previous scroll position on Back/Forward navigation
       const savedY = sessionStorage.getItem(`scroll-${location.pathname}`);
       if (savedY !== null) {
         // Wait briefly for layout to render before restoring scroll
-        setTimeout(() => {
+        timer = setTimeout(() => {
           window.scrollTo({ top: parseInt(savedY, 10), left: 0, behavior: 'instant' });
         }, 10);
       }
     } else {
       // Fresh navigation (PUSH or REPLACE) -> Start at top
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      // Wait briefly for the new layout to render and prevent competing browser behavior
+      timer = setTimeout(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      }, 50);
     }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [location.pathname, navType]);
 
   useEffect(() => {
