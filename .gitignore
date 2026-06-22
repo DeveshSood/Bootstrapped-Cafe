@@ -30,5 +30,9 @@ npm-debug.log*
 coverage/
 
 
-.mov
+# Large video files
+*.mov
+*.mp4
+*.avi
+*.mkv
 
