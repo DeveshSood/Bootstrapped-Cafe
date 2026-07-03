@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { apiGetSchedule, apiSetOverride, apiDeleteOverride } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import Navbar from '../components/Navbar/Navbar';
 import Footer from '../components/Footer/Footer';
 import Button from '../components/common/Button';
 import CalendarOverrides from '../components/CalendarOverrides/CalendarOverrides';
@@ -198,8 +197,12 @@ export default function KitchenDashboard() {
 
   return (
     <>
-      <Navbar />
-      <div style={{ minHeight: '100vh', background: 'var(--cream)', paddingTop: '90px', paddingBottom: '20px' }}>
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        style={{ minHeight: '100vh', background: 'var(--cream)', paddingTop: '90px', paddingBottom: '20px' }}
+      >
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px', gap: '10px' }}>
@@ -248,7 +251,7 @@ export default function KitchenDashboard() {
           />
 
         </div>
-      </div>
+      </motion.div>
       
       {/* Override Modal */}
       <AnimatePresence>

@@ -48,12 +48,12 @@ const PageTransition = ({ children }) => {
       const savedY = sessionStorage.getItem(`scroll-${location.pathname}`);
       if (savedY !== null) {
         requestAnimationFrame(() => {
-          window.scrollTo(0, parseInt(savedY, 10));
+          window.scrollTo({ top: parseInt(savedY, 10), left: 0, behavior: 'instant' });
         });
       }
     } else {
       requestAnimationFrame(() => {
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       });
     }
   }, [location.pathname, navType]);

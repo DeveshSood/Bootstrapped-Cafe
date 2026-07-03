@@ -93,7 +93,7 @@ const UserMenu = () => {
 
             <div className={styles.dropdownHeader}>
               <img src={avatarUrl} alt="" className={styles.dropdownAvatar} />
-              <div>
+              <div style={{minWidth: 0, overflow: 'hidden'}}>
                 <span className={styles.dropdownName}>{user.name}</span>
                 <span className={styles.dropdownEmail}>{user.email}</span>
               </div>
