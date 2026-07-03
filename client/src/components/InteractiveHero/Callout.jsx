@@ -38,10 +38,11 @@ export default function Callout({ data, isHovered, isDimmed, onHover, onLeave, o
           y2={data.dotPos.top}
           stroke="rgba(161, 168, 92, 0.8)" // subtle greenish
           strokeWidth="3"
-          initial={{ pathLength: 0 }}
-          animate={isLoaded ? { pathLength: 1 } : { pathLength: 0 }}
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={isLoaded ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
           transition={{ 
-            pathLength: { duration: 1.5, ease: "easeOut", delay: 1.2 }
+            pathLength: { duration: 1.2, ease: "easeInOut", delay: 0.6 },
+            opacity: { duration: 0.8, delay: 0.6 }
           }}
         />
       </svg>

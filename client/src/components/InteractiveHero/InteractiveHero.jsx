@@ -58,7 +58,6 @@ export default function InteractiveHero({ isLoaded = true }) {
   const [hoveredId, setHoveredId] = useState(null);
   const [heroMode, setHeroMode] = useState('food'); // 'food' or 'coworking'
   const [cwImageIndex, setCwImageIndex] = useState(0);
-  const [prevCwImageIndex, setPrevCwImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
 
@@ -69,8 +68,7 @@ export default function InteractiveHero({ isLoaded = true }) {
     const handleSet = (e) => {
       setHeroMode(e.detail);
       if (e.detail === 'coworking') {
-         setPrevCwImageIndex(0);
-         setCwImageIndex(0);
+          setCwImageIndex(0);
       }
     };
     window.addEventListener('setHeroMode', handleSet);
@@ -89,7 +87,6 @@ export default function InteractiveHero({ isLoaded = true }) {
         setHeroMode(prev => {
           const next = prev === 'food' ? 'coworking' : 'food';
           if (next === 'coworking') {
-            setPrevCwImageIndex(0);
             setCwImageIndex(0);
           }
           return next;
@@ -103,10 +100,7 @@ export default function InteractiveHero({ isLoaded = true }) {
   useEffect(() => {
     if (heroMode !== 'coworking' || isHovering || hoveredId !== null) return;
     const slideTimer = setInterval(() => {
-      setCwImageIndex(prev => {
-        setPrevCwImageIndex(prev);
-        return (prev + 1) % cwImages.length;
-      });
+      setCwImageIndex(prev => (prev + 1) % cwImages.length);
     }, 3333);
     return () => clearInterval(slideTimer);
   }, [heroMode, cwImages.length, isHovering, hoveredId]);
@@ -252,34 +246,22 @@ export default function InteractiveHero({ isLoaded = true }) {
             style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: heroMode === 'coworking' ? 2 : 1 }}
           >
             {/* Background Slideshow */}
-            {cwImages.map((src, idx) => {
-              let zIndex = 0;
-              let opacity = 0;
-              if (idx === cwImageIndex) {
-                 zIndex = 2;
-                 opacity = 1;
-              } else if (idx === prevCwImageIndex) {
-                 zIndex = 1;
-                 opacity = 1;
-              }
-
-              return (
-                <div
-                  key={src}
-                  style={{
-                    position: 'absolute',
-                    top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundImage: `url(${src})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    filter: 'brightness(0.5)',
-                    opacity: opacity,
-                    zIndex: zIndex,
-                    transition: idx === cwImageIndex ? 'opacity 1.5s ease-in-out' : 'none'
-                  }}
-                />
-              );
-            })}
+            {cwImages.map((src, idx) => (
+              <div
+                key={src}
+                style={{
+                  position: 'absolute',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  backgroundImage: `url(${src})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  filter: 'brightness(0.5)',
+                  opacity: idx === cwImageIndex ? 1 : 0,
+                  zIndex: idx === cwImageIndex ? 2 : 1,
+                  transition: 'opacity 1.5s ease-in-out'
+                }}
+              />
+            ))}
 
             {/* Dark overlay for better text readability */}
             <div
