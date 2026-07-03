@@ -11,8 +11,8 @@ const STEPS = [
   { key: 'accepted', label: 'Accepted', icon: '✅', desc: 'The kitchen has accepted your order' },
   { key: 'prepared', label: 'Prepared', icon: '👨‍🍳', desc: 'Your food is freshly prepared' },
   { key: 'packaged', label: 'Packaged', icon: '📦', desc: 'Packed and ready to go' },
-  { key: 'out_for_delivery', label: 'On the Way', icon: '🚴', desc: 'Your rider is on the way' },
-  { key: 'delivered', label: 'Delivered', icon: '🎉', desc: 'Enjoy your healthy meal!' },
+  { key: 'assigned_to_partner', label: 'Assigned', icon: '🚴', desc: 'Delivery partner assigned' },
+  { key: 'handed_to_partner', label: 'Picked Up', icon: '🏃', desc: 'Handed over to delivery partner' },
 ];
 
 const WAIT_QUOTES = [
@@ -43,6 +43,27 @@ const TrackOrderPage = () => {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [factIndex, setFactIndex] = useState(0);
   const sseRef = useRef(null);
+
+  const getDynamicDesc = (step, order) => {
+    if (!step || !order) return '';
+    if ((step.key === 'accepted' || step.key === 'prepared') && order.acceptedAt && order.estimatedPrepTime) {
+      const eta = new Date(new Date(order.acceptedAt).getTime() + order.estimatedPrepTime * 60000);
+      const timeStr = eta.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return (
+        <>
+          Kitchen is preparing your order. Estimated ready time:{' '}
+          <span style={{ color: 'var(--terracotta)', fontFamily: 'var(--font-body)', fontWeight: '700', fontStyle: 'normal' }}>
+            {timeStr}
+          </span>
+          . Get ready to book your delivery partner soon!
+        </>
+      );
+    }
+    if (step.key === 'packaged') {
+      return 'Your order is packed and ready! Please assign a delivery agent (Porter, Rapido, Uber, etc.) to pick it up now.';
+    }
+    return step.desc;
+  };
 
   // Load order
   useEffect(() => {
@@ -130,8 +151,8 @@ const TrackOrderPage = () => {
 
   const currentStepIndex = STEPS.findIndex(s => s.key === order.status);
   const isCancelled = order.status === 'cancelled';
-  const isDelivered = order.status === 'delivered';
-  const isWaiting = !isCancelled && !isDelivered;
+  const isHandedOver = order.status === 'handed_to_partner';
+  const isWaiting = !isCancelled && !isHandedOver;
 
   return (
     <>
@@ -209,9 +230,19 @@ const TrackOrderPage = () => {
               <h4 className={styles.detailsTitle}>Order Details</h4>
               <div className={styles.detailsItems}>
                 {order.items.map((item, i) => (
-                  <div key={i} className={styles.detailItem}>
-                    <span>{item.name} × {item.quantity}</span>
-                    <span>₹{item.price * item.quantity}</span>
+                  <div key={i} className={styles.itemRowWrapper}>
+                    <div className={styles.detailItem}>
+                      <span>{item.name} × {item.quantity}</span>
+                      <span>₹{item.price * item.quantity}</span>
+                    </div>
+                    {item.isCustomBowl && item.customIngredients && (
+                      <div style={{ fontSize: '0.8rem', color: 'var(--espresso-soft)', paddingLeft: '8px', marginTop: '4px' }}>
+                        {Object.entries(item.customIngredients).map(([key, vals]) => {
+                          if (!vals || vals.length === 0) return null;
+                          return <div key={key}><strong>{key}:</strong> {vals.join(', ')}</div>;
+                        })}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -222,7 +253,7 @@ const TrackOrderPage = () => {
             </div>
           );
 
-          if (isDelivered) {
+          if (isHandedOver) {
             return (
               <div className={styles.deliveredLayout}>
                 <motion.div
@@ -234,8 +265,8 @@ const TrackOrderPage = () => {
                   <div className={styles.deliveredBannerContent}>
                     <span className={styles.deliveredIcon}>🎉</span>
                     <div>
-                      <h3>Order Delivered!</h3>
-                      <p>Enjoy your healthy meal. We hope to see you again soon.</p>
+                      <h3>Order Picked Up!</h3>
+                      <p>Your meal is on its way with your delivery partner.</p>
                     </div>
                   </div>
                   <Link to="/menu" className={styles.reorderBtn}>Order Again</Link>
@@ -275,7 +306,7 @@ const TrackOrderPage = () => {
                       transition={{ duration: 0.3 }}
                     >
                       <span className={styles.currentIcon}>{STEPS[currentStepIndex]?.icon}</span>
-                      <p className={styles.currentDesc}>{STEPS[currentStepIndex]?.desc}</p>
+                      <p className={styles.currentDesc} style={{ whiteSpace: 'pre-line' }}>{getDynamicDesc(STEPS[currentStepIndex], order)}</p>
                     </motion.div>
                   </AnimatePresence>
                 )}

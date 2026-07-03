@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+/** Individual rolling digit with spring animation. */
 const Digit = ({ digit, isGoingUp }) => {
   return (
     <span style={{ position: 'relative', display: 'inline-block', overflow: 'hidden', width: '1ch', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>
@@ -8,7 +9,6 @@ const Digit = ({ digit, isGoingUp }) => {
         <motion.span
           key={digit}
           custom={isGoingUp}
-          // Rolling down when increasing, rolling up when decreasing
           initial={(up) => ({ y: up ? "-100%" : "100%", opacity: 0 })}
           animate={{ y: "0%", opacity: 1 }}
           exit={(up) => ({ y: up ? "100%" : "-100%", opacity: 0 })}
@@ -22,6 +22,7 @@ const Digit = ({ digit, isGoingUp }) => {
   );
 };
 
+/** SlotCounter — Animated digit counter that rolls individual digits on value change. */
 const SlotCounter = ({ value, className, prefix = '₹' }) => {
   const prevValue = useRef(value);
   const isGoingUp = value > prevValue.current;
@@ -31,7 +32,6 @@ const SlotCounter = ({ value, className, prefix = '₹' }) => {
   }, [value]);
 
   const stringValue = value.toLocaleString();
-  // Reverse to safely map digits from right to left (ones, tens, etc)
   const digits = stringValue.split('').reverse();
 
   return (

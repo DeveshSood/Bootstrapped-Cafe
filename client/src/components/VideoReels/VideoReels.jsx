@@ -3,8 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../common/Button';
 import styles from './VideoReels.module.css';
 
-// External video URLs (stock food videos for production)
-// Replace these with your own CDN-hosted videos for custom content
 const v1Video = 'https://videos.pexels.com/video-files/4252948/4252948-sd_506_960_25fps.mp4';
 const v2Video = 'https://videos.pexels.com/video-files/3195394/3195394-sd_506_960_25fps.mp4';
 const v3Video = 'https://videos.pexels.com/video-files/3298572/3298572-sd_506_960_25fps.mp4';
@@ -44,10 +42,6 @@ const VIDEO_DATA = [
   }
 ];
 
-/**
- * Generates a poster thumbnail from the first frame of a video.
- * This gives users an instant visual preview without downloading the full video.
- */
 const generatePoster = (videoUrl) => {
   return new Promise((resolve) => {
     const video = document.createElement('video');
@@ -73,7 +67,6 @@ const generatePoster = (videoUrl) => {
 
     video.addEventListener('error', () => resolve(null));
 
-    // Seek to 0.5s to get a more representative frame (not a black frame)
     video.addEventListener('loadedmetadata', () => {
       video.currentTime = 0.5;
     });
@@ -87,10 +80,6 @@ const ReelVideo = ({ video, isActive, isNearby, isMuted, toggleMute, onVideoEnd,
   const [isLoading, setIsLoading] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Determine what preload strategy to use:
-  // - Active video: load fully and play
-  // - Nearby (±1): preload metadata so playback starts fast when scrolled to
-  // - Far away: don't load anything
   const shouldLoadSrc = isActive || isNearby;
   const preloadValue = isActive ? 'auto' : isNearby ? 'metadata' : 'none';
 
@@ -102,7 +91,6 @@ const ReelVideo = ({ video, isActive, isNearby, isMuted, toggleMute, onVideoEnd,
       setIsLoading(true);
       setIsPaused(false);
 
-      // Wait for enough data before playing to avoid buffering mid-play
       const tryPlay = () => {
         const playPromise = vid.play();
         if (playPromise !== undefined) {
@@ -115,11 +103,9 @@ const ReelVideo = ({ video, isActive, isNearby, isMuted, toggleMute, onVideoEnd,
         }
       };
 
-      // If we have enough buffered data, play immediately
       if (vid.readyState >= 3) {
         tryPlay();
       } else {
-        // Wait until we have enough buffered data to play without stuttering
         const onCanPlay = () => {
           tryPlay();
           vid.removeEventListener('canplay', onCanPlay);
@@ -128,7 +114,6 @@ const ReelVideo = ({ video, isActive, isNearby, isMuted, toggleMute, onVideoEnd,
         return () => vid.removeEventListener('canplay', onCanPlay);
       }
     } else {
-      // Pause when inactive but keep current time to resume from same spot
       vid.pause();
       setIsPaused(false);
       setIsLoading(true);
@@ -149,7 +134,6 @@ const ReelVideo = ({ video, isActive, isNearby, isMuted, toggleMute, onVideoEnd,
 
   return (
     <>
-      {/* Loading state: show poster or spinner */}
       {isLoading && isActive && (
         <div className={styles.loadingOverlay}>
           {poster && (
@@ -164,7 +148,6 @@ const ReelVideo = ({ video, isActive, isNearby, isMuted, toggleMute, onVideoEnd,
         </div>
       )}
 
-      {/* Show static poster when not active and not loading video */}
       {!isActive && poster && (
         <img
           src={poster}
@@ -175,7 +158,6 @@ const ReelVideo = ({ video, isActive, isNearby, isMuted, toggleMute, onVideoEnd,
 
       <video
         ref={videoRef}
-        // Only set src if this video is active or nearby — prevents downloading distant videos
         src={shouldLoadSrc ? video.url : undefined}
         className={styles.videoElement}
         loop={false}
@@ -196,7 +178,6 @@ const ReelVideo = ({ video, isActive, isNearby, isMuted, toggleMute, onVideoEnd,
         }}
       />
 
-      {/* Pause indicator */}
       {isPaused && isActive && (
         <div className={styles.pauseIndicator}>
           <svg width="48" height="48" viewBox="0 0 24 24" fill="white">
@@ -207,7 +188,6 @@ const ReelVideo = ({ video, isActive, isNearby, isMuted, toggleMute, onVideoEnd,
 
       <div className={styles.overlay}>
         <div className={styles.overlayTop}>
-          {/* We can put other top-level overlay items here if needed */}
         </div>
         <div className={styles.controls}>
           <button
@@ -234,7 +214,6 @@ const VideoReels = () => {
   const [posters, setPosters] = useState({});
   const wrapperRefs = useRef([]);
 
-  // Generate poster thumbnails on mount — lightweight first-frame captures
   useEffect(() => {
     let cancelled = false;
 
@@ -252,7 +231,6 @@ const VideoReels = () => {
     return () => { cancelled = true; };
   }, []);
 
-  // Find the active index so we can determine "nearby" videos
   const activeIndex = useMemo(
     () => VIDEO_DATA.findIndex((v) => v.id === activeId),
     [activeId]
@@ -290,13 +268,13 @@ const VideoReels = () => {
     wasDragged.current = false;
     startY.current = e.pageY || e.touches?.[0]?.pageY || 0;
     scrollTopRef.current = containerRef.current.scrollTop;
-    containerRef.current.style.scrollSnapType = 'none'; // disable snap during drag
+    containerRef.current.style.scrollSnapType = 'none';
     containerRef.current.style.cursor = 'grabbing';
   };
 
   const handlePointerMove = (e) => {
     if (!isDragging) return;
-    e.preventDefault(); // prevent text selection
+    e.preventDefault();
     const y = e.pageY || e.touches?.[0]?.pageY || 0;
     const walk = (startY.current - y);
     if (Math.abs(walk) > 5) {
@@ -310,16 +288,13 @@ const VideoReels = () => {
     setIsDragging(false);
     containerRef.current.style.cursor = '';
     
-    // Store globally so the video click handler can read it synchronously
     window.wasDraggedVideo = wasDragged.current;
     setTimeout(() => { window.wasDraggedVideo = false; }, 50);
 
-    // Smoothly snap to the closest reel manually
     const container = containerRef.current;
     const itemHeight = container.clientHeight;
     const scrollY = container.scrollTop;
     
-    // Calculate the nearest index
     const closestIndex = Math.max(0, Math.min(VIDEO_DATA.length - 1, Math.round(scrollY / itemHeight)));
     
     const targetElement = wrapperRefs.current[closestIndex];
@@ -327,7 +302,6 @@ const VideoReels = () => {
       container.scrollTo({ top: targetElement.offsetTop, behavior: 'smooth' });
     }
     
-    // Re-enable native snapping after smooth scroll completes
     setTimeout(() => {
       if (containerRef.current) {
         containerRef.current.style.scrollSnapType = 'y mandatory';
@@ -345,7 +319,6 @@ const VideoReels = () => {
         container.scrollTo({ top: nextElement.offsetTop, behavior: 'smooth' });
       }
     } else {
-      // Loop back to the first video when the last one ends
       const firstElement = wrapperRefs.current[0];
       if (firstElement) {
         container.scrollTo({ top: firstElement.offsetTop, behavior: 'smooth' });
@@ -415,7 +388,6 @@ const VideoReels = () => {
                   onVideoEnd={() => handleVideoEnd(index)}
                   poster={posters[video.id] || null}
                 />
-                {/* Scroll indicator on the very first video */}
                 {index === 0 && activeId === video.id && (
                   <div className={styles.scrollIndicator}>
                     <div className={styles.scrollHand}>👆</div>
@@ -427,7 +399,6 @@ const VideoReels = () => {
           })}
         </div>
 
-        {/* Vertical Progress Bar */}
         <div className={styles.progressContainer}>
           {VIDEO_DATA.map((video, index) => (
             <button

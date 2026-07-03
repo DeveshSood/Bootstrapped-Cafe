@@ -11,10 +11,8 @@ import GrainOverlay from './components/common/GrainOverlay';
 import ScrollProgress from './components/common/ScrollProgress';
 import PageTransition from './components/common/PageTransition';
 import ActiveOrderWidget from './components/ActiveOrderWidget/ActiveOrderWidget';
-
 import ProtectedRoute from './components/common/ProtectedRoute';
 
-// Pages
 import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
 import CheckoutPage from './pages/CheckoutPage';
@@ -25,6 +23,11 @@ import TrackOrderPage from './pages/TrackOrderPage';
 import RestaurantDashboard from './pages/RestaurantDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import ReceiptPage from './pages/ReceiptPage';
+import OurStoryPage from './pages/OurStoryPage';
+import ContactPage from './pages/ContactPage';
+import CareersPage from './pages/CareersPage';
+import LegalPage from './pages/LegalPage';
+import CustomSaladPage from './pages/CustomSaladPage';
 
 const AppContent = () => {
   const [cartOpen, setCartOpen] = useState(false);
@@ -49,7 +52,6 @@ const AppContent = () => {
 
   return (
     <>
-
       {!loaded && <LoadingScreen onComplete={() => setLoaded(true)} />}
       {checkoutLoader && (
         <LoadingScreen 
@@ -65,7 +67,6 @@ const AppContent = () => {
         </>
       )}
       
-      {/* Navbar visible on all pages except receipt */}
       {!isReceiptPage && (
         <Navbar
           cartCount={totalItems}
@@ -85,16 +86,20 @@ const AppContent = () => {
       
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          {/* Public Routes */}
-          <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
+          {/* Public */}
+          <Route path="/" element={<PageTransition><HomePage isLoaded={loaded} /></PageTransition>} />
           <Route path="/menu" element={<PageTransition><MenuPage /></PageTransition>} />
+          <Route path="/custom-salad" element={<PageTransition><CustomSaladPage /></PageTransition>} />
           <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
-          
-          {/* Optionally protected routes (Checkout handles its own auth checks, or is open) */}
           <Route path="/checkout" element={<PageTransition><CheckoutPage /></PageTransition>} />
           <Route path="/coworking" element={<PageTransition><CoworkingPage /></PageTransition>} />
+          <Route path="/our-story" element={<PageTransition><OurStoryPage /></PageTransition>} />
+          <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
+          <Route path="/careers" element={<PageTransition><CareersPage /></PageTransition>} />
+          <Route path="/privacy" element={<PageTransition><LegalPage type="privacy" /></PageTransition>} />
+          <Route path="/terms" element={<PageTransition><LegalPage type="terms" /></PageTransition>} />
           
-          {/* Protected Routes — Users */}
+          {/* Protected — Users */}
           <Route path="/profile" element={
             <ProtectedRoute>
               <PageTransition><ProfilePage /></PageTransition>
@@ -106,7 +111,7 @@ const AppContent = () => {
             </ProtectedRoute>
           } />
 
-          {/* Protected Routes — Staff/Admin */}
+          {/* Protected — Staff/Admin */}
           <Route path="/restaurant" element={
             <ProtectedRoute requireStaff>
               <PageTransition><RestaurantDashboard /></PageTransition>

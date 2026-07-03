@@ -25,6 +25,17 @@
   margin-top: var(--space-2xl);
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marqueeScroll {
+  animation: marquee 8s linear infinite;
+  /* we add padding in JS between the duplicate texts. 
+     Moving -50% translates exactly one full text+padding width! */
+}
+
 .categoryTab {
   font-family: var(--font-body);
   font-size: var(--fs-label);
@@ -68,11 +79,11 @@
    ============================================ */
 .mealCardWrapper {
   background-color: transparent;
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-xl);
   perspective: 1000px;
   cursor: pointer;
   position: relative;
-  min-height: 280px; /* Base height to prevent collapse */
+  min-height: 220px;
 }
 
 /* Hover state - only keep shadow, no scale/transform */
@@ -87,8 +98,8 @@
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
   will-change: transform;
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
 }
 
 .flipCardFront, .flipCardBack {
@@ -96,7 +107,7 @@
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: var(--radius-2xl);
+  border-radius: var(--radius-xl);
   overflow: hidden;
 }
 
@@ -106,7 +117,7 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 6px;
 }
 
 /* BACK SIDE */
@@ -116,51 +127,56 @@
   transform: rotateY(180deg);
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 10px;
   justify-content: center;
   align-items: center;
   text-align: center;
   border: 1px solid var(--matte-gray-dark);
+  overflow: hidden;
 }
 
 .mealTitleBack {
   font-family: var(--font-display);
-  font-size: clamp(1.05rem, 5vw, 1.25rem);
+  font-size: clamp(0.85rem, 3.5vw, 1rem);
   font-weight: 600;
   color: var(--terracotta);
-  margin-bottom: var(--space-sm);
+  margin-bottom: 4px;
   line-height: 1.2;
   width: 100%;
 }
 
 .mealPriceBack {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--espresso);
-  margin-bottom: var(--space-sm);
+  margin-bottom: 4px;
   width: 100%;
-  padding-top: var(--space-sm);
+  padding-top: 4px;
   border-top: 1px dashed rgba(30, 24, 21, 0.15);
 }
 
 .mealDescription {
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: var(--espresso-soft);
   line-height: 1.4;
-  margin-bottom: var(--space-sm);
+  margin-bottom: 4px;
   width: 100%;
-  padding-top: var(--space-sm);
+  padding-top: 4px;
   border-top: 1px dashed rgba(30, 24, 21, 0.15);
   overflow-y: auto;
   scrollbar-width: thin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 }
 
 /* Top Section (Image + Strip) */
 .mealCardTop {
   background-color: var(--warm-cream); 
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -169,7 +185,7 @@
 .mealImageContainer {
   position: relative;
   width: 100%;
-  height: 180px;
+  height: 130px;
   overflow: hidden;
   z-index: 2;
 }
@@ -197,7 +213,7 @@
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: var(--radius-pill);
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
@@ -207,8 +223,8 @@
   color: var(--terracotta);
   text-align: center;
   font-family: var(--font-body);
-  font-size: 0.65rem;
-  padding: 8px;
+  font-size: 0.6rem;
+  padding: 5px;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -217,20 +233,20 @@
 .mealFrontDetails {
   display: flex;
   justify-content: space-between;
-  padding: 16px 8px 8px 8px;
-  gap: 12px;
+  padding: 10px 6px 6px 6px;
+  gap: 8px;
 }
 
 .mealFrontDetailsLeft {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   flex: 1;
 }
 
 .mealTitle {
   font-family: var(--font-body);
-  font-size: 1.15rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--espresso);
   line-height: 1.2;
@@ -246,8 +262,8 @@
   background-color: rgba(0, 0, 0, 0.05);
   color: var(--espresso-muted);
   font-family: var(--font-body);
-  font-size: 0.6rem;
-  padding: 4px 8px;
+  font-size: 0.55rem;
+  padding: 3px 6px;
   border-radius: var(--radius-sm);
 }
 
@@ -268,7 +284,7 @@
 
 .mealPriceBox {
   font-family: var(--font-body);
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   font-weight: 500;
   color: var(--espresso);
   line-height: 1;
@@ -283,11 +299,13 @@
 .mealFooterRow {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   width: 100%;
-  padding-top: var(--space-sm);
+  padding: 6px 0 2px;
   border-top: 1px dashed rgba(30, 24, 21, 0.15);
+  flex-shrink: 0;
   margin-top: auto;
+  min-height: 42px;
 }
 
 .mealOrderBtn {
@@ -295,11 +313,11 @@
   color: var(--terracotta);
   border: 1.5px solid var(--terracotta);
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   border-radius: var(--radius-pill);
   padding: 0 18px;
-  height: 40px;
+  height: 34px;
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
@@ -308,7 +326,7 @@
   overflow: hidden;
   position: relative;
   transition: all var(--duration-fast) var(--ease-out);
-  width: 120px;
+  width: 110px;
   justify-content: center;
 }
 
@@ -346,8 +364,8 @@
   border: 1.5px solid var(--terracotta);
   border-radius: var(--radius-pill);
   padding: 0 6px;
-  height: 40px;
-  min-width: 120px;
+  height: 34px;
+  min-width: 110px;
   box-sizing: border-box;
 }
 

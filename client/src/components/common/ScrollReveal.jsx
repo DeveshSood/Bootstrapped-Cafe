@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import anime from 'animejs';
 
+/** ScrollReveal — Scroll-triggered stagger animation using anime.js. */
 const ScrollReveal = ({ 
   children, 
   animation = 'fadeUp', 
@@ -19,26 +20,17 @@ const ScrollReveal = ({
           setHasRevealed(true);
           
           const targets = containerRef.current.children;
-          
           let animationProps = {};
           
           switch (animation) {
             case 'fadeUp':
-              animationProps = {
-                opacity: [0, 1],
-                translateY: [40, 0],
-              };
+              animationProps = { opacity: [0, 1], translateY: [40, 0] };
               break;
             case 'fadeScale':
-              animationProps = {
-                opacity: [0, 1],
-                scale: [0.9, 1],
-              };
+              animationProps = { opacity: [0, 1], scale: [0.9, 1] };
               break;
             default:
-              animationProps = {
-                opacity: [0, 1],
-              };
+              animationProps = { opacity: [0, 1] };
           }
 
           anime({
@@ -50,15 +42,11 @@ const ScrollReveal = ({
           });
         }
       },
-      {
-        threshold,
-        rootMargin: '0px 0px -50px 0px'
-      }
+      { threshold, rootMargin: '0px 0px -50px 0px' }
     );
 
     if (containerRef.current) {
       observer.observe(containerRef.current);
-      // Initialize state
       Array.from(containerRef.current.children).forEach(child => {
         child.style.opacity = '0';
       });

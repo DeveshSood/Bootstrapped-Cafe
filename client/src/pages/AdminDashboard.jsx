@@ -6,7 +6,7 @@ import { apiGetAllOrders, apiApproveCancellation, apiRejectCancellation, apiDele
 import styles from './AdminDashboard.module.css';
 
 const TABS = ['active', 'all', 'completed', 'cancellations', 'cancelled', 'unpaid', 'deleted', 'subscriptions'];
-const ACTIVE_STATUSES = ['pending', 'payment_confirmed', 'accepted', 'prepared', 'packaged', 'out_for_delivery'];
+const ACTIVE_STATUSES = ['pending', 'payment_confirmed', 'accepted', 'prepared', 'packaged', 'assigned_to_partner'];
 
 const AdminDashboard = () => {
   const { token, isAdmin } = useAuth();
@@ -209,7 +209,7 @@ const AdminDashboard = () => {
     const filtered = orders.filter(o => filterBySearch(o));
     if (activeTab === 'all') return filtered;
     if (activeTab === 'active') return filtered.filter(o => ACTIVE_STATUSES.includes(o.status));
-    if (activeTab === 'completed') return filtered.filter(o => o.status === 'delivered' || o.status === 'cancelled');
+    if (activeTab === 'completed') return filtered.filter(o => o.status === 'handed_to_partner' || o.status === 'cancelled');
     if (activeTab === 'unpaid') return filtered.filter(o => o.paymentStatus !== 'completed' && o.status === 'pending');
     if (activeTab === 'cancellations') return filtered.filter(o => o.cancelRequest?.status === 'pending');
     if (activeTab === 'cancelled') return filtered.filter(o => o.status === 'cancelled');

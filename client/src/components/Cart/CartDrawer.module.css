@@ -80,3 +80,17 @@
   box-shadow: 0 8px 24px rgba(200, 81, 45, 0.3);
   color: var(--white);
 }
+
+.checkoutBtn:hover {
+  background-color: var(--espresso);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 24, 21, 0.2);
+}
+
+.itemCustomDetails {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--espresso-soft);
+  margin-top: 4px;
+  line-height: 1.3;
+}

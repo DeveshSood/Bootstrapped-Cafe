@@ -1,16 +1,11 @@
 import React from 'react';
 import styles from './Button.module.css';
-
 import { Link } from 'react-router-dom';
 
 /**
- * Button — SAVORA-style CTA button
- * 
- * Variants:
- *  - "filled" (terracotta background, white text)
- *  - "outlined" (dark border, transparent bg)
- *  - "outlined-light" (white border, for dark backgrounds)
- *  - "text" (no border, just text + arrow)
+ * Button — Reusable CTA button component.
+ * Variants: "filled" | "outlined" | "outlined-light" | "text"
+ * Renders as <a>, <Link>, or <button> depending on the `href` prop.
  */
 const Button = ({ 
   children, 

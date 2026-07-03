@@ -1,0 +1,207 @@
+.ourStoryPage {
+  min-height: 100vh;
+  background-color: var(--warm-cream);
+  color: var(--espresso);
+  padding-bottom: var(--space-2xl);
+}
+
+.heroSection {
+  position: relative;
+  height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+  padding: 0 var(--space-md);
+}
+
+.heroBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  object-fit: cover;
+  z-index: 0;
+  will-change: transform;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(30, 24, 21, 0.4), rgba(30, 24, 21, 0.7));
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  color: var(--white);
+  max-width: 800px;
+}
+
+.heroTitle {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  line-height: 1.1;
+  font-weight: 500;
+  margin-bottom: var(--space-md);
+}
+
+.heroTitle em {
+  font-style: italic;
+  color: var(--terracotta);
+  font-weight: 400;
+}
+
+.section {
+  padding: var(--space-2xl) var(--space-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Philosophy */
+.philosophyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2xl);
+  align-items: center;
+  margin-top: var(--space-xl);
+}
+
+.philosophyText {
+  font-family: var(--font-body);
+  font-size: var(--fs-lg);
+  line-height: 1.6;
+  color: var(--espresso-soft);
+}
+
+.philosophyText p {
+  margin-bottom: var(--space-md);
+}
+
+.philosophyImageWrapper {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 5/4;
+}
+
+.philosophyImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Ingredients */
+.ingredientsSection {
+  background-color: var(--white);
+  padding: var(--space-2xl) var(--space-xl);
+  border-radius: 40px;
+  margin: 0 var(--space-md);
+}
+
+.ingredientBento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.bentoCard {
+  background-color: var(--warm-cream);
+  padding: var(--space-xl);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bentoCard:hover {
+  transform: translateY(-8px);
+}
+
+.bentoIcon {
+  font-size: 2.5rem;
+}
+
+.bentoTitle {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  color: var(--espresso);
+}
+
+.bentoDesc {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--espresso-soft);
+  line-height: 1.5;
+}
+
+/* Sustainability */
+.sustainabilitySection {
+  padding: var(--space-2xl) var(--space-xl);
+  text-align: center;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xl);
+  margin-top: var(--space-2xl);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.statNumber {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  color: var(--terracotta);
+  line-height: 1;
+}
+
+.statLabel {
+  font-family: var(--font-body);
+  font-size: var(--fs-lg);
+  color: var(--espresso);
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .philosophyGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .ingredientBento {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .ingredientBento {
+    grid-template-columns: 1fr;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+  }
+}

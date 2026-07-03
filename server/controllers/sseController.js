@@ -1,14 +1,10 @@
 /**
  * SSE Manager — Manages Server-Sent Event connections for real-time order updates.
- * 
- * Two channel types:
- *  1. Per-order streams  — users tracking a specific order
- *  2. Dashboard stream   — restaurant/admin watching all incoming orders
  */
 
-// orderId → Set<res>
+
 const orderClients = new Map();
-// Set<res> for dashboard-level subscribers
+
 const dashboardClients = new Set();
 
 function addOrderClient(orderId, res) {
@@ -34,34 +30,31 @@ function addDashboardClient(res) {
 function broadcastOrderUpdate(orderId, data) {
   const payload = `data: ${JSON.stringify(data)}\n\n`;
 
-  // Notify anyone watching this specific order
+
   const clients = orderClients.get(orderId);
   if (clients) {
     clients.forEach(res => res.write(payload));
   }
 
-  // Notify dashboard watchers
+
   dashboardClients.forEach(res => res.write(payload));
 }
 
-/**
- * SSE endpoint: GET /api/orders/:id/stream
- * Client opens EventSource to this URL.
- */
+/** SSE endpoint: GET /api/orders/:id/stream */
 function subscribeToOrder(req, res) {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
     Connection: 'keep-alive',
-    'X-Accel-Buffering': 'no', // Disable nginx buffering if behind proxy
+    'X-Accel-Buffering': 'no',
   });
 
-  // Send a heartbeat so the connection doesn't die silently
+
   res.write(`data: ${JSON.stringify({ type: 'connected', orderId: req.params.id })}\n\n`);
 
   addOrderClient(req.params.id, res);
 
-  // Heartbeat every 30s to keep connection alive
+
   const heartbeat = setInterval(() => {
     res.write(`: heartbeat\n\n`);
   }, 30000);
@@ -69,10 +62,7 @@ function subscribeToOrder(req, res) {
   res.on('close', () => clearInterval(heartbeat));
 }
 
-/**
- * SSE endpoint: GET /api/orders/dashboard/stream
- * Restaurant/admin dashboard watches all order updates.
- */
+/** SSE endpoint: GET /api/orders/dashboard/stream */
 function subscribeToDashboard(req, res) {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',

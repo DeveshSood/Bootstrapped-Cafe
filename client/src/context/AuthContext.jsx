@@ -1,17 +1,21 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { apiLogin, apiRegister, apiGetProfile, apiUpdateProfile,
-         apiAddAddress, apiUpdateAddress, apiDeleteAddress, apiSetDefaultAddress } from '../utils/api';
+         apiAddAddress, apiUpdateAddress, apiDeleteAddress, apiSetDefaultAddress,
+         apiSaveCustomBowl, apiDeleteCustomBowl, apiUpdateCustomBowl } from '../utils/api';
 
 const AuthContext = createContext(null);
 
 const TOKEN_KEY = 'bc_auth_token';
 
+/**
+ * AuthProvider — Manages authentication state, profile data, and address CRUD.
+ * Persists JWT to localStorage and auto-validates on mount.
+ */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
   const [loading, setLoading] = useState(true);
 
-  // On mount (and when token changes), validate and load profile
   useEffect(() => {
     if (!token) {
       setLoading(false);
@@ -22,7 +26,6 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user);
       })
       .catch(() => {
-        // Token expired or invalid — clear it
         localStorage.removeItem(TOKEN_KEY);
         setToken(null);
         setUser(null);
@@ -70,16 +73,32 @@ export const AuthProvider = ({ children }) => {
     return data.addresses;
   }, [token]);
 
-  const deleteAddress = useCallback(async (addressId) => {
-    const data = await apiDeleteAddress(token, addressId);
+  const deleteAddress = useCallback(async (id) => {
+    const data = await apiDeleteAddress(token, id);
     setUser(prev => ({ ...prev, addresses: data.addresses }));
-    return data.addresses;
   }, [token]);
 
-  const setDefaultAddress = useCallback(async (addressId) => {
-    const data = await apiSetDefaultAddress(token, addressId);
+  const setDefaultAddress = useCallback(async (id) => {
+    const data = await apiSetDefaultAddress(token, id);
     setUser(prev => ({ ...prev, addresses: data.addresses }));
-    return data.addresses;
+  }, [token]);
+
+  const saveCustomBowl = useCallback(async (bowlData) => {
+    const data = await apiSaveCustomBowl(token, bowlData);
+    setUser(prev => ({ ...prev, savedBowls: data.savedBowls }));
+    return data.savedBowls;
+  }, [token]);
+
+  const deleteCustomBowl = useCallback(async (bowlId) => {
+    const data = await apiDeleteCustomBowl(token, bowlId);
+    setUser(prev => ({ ...prev, savedBowls: data.savedBowls }));
+    return data.savedBowls;
+  }, [token]);
+
+  const updateCustomBowl = useCallback(async (bowlId, bowlData) => {
+    const data = await apiUpdateCustomBowl(token, bowlId, bowlData);
+    setUser(prev => ({ ...prev, savedBowls: data.savedBowls }));
+    return data.savedBowls;
   }, [token]);
 
   const value = {
@@ -95,9 +114,15 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     addAddress,
+    addAddress,
+    addAddress,
     updateAddress,
     deleteAddress,
     setDefaultAddress,
+    saveCustomBowl,
+    deleteCustomBowl,
+    updateCustomBowl,
+    deleteCustomBowl,
   };
 
   return (

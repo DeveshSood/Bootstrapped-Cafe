@@ -12,7 +12,7 @@ const UserMenu = () => {
   const menuRef = useRef(null);
   const avatarUrl = user ? generateAvatar(user.name, 80) : '';
 
-  // Fetch active orders count for staff
+
   useEffect(() => {
     if (isStaff) {
       const fetchCount = async () => {
@@ -43,7 +43,7 @@ const UserMenu = () => {
     }
   }, [isStaff]);
 
-  // Close on outside click
+
   useEffect(() => {
     const handleClick = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -54,7 +54,7 @@ const UserMenu = () => {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [open]);
 
-  // Close on Escape
+
   useEffect(() => {
     const handleKey = (e) => {
       if (e.key === 'Escape') setOpen(false);
@@ -88,7 +88,7 @@ const UserMenu = () => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           >
-            {/* Profile header */}
+
             <div className={styles.dropdownHeader}>
               <img src={avatarUrl} alt="" className={styles.dropdownAvatar} />
               <div>
@@ -99,7 +99,7 @@ const UserMenu = () => {
 
             <div className={styles.dropdownDivider} />
 
-            {/* Nav items */}
+
             <Link to="/profile" className={styles.dropdownItem} onClick={() => setOpen(false)}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               Your Profile

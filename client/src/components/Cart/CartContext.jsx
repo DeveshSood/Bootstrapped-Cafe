@@ -21,12 +21,9 @@ const cartReducer = (state, action) => {
     }
     case 'ADD_ITEMS': {
       let currentItems = [...state.items];
-      const newItems = action.payload;
-      
-      for (const newItem of newItems) {
+      for (const newItem of action.payload) {
         const existingIndex = currentItems.findIndex(i => i.id === newItem.id);
         const incomingQuantity = newItem.quantity || 1;
-        
         if (existingIndex !== -1) {
           currentItems[existingIndex] = {
             ...currentItems[existingIndex],
@@ -56,13 +53,17 @@ const cartReducer = (state, action) => {
   }
 };
 
+/**
+ * CartProvider — Manages shopping cart state with server sync.
+ * Merges local and server carts on login; debounces sync to server on changes.
+ */
 export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, { items: [] });
   const { user, token } = useAuth();
   const syncTimeout = useRef(null);
   const hasLoadedServerCart = useRef(false);
 
-  // When user logs in, merge local cart with server cart
+  /* Merge local cart with server cart on login */
   useEffect(() => {
     if (!user || !token) {
       hasLoadedServerCart.current = false;
@@ -78,9 +79,10 @@ export const CartProvider = ({ children }) => {
           price: item.price,
           image: item.image,
           quantity: item.quantity,
+          isCustomBowl: item.isCustomBowl || false,
+          customIngredients: item.customIngredients || null,
         }));
 
-        // Merge: local items take priority, server fills the rest
         const localItems = state.items;
         const merged = [...localItems];
         for (const serverItem of serverCart) {
@@ -93,12 +95,11 @@ export const CartProvider = ({ children }) => {
         hasLoadedServerCart.current = true;
       })
       .catch(() => {
-        // Server cart load failed — keep local cart
         hasLoadedServerCart.current = true;
       });
   }, [user, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Debounced sync to server whenever cart changes (only if logged in)
+  /* Debounced sync to server on cart changes */
   useEffect(() => {
     if (!user || !token || !hasLoadedServerCart.current) return;
 
@@ -110,10 +111,10 @@ export const CartProvider = ({ children }) => {
         price: item.price,
         image: item.image,
         quantity: item.quantity,
+        isCustomBowl: item.isCustomBowl,
+        customIngredients: item.customIngredients,
       }));
-      apiSyncCart(token, cartForServer).catch(() => {
-        // Silent fail — cart sync is best-effort
-      });
+      apiSyncCart(token, cartForServer).catch(() => {});
     }, 800);
 
     return () => {

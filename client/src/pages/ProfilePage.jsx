@@ -13,9 +13,9 @@ const TABS = ['profile', 'addresses', 'orders', 'subscriptions'];
 const TAB_LABELS = { profile: 'Personal Info', addresses: 'Addresses', orders: 'Order History', subscriptions: 'My Subscriptions & Passes' };
 
 const STATUS_LABELS = {
-  pending: 'Pending', payment_confirmed: 'Payment Confirmed', accepted: 'Accepted', prepared: 'Prepared',
-  packaged: 'Packaged', out_for_delivery: 'Out for Delivery',
-  delivered: 'Delivered', cancelled: 'Cancelled',
+  pending: 'Pending', payment_confirmed: 'Payment Confirmed', accepted: 'Accepted',  prepared: 'Prepared',
+  packaged: 'Packaged', assigned_to_partner: 'Assigned',
+  handed_to_partner: 'Picked Up', cancelled: 'Cancelled',
 };
 
 const ProfilePage = () => {

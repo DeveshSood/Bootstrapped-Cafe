@@ -16,7 +16,7 @@ const Footer = () => {
   const ctaRef = useRef(null);
   const [sectionRef, isVisible] = useIntersectionObserver({ threshold: 0.3 });
 
-  // Animate CTA banner when scrolled into view
+
   useEffect(() => {
     if (isVisible && ctaRef.current) {
       anime.timeline({ easing: 'easeOutExpo' })
@@ -32,7 +32,7 @@ const Footer = () => {
 
   return (
     <>
-      {/* CTA Banner */}
+
       <section className={styles.ctaBanner} ref={sectionRef}>
         <div className={styles.ctaGradientOverlay} />
         <div className={styles.ctaInner} ref={ctaRef}>
@@ -51,10 +51,10 @@ const Footer = () => {
         </div>
       </section>
 
-      {/* Footer */}
+
       <footer className={styles.footer} id="footer">
         <div className={styles.footerInner}>
-          {/* Brand */}
+
           <div className={styles.brand}>
             <h4 className={styles.footerLogo}>Bootstrapped Cafe</h4>
             <div className={styles.footerLogoLine} />
@@ -67,7 +67,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Links */}
+
           <div className={styles.footerCol}>
             <h6 className={styles.footerColTitle}>Menu</h6>
             {['All Dishes', 'Bowls', 'Salads', 'Drinks', 'Desserts'].map(l => (
@@ -77,16 +77,18 @@ const Footer = () => {
 
           <div className={styles.footerCol}>
             <h6 className={styles.footerColTitle}>Our Story</h6>
-            {['Our Philosophy', 'Our Ingredients', 'Sustainability', 'Journal'].map(l => (
-              <a key={l} href="#" className={styles.footerLink}>{l}</a>
-            ))}
+            <a href="/our-story#philosophy" className={styles.footerLink}>Our Philosophy</a>
+            <a href="/our-story#ingredients" className={styles.footerLink}>Our Ingredients</a>
+            <a href="/our-story#sustainability" className={styles.footerLink}>Sustainability</a>
+            <a href="/our-story" className={styles.footerLink}>Journal</a>
           </div>
 
           <div className={styles.footerCol}>
             <h6 className={styles.footerColTitle}>Info</h6>
-            {['Book a Table', 'Catering', 'Careers', 'Contact Us'].map(l => (
-              <a key={l} href="#" className={styles.footerLink}>{l}</a>
-            ))}
+            <a href="/coworking" className={styles.footerLink}>Book a Workspace</a>
+            <a href="/menu" className={styles.footerLink}>Catering</a>
+            <a href="/careers" className={styles.footerLink}>Careers</a>
+            <a href="/contact" className={styles.footerLink}>Contact Us</a>
           </div>
 
           <div className={styles.footerCol}>
@@ -105,13 +107,13 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom bar */}
+
         <div className={styles.footerBottom}>
           <span>© 2026 Bootstrapped Cafe. Developed by Team Phoenix (+91 8580480030).</span>
           <div className={styles.footerBottomLinks}>
-            <a href="#">Privacy Policy</a>
+            <a href="/privacy">Privacy Policy</a>
             <span>|</span>
-            <a href="#">Terms & Conditions</a>
+            <a href="/terms">Terms & Conditions</a>
           </div>
         </div>
       </footer>

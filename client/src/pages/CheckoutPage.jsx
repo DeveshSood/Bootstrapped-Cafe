@@ -133,9 +133,21 @@ const CheckoutPage = () => {
               setStatus('success');
               clearCart();
             } else {
+              // Verification failed — cancel the order
+              await fetch('/api/payment/fail', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId: backendOrder._id }),
+              });
               setStatus('error');
             }
           } catch {
+            // Network error during verification — cancel the order
+            await fetch('/api/payment/fail', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId: backendOrder._id }),
+            }).catch(() => {});
             setStatus('error');
           }
         },
@@ -148,11 +160,28 @@ const CheckoutPage = () => {
           color: '#C8512D',
         },
         modal: {
-          ondismiss: () => setStatus('idle'),
+          ondismiss: async () => {
+            // User closed the Razorpay modal without paying — cancel the order
+            await fetch('/api/payment/fail', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId: backendOrder._id }),
+            }).catch(() => {});
+            setStatus('idle');
+          },
         },
       };
 
       const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', async () => {
+        // Razorpay reports payment failure — cancel the order
+        await fetch('/api/payment/fail', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId: backendOrder._id }),
+        }).catch(() => {});
+        setStatus('error');
+      });
       rzp.open();
     } catch (err) {
       console.error(err);

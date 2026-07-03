@@ -4,14 +4,7 @@ import useSwipe from '../../hooks/useSwipe';
 import { useAuth } from '../../context/AuthContext';
 import styles from './HamburgerMenu.module.css';
 
-/**
- * HamburgerMenu — Fullscreen mobile menu overlay
- * 
- * Features:
- * - Slides in from left with staggered link animations
- * - Closes on: backdrop tap, swipe left, or X button (handled by parent)
- * - Large Playfair Display nav links
- */
+/** HamburgerMenu — Fullscreen mobile menu overlay with swipe-to-close support. */
 const HamburgerMenu = ({ isOpen, onClose, isAuthenticated }) => {
   const { user, logout } = useAuth();
   const swipeHandlers = useSwipe({
@@ -22,10 +15,10 @@ const HamburgerMenu = ({ isOpen, onClose, isAuthenticated }) => {
   const menuLinks = [
     { label: 'Home', path: '/' },
     { label: 'Menu', path: '/menu' },
-    { label: 'Workspace', path: '/#coworking' },
-    { label: 'Our Story', path: '/#how-we-cook' },
-    { label: 'Catering', path: '/#membership' },
-    { label: 'Contact', path: '/#footer' },
+    { label: 'Coworking', path: '/coworking' },
+    { label: 'Our Story', path: '/our-story' },
+    { label: 'Careers', path: '/careers' },
+    { label: 'Contact', path: '/contact' },
   ];
 
   const handleBackdropClick = (e) => {
@@ -42,14 +35,12 @@ const HamburgerMenu = ({ isOpen, onClose, isAuthenticated }) => {
       aria-modal="true"
       aria-label="Navigation menu"
     >
-      {/* Dark backdrop — click to close */}
       <div 
         className={styles.backdrop} 
         onClick={handleBackdropClick}
         aria-hidden="true"
       />
 
-      {/* Menu panel */}
       <div className={styles.menuPanel}>
         {isAuthenticated && user && (
           <div className={`${styles.mobileProfileHeader} ${isOpen ? styles.fadeIn : ''}`}>
@@ -79,7 +70,6 @@ const HamburgerMenu = ({ isOpen, onClose, isAuthenticated }) => {
             <Link 
               to="/profile?tab=addresses" 
               className={styles.menuLink} 
-              onClick={onClose}
               style={{ transitionDelay: isOpen ? `${100 + menuLinks.length * 50}ms` : '0ms' }}
             >
               Manage Addresses

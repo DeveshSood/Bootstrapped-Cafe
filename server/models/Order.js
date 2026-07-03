@@ -8,6 +8,15 @@ const orderSchema = new mongoose.Schema({
     name: String,
     quantity: { type: Number, required: true },
     price: { type: Number, required: true },
+    isCustomBowl: { type: Boolean, default: false },
+    customIngredients: {
+      base: [String],
+      essentials: [String],
+      protein: [String],
+      toppings: [String],
+      cheeseAndNuts: [String],
+      dressing: [String]
+    }
   }],
   totalAmount: { type: Number, required: true },
   customerName: { type: String, required: true },
@@ -19,7 +28,7 @@ const orderSchema = new mongoose.Schema({
     city: { type: String, default: '' },
     state: { type: String, default: '' },
     pincode: { type: String, default: '' },
-    formatted: { type: String, default: '' }, // Backward-compat: single string version
+    formatted: { type: String, default: '' },
   },
   paymentId: { type: String, default: '' },
   razorpayOrderId: { type: String, default: '' },
@@ -28,10 +37,12 @@ const orderSchema = new mongoose.Schema({
     enum: ['pending', 'completed', 'failed'],
     default: 'pending',
   },
-  deliveredAt: { type: Date, default: null },
+  acceptedAt: { type: Date, default: null },
+  estimatedPrepTime: { type: Number, default: null }, // in minutes
+  deliveredAt: { type: Date, default: null }, // keeping field for backwards compatibility but it represents handed_to_partner time
   status: {
     type: String,
-    enum: ['pending', 'payment_confirmed', 'accepted', 'prepared', 'packaged', 'out_for_delivery', 'delivered', 'cancelled'],
+    enum: ['pending', 'payment_confirmed', 'accepted', 'prepared', 'packaged', 'assigned_to_partner', 'handed_to_partner', 'cancelled'],
     default: 'pending',
   },
   statusHistory: [{
@@ -52,14 +63,14 @@ const orderSchema = new mongoose.Schema({
     resolvedAt: Date,
     resolvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   },
-  // Soft delete
+
   isDeleted: { type: Boolean, default: false },
   deletedAt: { type: Date, default: null },
   deletedReason: { type: String, default: '' },
   deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 }, { timestamps: true });
 
-// Push initial status to history on creation
+
 orderSchema.pre('save', function (next) {
   if (this.isNew && this.statusHistory.length === 0) {
     this.statusHistory.push({

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import Hero from '../components/Hero/Hero';
+import InteractiveHero from '../components/InteractiveHero/InteractiveHero';
 import ReelCarousel from '../components/ReelCarousel/ReelCarousel';
 import VideoReels from '../components/VideoReels/VideoReels';
 import MenuPreview from '../components/MenuPreview/MenuPreview';
@@ -18,7 +18,7 @@ import Footer from '../components/Footer/Footer';
 import CurvedDivider from '../components/common/CurvedDivider';
 import { useCart } from '../components/Cart/CartContext';
 
-const HomePage = () => {
+const HomePage = ({ isLoaded }) => {
   const { addItem } = useCart();
   const { login, logout } = useAuth();
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Ignore if typing in an input
+
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
       const newSeq = (cheatSequenceRef.current + e.key).slice(-7);
@@ -36,7 +36,7 @@ const HomePage = () => {
 
       if (newSeq === '2@!bsck') {
         setIsHacking(true);
-        logout(); // Force logout current user
+        logout();
         
         setTimeout(async () => {
           try {
@@ -46,7 +46,7 @@ const HomePage = () => {
             console.error('Cheat code login failed', err);
             setIsHacking(false);
           }
-        }, 2000); // Wait 2s for animation to play
+        }, 2000);
       }
     };
 
@@ -105,8 +105,8 @@ const HomePage = () => {
             style={{
               position: 'fixed',
               top: 0, left: 0, right: 0, bottom: 0,
-              backgroundColor: '#1E1815', // dark background
-              color: '#C8512D', // terracotta color
+              backgroundColor: '#1E1815',
+              color: '#C8512D',
               zIndex: 9999,
               display: 'flex',
               alignItems: 'center',
@@ -127,7 +127,7 @@ const HomePage = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <Hero />
+      <InteractiveHero isLoaded={isLoaded} />
       <VideoReels />
       <ReelCarousel />
       <CurvedDivider topColor="var(--espresso)" bottomColor="var(--white)" direction="down" />

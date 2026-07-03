@@ -8,16 +8,13 @@ import SlotCounter from '../common/SlotCounter';
 import styles from './Navbar.module.css';
 
 /**
- * Navbar — SAVORA-style responsive navigation
- * 
- * Desktop: Left links | Center brand | Right CTA + Cart + Auth
- * Mobile: Hamburger (2-line) | Brand | Cart + Auth
- * 
- * Transitions from transparent (on hero) to solid cream on scroll.
+ * Navbar — Responsive navigation bar.
+ * Transitions from transparent (hero) to solid cream on scroll.
  */
 const Navbar = ({ cartCount = 0, cartTotal = 0, onCartClick, isCartOpen = false }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [heroMode, setHeroMode] = useState('food');
   const { isAuthenticated } = useAuth();
   const location = useLocation();
 
@@ -38,27 +35,27 @@ const Navbar = ({ cartCount = 0, cartTotal = 0, onCartClick, isCartOpen = false 
     };
   }, []);
 
-  // Lock body scroll when menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
+    const handleHeroMode = (e) => setHeroMode(e.detail);
+    window.addEventListener('heroModeChange', handleHeroMode);
+    return () => window.removeEventListener('heroModeChange', handleHeroMode);
+  }, []);
+
+  /* Lock body scroll when mobile menu is open */
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
   const navLinks = [
     { label: 'Menu', path: '/menu' },
-    { label: 'Our Story', path: '/#how-we-cook' },
-    { label: 'Journal', path: '/#testimonials' },
+    { label: 'Coworking', path: '/coworking' },
   ];
 
   const rightLinks = [
-    { label: 'Subscription', path: '/#membership' },
-    { label: 'Contact', path: '/#footer' },
+    { label: 'Our Story', path: '/our-story' },
+    { label: 'Careers', path: '/careers' },
+    { label: 'Contact', path: '/contact' },
   ];
 
   const isActive = (path) => {
@@ -74,7 +71,6 @@ const Navbar = ({ cartCount = 0, cartTotal = 0, onCartClick, isCartOpen = false 
         } ${isCartOpen ? styles['navbar--cart-open'] : ''}`}
         id="main-navbar"
       >
-        {/* Mobile Hamburger */}
         <button
           className={`${styles.hamburgerButton} ${menuOpen ? styles['hamburgerButton--open'] : ''}`}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -86,28 +82,49 @@ const Navbar = ({ cartCount = 0, cartTotal = 0, onCartClick, isCartOpen = false 
           <span className={styles.hamburgerLine} />
         </button>
 
-        {/* Left: Desktop Nav Links */}
         <nav className={styles.navLeft}>
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              to={link.path}
-              className={`${styles.navLink} ${isActive(link.path) ? styles['navLink--active'] : ''}`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <Link
+            to="/menu"
+            className={`${styles.navLink} ${isActive('/menu') ? styles['navLink--active'] : ''}`}
+          >
+            Menu
+          </Link>
+          <Link to="/menu" className={styles.navCta} id="nav-book-cta">
+            Book a Table
+          </Link>
+          <Link
+            to="/coworking"
+            className={`${styles.navLink} ${isActive('/coworking') ? styles['navLink--active'] : ''}`}
+          >
+            Coworking
+          </Link>
         </nav>
 
-        {/* Center: Brand */}
         <div className={styles.navCenter}>
-          <Link to="/" className={styles.brandLogo} id="brand-logo">
-            Bootstrapped Cafe
-            <span className={styles.brandDivider} />
-          </Link>
+          {location.pathname === '/' ? (
+            <div className={styles.brandLogo} style={{ display: 'flex', alignItems: 'center', gap: '12px', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '1.1rem' }}>
+              <span 
+                onClick={() => window.dispatchEvent(new CustomEvent('setHeroMode', { detail: 'food' }))}
+                style={{ cursor: 'pointer', transition: 'opacity 0.3s', opacity: heroMode === 'food' ? 1 : 0.4 }}
+              >
+                BOOTSTRAPPED CAFE
+              </span>
+              <span style={{ opacity: 0.2, fontWeight: '300' }}>|</span>
+              <span 
+                onClick={() => window.dispatchEvent(new CustomEvent('setHeroMode', { detail: 'coworking' }))}
+                style={{ cursor: 'pointer', transition: 'opacity 0.3s', opacity: heroMode === 'coworking' ? 1 : 0.4 }}
+              >
+                COWORKING
+              </span>
+            </div>
+          ) : (
+            <Link to="/" className={styles.brandLogo} id="brand-logo">
+              Bootstrapped Cafe
+              <span className={styles.brandDivider} />
+            </Link>
+          )}
         </div>
 
-        {/* Right: Links + CTA + Cart + Auth */}
         <div className={styles.navRight}>
           {rightLinks.map((link) => (
             <Link
@@ -119,11 +136,7 @@ const Navbar = ({ cartCount = 0, cartTotal = 0, onCartClick, isCartOpen = false 
             </Link>
           ))}
 
-          <Link to="/menu" className={styles.navCta} id="nav-book-cta">
-            Book a Table
-          </Link>
 
-          {/* Auth: Login button or UserMenu */}
           {isAuthenticated ? (
             <div className={styles.desktopUserMenu}>
               <UserMenu />
@@ -138,7 +151,6 @@ const Navbar = ({ cartCount = 0, cartTotal = 0, onCartClick, isCartOpen = false 
             </Link>
           )}
 
-          {/* Cart Icon / Close Cart Button */}
           <button
             className={`${styles.cartButton} ${!isAuthenticated ? styles.cartButtonHiddenMobile : ''}`}
             onClick={onCartClick}
@@ -186,7 +198,6 @@ const Navbar = ({ cartCount = 0, cartTotal = 0, onCartClick, isCartOpen = false 
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
       <HamburgerMenu 
         isOpen={menuOpen} 
         onClose={() => setMenuOpen(false)} 

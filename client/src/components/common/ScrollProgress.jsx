@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import styles from './ScrollProgress.module.css';
 
+/** ScrollProgress — Circular scroll-to-top button with SVG progress ring. */
 const ScrollProgress = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const location = useLocation();
 
   useEffect(() => {
     let rafId = null;
@@ -12,16 +15,12 @@ const ScrollProgress = () => {
       rafId = requestAnimationFrame(() => {
         const scrollPx = document.documentElement.scrollTop || document.body.scrollTop;
         const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        
         if (winHeightPx <= 0) return;
-        
-        const scrolled = (scrollPx / winHeightPx) * 100;
-        setScrollProgress(scrolled);
+        setScrollProgress((scrollPx / winHeightPx) * 100);
       });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Initial call
     handleScroll();
     
     return () => {
@@ -34,7 +33,9 @@ const ScrollProgress = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const radius = 29; /* 31 center - 2 (half of 4px stroke) = 29, so it touches the outer bound exactly */
+  if (location.pathname === '/custom-salad') return null;
+
+  const radius = 29;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (scrollProgress / 100) * circumference;
 

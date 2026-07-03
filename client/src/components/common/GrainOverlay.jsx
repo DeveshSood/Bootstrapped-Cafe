@@ -1,9 +1,6 @@
 import React from 'react';
 
-/**
- * GrainOverlay — Fixed full-page noise texture overlay
- * Disabled to prevent severe lag from SVG feTurbulence filter.
- */
+/** GrainOverlay — Disabled to prevent SVG feTurbulence performance issues. */
 const GrainOverlay = () => {
   return null;
 };

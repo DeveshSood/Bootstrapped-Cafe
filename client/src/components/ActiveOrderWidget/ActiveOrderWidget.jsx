@@ -9,10 +9,10 @@ const STATUS_LABELS = {
   pending: 'Order Pending',
   payment_confirmed: 'Payment Confirmed',
   accepted: 'Order Accepted',
-  prepared: 'Being Prepared',
+  prepared: 'Prepared',
   packaged: 'Packaged',
-  out_for_delivery: 'Out for Delivery',
-  delivered: 'Delivered',
+  assigned_to_partner: 'Assigned',
+  handed_to_partner: 'Picked Up',
   cancelled: 'Cancelled',
 };
 
@@ -22,11 +22,15 @@ const EMOJIS = {
   accepted: '✅',
   prepared: '👨‍🍳',
   packaged: '📦',
-  out_for_delivery: '🚴',
-  delivered: '🎉',
+  assigned_to_partner: '🚴',
+  handed_to_partner: '🏃',
   cancelled: '❌',
 };
 
+/**
+ * ActiveOrderWidget — Floating widget that tracks the user's most recent active order.
+ * Uses polling + SSE for real-time status updates.
+ */
 const ActiveOrderWidget = () => {
   const { isAuthenticated, token } = useAuth();
   const [activeOrder, setActiveOrder] = useState(null);
@@ -44,37 +48,26 @@ const ActiveOrderWidget = () => {
         const orders = await apiGetUserOrders(token);
         if (!orders || orders.length === 0) return;
 
-        // Find the most recent active order
-        const currentActive = orders.find(
-          (o) => o.status !== 'delivered' && o.status !== 'cancelled'
+        const active = orders.filter(
+          (o) => o.status !== 'handed_to_partner' && o.status !== 'cancelled'
         );
 
-        // If no active order, check if the most recent order was JUST delivered or cancelled
-        if (!currentActive) {
-          const latestOrder = orders[0];
-          if (latestOrder && (latestOrder.status === 'delivered' || latestOrder.status === 'cancelled')) {
-            // Check if we were previously tracking this order
-            setActiveOrder((prev) => {
-              if (prev && prev._id === latestOrder._id && prev.status !== latestOrder.status) {
-                // It just changed to finished! Start the 1-minute timeout.
-                const timeout = setTimeout(() => {
-                  setActiveOrder(null);
-                }, 10000); // 10 seconds
-                setDeliveredTimeout(timeout);
-                return latestOrder;
-              }
-              // If it was already finished, and we weren't tracking it active, or we are currently in the timeout
-              if (prev && prev._id === latestOrder._id && (prev.status === 'delivered' || prev.status === 'cancelled')) {
-                return prev; // keep showing it until timeout
-              }
-              return null; // hide it
-            });
-          } else {
-            setActiveOrder(null);
-          }
+        const latestOrder = active.length > 0 ? active[0] : (orders[0] || null);
+
+        if (latestOrder && (latestOrder.status === 'handed_to_partner' || latestOrder.status === 'cancelled')) {
+          setActiveOrder(prev => {
+            if (!prev) return null;
+            if (prev._id === latestOrder._id && (prev.status === 'handed_to_partner' || prev.status === 'cancelled')) {
+              return prev;
+            }
+            const timeout = setTimeout(() => {
+              setActiveOrder(null);
+            }, 10000);
+            setDeliveredTimeout(timeout);
+            return latestOrder;
+          });
         } else {
-          setActiveOrder(currentActive);
-          // clear any existing timeout if an active order is found
+          setActiveOrder(latestOrder);
           if (deliveredTimeout) {
             clearTimeout(deliveredTimeout);
             setDeliveredTimeout(null);
@@ -85,13 +78,10 @@ const ActiveOrderWidget = () => {
       }
     };
 
-    // Fetch immediately
     fetchOrders();
 
-    // Poll every 30 seconds as fallback
     const interval = setInterval(fetchOrders, 30000);
 
-    // Set up SSE stream for real-time updates if an active order exists
     let sseSource = null;
     if (activeOrder?._id) {
       sseSource = new EventSource(`/api/orders/${activeOrder._id}/stream?token=${token}`);
@@ -99,9 +89,9 @@ const ActiveOrderWidget = () => {
         try {
           const payload = JSON.parse(event.data);
           if (payload.type === 'ORDER_STATUS_UPDATED') {
-            fetchOrders(); // instantly fetch the latest state
+            fetchOrders();
           }
-        } catch (e) {}
+        } catch (e) { /* Ignore malformed SSE data */ }
       };
     }
 
@@ -113,8 +103,6 @@ const ActiveOrderWidget = () => {
   }, [isAuthenticated, token, deliveredTimeout, activeOrder?._id]);
 
   if (!activeOrder) return null;
-
-  const isDelivered = activeOrder.status === 'delivered';
 
   return (
     <AnimatePresence>

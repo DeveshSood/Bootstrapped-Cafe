@@ -5,7 +5,7 @@ import './styles/index.css';
 import './styles/animations.css';
 import './styles/grain-overlay.css';
 
-// Disable native browser scroll restoration globally to prevent conflicting scroll jumps
+/* Prevent browser scroll restoration from conflicting with route transitions */
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
 }

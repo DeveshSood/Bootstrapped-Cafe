@@ -1,31 +1,18 @@
 /**
- * Deterministic avatar generator — creates a unique colored circle
- * with the user's initials, derived from their name.
- * 
- * No external API. Pure canvas. Same name always produces the same color.
+ * Deterministic avatar generator — creates a colored SVG circle with user initials.
+ * Same name always produces the same color. No external API required.
  */
 
-// Warm, muted palette that fits the cafe aesthetic
 const AVATAR_COLORS = [
-  '#C8512D', // terracotta
-  '#2C5530', // forest green
-  '#6B5B52', // espresso muted
-  '#D4693F', // terracotta light
-  '#3A7042', // forest green light
-  '#8B6F47', // warm brown
-  '#5C7A3D', // olive
-  '#B85C3A', // burnt sienna
-  '#4A6B5C', // sage
-  '#7D5A50', // mocha
-  '#6B8E5A', // moss
-  '#A0522D', // sienna
+  '#C8512D', '#2C5530', '#6B5B52', '#D4693F', '#3A7042', '#8B6F47',
+  '#5C7A3D', '#B85C3A', '#4A6B5C', '#7D5A50', '#6B8E5A', '#A0522D',
 ];
 
 function hashCode(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    hash = hash & hash; // Convert to 32-bit int
+    hash = hash & hash;
   }
   return Math.abs(hash);
 }
@@ -42,8 +29,6 @@ export function generateAvatar(name, size = 128) {
   const bgColor = AVATAR_COLORS[colorIndex];
   const initials = getInitials(name);
 
-  // Using SVG ensures perfect scaling, crispness, and flawless centering
-  // dy="0.05em" gently nudges the uppercase letters for visual balance
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
       <circle cx="${size/2}" cy="${size/2}" r="${size/2}" fill="${bgColor}" />

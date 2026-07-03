@@ -112,7 +112,7 @@ const LoadingScreen = ({ onComplete, onMidpoint }) => {
           ref={subtitleRef} 
           className={styles.subtitle}
         >
-          Food that fuels focus
+          HEALTHY FOOD MEETS COWORKING
         </div>
       </div>
     </div>

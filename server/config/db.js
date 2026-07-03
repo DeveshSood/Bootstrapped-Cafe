@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
+/** Establishes connection to MongoDB using the URI from environment variables. */
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/bootstrap-cafe');
-    console.log('MongoDB connected successfully');
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`MongoDB Error: ${error.message}`);

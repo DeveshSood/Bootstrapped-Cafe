@@ -2,10 +2,10 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { JWT_SECRET, JWT_EXPIRE } = require('../middleware/auth');
 
-// Generate JWT
+
 const signToken = (id) => jwt.sign({ id }, JWT_SECRET, { expiresIn: JWT_EXPIRE });
 
-// Shape user data for response (never leak password)
+
 const sanitizeUser = (user) => ({
   _id: user._id,
   name: user.name,
@@ -13,6 +13,7 @@ const sanitizeUser = (user) => ({
   phone: user.phone,
   role: user.role,
   addresses: user.addresses,
+  savedBowls: user.savedBowls,
   createdAt: user.createdAt,
 });
 
@@ -103,7 +104,7 @@ exports.addAddress = async (req, res) => {
     const { label, line1, line2, city, state, pincode, isDefault } = req.body;
     const user = req.user;
 
-    // If this is the first address or isDefault, unset all others
+
     if (isDefault || user.addresses.length === 0) {
       user.addresses.forEach(a => { a.isDefault = false; });
     }
@@ -115,7 +116,7 @@ exports.addAddress = async (req, res) => {
       city,
       state: state || '',
       pincode,
-      isDefault: isDefault || user.addresses.length === 0, // First address auto-default
+      isDefault: isDefault || user.addresses.length === 0,
     });
 
     await user.save();
@@ -157,7 +158,7 @@ exports.deleteAddress = async (req, res) => {
     const wasDefault = addr.isDefault;
     addr.deleteOne();
 
-    // If we removed the default, promote the first remaining
+
     if (wasDefault && user.addresses.length > 0) {
       user.addresses[0].isDefault = true;
     }
@@ -186,7 +187,7 @@ exports.setDefaultAddress = async (req, res) => {
   }
 };
 
-// ─── Sync Cart (overwrite server cart with client state) ─
+// ─── Sync Cart ────────────────────────────────────────────
 exports.syncCart = async (req, res) => {
   try {
     const { cart } = req.body;
@@ -201,4 +202,48 @@ exports.syncCart = async (req, res) => {
 // ─── Get Cart ───────────────────────────────────────────
 exports.getCart = async (req, res) => {
   res.json({ cart: req.user.cart || [] });
+};
+
+// ─── Custom Bowls ───────────────────────────────────────
+exports.saveCustomBowl = async (req, res) => {
+  try {
+    const { name, price, customIngredients } = req.body;
+    req.user.savedBowls.push({ name, price, customIngredients });
+    await req.user.save();
+    res.json({ savedBowls: req.user.savedBowls });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.deleteCustomBowl = async (req, res) => {
+  try {
+    req.user.savedBowls.pull(req.params.bowlId);
+    await req.user.save();
+    res.json({ savedBowls: req.user.savedBowls });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.updateCustomBowl = async (req, res) => {
+  try {
+    const { name, price, customIngredients } = req.body;
+    const bowl = req.user.savedBowls.id(req.params.bowlId);
+    if (!bowl) {
+      return res.status(404).json({ message: 'Bowl not found' });
+    }
+    
+    if (name) bowl.name = name;
+    if (price !== undefined) bowl.price = price;
+    if (customIngredients) bowl.customIngredients = customIngredients;
+    
+    await req.user.save();
+    res.json({ savedBowls: req.user.savedBowls });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };

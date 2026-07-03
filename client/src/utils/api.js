@@ -7,17 +7,12 @@ function authHeaders(token) {
   };
 }
 
-/**
- * Safely parse JSON from a fetch Response.
- * If the body isn't valid JSON (e.g. an HTML error page from the proxy),
- * this returns a structured error object instead of crashing.
- */
+/** Safely parse JSON from a fetch Response, returning a structured error if body is not valid JSON. */
 async function safeJson(res) {
   const text = await res.text();
   try {
     return JSON.parse(text);
   } catch {
-    // Server returned non-JSON (HTML error page, empty body, etc.)
     console.error('Non-JSON response:', text.slice(0, 300));
     return {
       message: res.status >= 500
@@ -29,19 +24,18 @@ async function safeJson(res) {
   }
 }
 
-/**
- * Wrapper around fetch that handles network errors gracefully.
- */
+/** Wrapper around fetch that converts network failures into user-friendly errors. */
 async function safeFetch(url, options) {
   try {
     return await fetch(url, options);
   } catch (err) {
-    // Network failure — server unreachable, CORS blocked, DNS fail, etc.
     throw new Error(
       'Unable to connect to the server. Please check your internet connection and try again.'
     );
   }
 }
+
+/* ─── Auth API ─────────────────────────────────────────── */
 
 export async function apiRegister(name, email, password) {
   const res = await safeFetch(`${API_BASE}/register`, {
@@ -85,6 +79,8 @@ export async function apiUpdateProfile(token, updates) {
   return data;
 }
 
+/* ─── Address API ──────────────────────────────────────── */
+
 export async function apiAddAddress(token, address) {
   const res = await safeFetch(`${API_BASE}/addresses`, {
     method: 'POST',
@@ -127,6 +123,8 @@ export async function apiSetDefaultAddress(token, addressId) {
   return data;
 }
 
+/* ─── Cart API ─────────────────────────────────────────── */
+
 export async function apiSyncCart(token, cart) {
   const res = await safeFetch(`${API_BASE}/cart`, {
     method: 'PUT',
@@ -147,7 +145,41 @@ export async function apiGetCart(token) {
   return data;
 }
 
-// ─── Order API ──────────────────────────────────────────
+/* ─── Custom Bowls API ─────────────────────────────────── */
+
+export async function apiSaveCustomBowl(token, bowlData) {
+  const res = await safeFetch(`${API_BASE}/custom-bowls`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(bowlData),
+  });
+  const data = await safeJson(res);
+  if (!res.ok) throw new Error(data.message || 'Failed to save bowl');
+  return data;
+}
+
+export async function apiDeleteCustomBowl(token, bowlId) {
+  const res = await safeFetch(`${API_BASE}/custom-bowls/${bowlId}`, {
+    method: 'DELETE',
+    headers: authHeaders(token),
+  });
+  const data = await safeJson(res);
+  if (!res.ok) throw new Error(data.message || 'Failed to delete bowl');
+  return data;
+}
+
+export async function apiUpdateCustomBowl(token, bowlId, bowlData) {
+  const res = await safeFetch(`${API_BASE}/custom-bowls/${bowlId}`, {
+    method: 'PUT',
+    headers: authHeaders(token),
+    body: JSON.stringify(bowlData),
+  });
+  const data = await safeJson(res);
+  if (!res.ok) throw new Error(data.message || 'Failed to update bowl');
+  return data;
+}
+
+/* ─── Order API ────────────────────────────────────────── */
 
 export async function apiGetUserOrders(token) {
   const res = await safeFetch('/api/orders/my', {
@@ -175,10 +207,11 @@ export async function apiGetAllOrders(token, params = {}) {
   return data;
 }
 
-export async function apiUpdateOrderStatus(token, orderId) {
+export async function apiUpdateOrderStatus(token, orderId, bodyData = {}) {
   const res = await safeFetch(`/api/orders/${orderId}/status`, {
     method: 'PUT',
-    headers: authHeaders(token),
+    headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
+    body: JSON.stringify(bodyData),
   });
   const data = await safeJson(res);
   if (!res.ok) throw new Error(data.message || 'Failed to update order status');

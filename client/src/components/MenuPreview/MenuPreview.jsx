@@ -8,7 +8,7 @@ import page1 from '../../assets/images/menu-pages/page-1.jpg';
 import page2 from '../../assets/images/menu-pages/page-2.jpg';
 import page3 from '../../assets/images/menu-pages/page-3.jpg';
 
-// Reusable component for image with inner parallax
+
 const ParallaxImage = ({ src, alt, className, speed = 0.2 }) => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -16,7 +16,7 @@ const ParallaxImage = ({ src, alt, className, speed = 0.2 }) => {
     offset: ["start end", "end start"]
   });
   
-  // The image translates internally opposite to the scroll
+
   const y = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   return (
@@ -25,7 +25,7 @@ const ParallaxImage = ({ src, alt, className, speed = 0.2 }) => {
         src={src} 
         alt={alt} 
         className={styles.parallaxImg}
-        style={{ y, scale: 1.2 }} // scale up slightly to allow room for parallax movement
+        style={{ y, scale: 1.2 }}
         loading="lazy"
       />
     </div>
@@ -37,7 +37,7 @@ const MenuPreview = () => {
     <section className={styles.menuPreview} id="menu">
       <div className={styles.container}>
         
-        {/* Left: Content */}
+
         <div className={styles.content}>
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
@@ -77,7 +77,7 @@ const MenuPreview = () => {
           </motion.div>
         </div>
 
-        {/* Right: Editorial Staggered Layout */}
+
         <div className={styles.editorialGrid}>
           <ParallaxImage src={page1} alt="Menu item 1" className={styles.imgLeft} speed={0.15} />
           <ParallaxImage src={page2} alt="Menu item 2" className={styles.imgCenter} speed={0.25} />

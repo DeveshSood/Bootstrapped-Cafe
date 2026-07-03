@@ -2,14 +2,14 @@ const Order = require('../models/Order');
 const Counter = require('../models/Counter');
 const { broadcastOrderUpdate } = require('./sseController');
 
-// Valid status transitions — defines what status can follow what
+
 const STATUS_FLOW = {
   pending: 'payment_confirmed',
   payment_confirmed: 'accepted',
   accepted: 'prepared',
   prepared: 'packaged',
-  packaged: 'out_for_delivery',
-  out_for_delivery: 'delivered',
+  packaged: 'assigned_to_partner',
+  assigned_to_partner: 'handed_to_partner',
 };
 
 // ─── Create Order ───────────────────────────────────────
@@ -17,18 +17,18 @@ exports.createOrder = async (req, res) => {
   try {
     const data = { ...req.body };
 
-    // If authenticated, link user
+
     if (req.user) {
       data.user = req.user._id;
     }
 
-    // Handle backward-compat: if customerAddress is a string, put it in formatted
+
     if (data.customerAddress && typeof data.customerAddress === 'string') {
       data.deliveryAddress = { formatted: data.customerAddress };
       delete data.customerAddress;
     }
 
-    // Generate Monotonic Tracking ID: OYYRD-DDORNRMMBSC
+
     const now = new Date();
     const yy = now.getFullYear().toString().slice(-2);
     const mm = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -46,7 +46,7 @@ exports.createOrder = async (req, res) => {
 
     const order = await Order.create(data);
 
-    // Broadcast new order to dashboard watchers
+
     broadcastOrderUpdate(order._id.toString(), {
       type: 'new_order',
       order,
@@ -87,7 +87,7 @@ exports.getAllOrders = async (req, res) => {
     const { status, deleted, page = 1, limit = 50 } = req.query;
     const filter = {};
     
-    // Support querying for deleted orders explicitly
+
     if (deleted === 'true') {
       filter.isDeleted = true;
     } else {
@@ -116,7 +116,7 @@ exports.updateOrderStatus = async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: 'Order not found' });
 
-    if (order.status === 'delivered' || order.status === 'cancelled') {
+    if (order.status === 'handed_to_partner' || order.status === 'cancelled') {
       return res.status(400).json({ message: `Cannot update a ${order.status} order` });
     }
 
@@ -126,8 +126,17 @@ exports.updateOrderStatus = async (req, res) => {
     }
 
     order.status = nextStatus;
-    if (nextStatus === 'delivered') {
-      order.deliveredAt = new Date();
+    
+    if (nextStatus === 'accepted') {
+      const { prepTime } = req.body;
+      if (prepTime) {
+        order.estimatedPrepTime = Number(prepTime);
+        order.acceptedAt = new Date();
+      }
+    }
+    
+    if (nextStatus === 'handed_to_partner') {
+      order.deliveredAt = new Date(); // Reusing this field to mark completion
     }
     order.statusHistory.push({
       status: nextStatus,
@@ -137,7 +146,7 @@ exports.updateOrderStatus = async (req, res) => {
 
     await order.save();
 
-    // Broadcast to SSE clients
+
     broadcastOrderUpdate(order._id.toString(), {
       type: 'status_update',
       orderId: order._id,
@@ -152,13 +161,13 @@ exports.updateOrderStatus = async (req, res) => {
   }
 };
 
-// ─── Request Cancellation (restaurant only — admin approves) ─
+// ─── Request Cancellation ─────────────────────────────────
 exports.requestCancellation = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: 'Order not found' });
 
-    if (order.status === 'delivered' || order.status === 'cancelled') {
+    if (order.status === 'handed_to_partner' || order.status === 'cancelled') {
       return res.status(400).json({ message: 'Cannot cancel a completed order' });
     }
 
@@ -250,7 +259,7 @@ exports.rejectCancellation = async (req, res) => {
   }
 };
 
-// ─── Delete Order (admin only - soft delete) ────────────
+// ─── Delete Order ─────────────────────────────────────────
 exports.deleteOrder = async (req, res) => {
   try {
     const { reason } = req.body;
@@ -264,20 +273,15 @@ exports.deleteOrder = async (req, res) => {
     order.deletedAt = new Date();
     order.deletedBy = req.user._id;
 
-    // Optional: Also mark status as cancelled if it wasn't already completed
-    if (order.status !== 'delivered' && order.status !== 'cancelled') {
+
+    if (order.status !== 'handed_to_partner' && order.status !== 'cancelled') {
       order.status = 'cancelled';
-      order.statusHistory.push({
-        status: 'cancelled',
-        timestamp: new Date(),
-        updatedBy: req.user._id,
-        note: `Deleted by admin: ${reason}`,
-      });
+      order.statusHistory.push({ status: 'cancelled', timestamp: new Date(), updatedBy: req.user._id, note: 'Cancellation approved by admin' });
     }
 
     await order.save();
     
-    // Broadcast status update
+
     broadcastOrderUpdate(order._id.toString(), {
       type: 'status_update',
       orderId: order._id,
@@ -321,21 +325,21 @@ exports.getOrderStats = async (req, res) => {
     const year = now.getFullYear();
     const startOfYear = new Date(year, 0, 1);
 
-    // Count orders created this year
+
     const yearlyCount = await Order.countDocuments({
       createdAt: { $gte: startOfYear },
     });
 
-    // Get current sequence counter for this year
+
     const counter = await Counter.findById(`orderSeq_${year}`);
     const currentSeq = counter ? counter.seq : 0;
 
-    // Count by status
-    const activeStatuses = ['pending', 'payment_confirmed', 'accepted', 'prepared', 'packaged', 'out_for_delivery'];
+
+    const activeStatuses = ['pending', 'payment_confirmed', 'accepted', 'prepared', 'packaged', 'assigned_to_partner'];
     const activeCount = await Order.countDocuments({
       status: { $in: activeStatuses },
     });
-    const deliveredCount = await Order.countDocuments({ status: 'delivered' });
+    const deliveredCount = await Order.countDocuments({ status: 'handed_to_partner' });
     const cancelledCount = await Order.countDocuments({ status: 'cancelled' });
 
     res.json({

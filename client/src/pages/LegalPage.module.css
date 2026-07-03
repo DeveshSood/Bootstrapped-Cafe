@@ -1,0 +1,136 @@
+.legalPage {
+  min-height: 100vh;
+  background-color: var(--warm-cream);
+  padding: 120px var(--space-md) var(--space-2xl);
+  color: var(--espresso);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  color: var(--espresso);
+  margin-bottom: var(--space-xs);
+}
+
+.lastUpdated {
+  font-family: var(--font-body);
+  color: var(--espresso-soft);
+  font-size: 0.95rem;
+}
+
+.contentWrapper {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: var(--space-2xl);
+}
+
+.sidebar {
+  position: relative;
+}
+
+.toc {
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.tocTitle {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  color: var(--terracotta);
+  margin-bottom: var(--space-xs);
+}
+
+.tocLink {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--espresso-soft);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding: 4px 0;
+}
+
+.tocLink:hover, .tocLinkActive {
+  color: var(--espresso);
+  font-weight: 500;
+}
+
+.mainContent {
+  background-color: var(--white);
+  padding: var(--space-2xl);
+  border-radius: 32px;
+  box-shadow: 0 10px 40px rgba(30, 24, 21, 0.03);
+}
+
+.section {
+  margin-bottom: var(--space-xl);
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.section h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  color: var(--espresso);
+  margin-bottom: var(--space-sm);
+}
+
+.section p {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--espresso-soft);
+  line-height: 1.7;
+  margin-bottom: var(--space-sm);
+}
+
+.section ul {
+  list-style-type: disc;
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-sm);
+}
+
+.section li {
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  color: var(--espresso-soft);
+  line-height: 1.7;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 900px) {
+  .contentWrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .legalPage {
+    padding-top: 100px;
+  }
+
+  .mainContent {
+    padding: var(--space-xl) var(--space-md);
+    border-radius: 20px;
+  }
+}

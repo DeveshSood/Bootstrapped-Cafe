@@ -7,13 +7,13 @@ const instance = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET || 'placeholder_secret',
 });
 
-// POST /api/payment/create-order
+
 exports.createRazorpayOrder = async (req, res) => {
   try {
     const { amount } = req.body;
 
     const options = {
-      amount: amount * 100, // Razorpay expects paise
+      amount: amount * 100,
       currency: 'INR',
       receipt: `order_${Date.now()}`,
     };
@@ -30,17 +30,17 @@ exports.createRazorpayOrder = async (req, res) => {
   }
 };
 
-// POST /api/payment/verify
+
 exports.verifyPayment = async (req, res) => {
   try {
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      orderId, // Receive the backend order ID from the frontend
+      orderId,
     } = req.body;
 
-    // Verify signature
+
     const body = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'placeholder_secret')
@@ -51,7 +51,7 @@ exports.verifyPayment = async (req, res) => {
       return res.status(400).json({ message: 'Payment verification failed' });
     }
 
-    // Update existing order
+
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -60,7 +60,7 @@ exports.verifyPayment = async (req, res) => {
     order.paymentId = razorpay_payment_id;
     order.razorpayOrderId = razorpay_order_id;
     
-    // Advance status to payment_confirmed to indicate payment success
+
     order.paymentStatus = 'completed';
     order.status = 'payment_confirmed';
     order.statusHistory.push({
@@ -71,7 +71,7 @@ exports.verifyPayment = async (req, res) => {
 
     await order.save();
 
-    // Broadcast to SSE clients (e.g. restaurant dashboard)
+
     const { broadcastOrderUpdate } = require('./sseController');
     broadcastOrderUpdate(order._id.toString(), {
       type: 'status_update',
@@ -87,3 +87,48 @@ exports.verifyPayment = async (req, res) => {
     res.status(500).json({ message: 'Payment verification failed' });
   }
 };
+
+
+exports.failPayment = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    if (!orderId) {
+      return res.status(400).json({ message: 'orderId is required' });
+    }
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Only fail orders that are still pending payment
+    if (order.paymentStatus !== 'pending') {
+      return res.status(400).json({ message: 'Order payment is not pending' });
+    }
+
+    order.paymentStatus = 'failed';
+    order.status = 'cancelled';
+    order.statusHistory.push({
+      status: 'cancelled',
+      timestamp: new Date(),
+      note: 'Payment failed or dismissed by customer',
+    });
+
+    await order.save();
+
+    const { broadcastOrderUpdate } = require('./sseController');
+    broadcastOrderUpdate(order._id.toString(), {
+      type: 'status_update',
+      orderId: order._id,
+      status: order.status,
+      paymentStatus: order.paymentStatus,
+      statusHistory: order.statusHistory,
+    });
+
+    res.json({ success: true, message: 'Order cancelled due to payment failure' });
+  } catch (error) {
+    console.error('Payment failure handling error:', error);
+    res.status(500).json({ message: 'Failed to handle payment failure' });
+  }
+};
+

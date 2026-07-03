@@ -23,7 +23,7 @@ const SignatureMeals = () => {
     <section className={styles.magazineSection} id="signature-meals">
       <div className={styles.container}>
         
-        {/* Background Typography */}
+
         <div className={styles.bgTextWrapper}>
           <AnimatePresence mode="wait">
             <motion.div 
@@ -40,7 +40,7 @@ const SignatureMeals = () => {
         </div>
 
         <div className={styles.contentGrid}>
-          {/* Left Column: Details */}
+
           <div className={styles.leftCol}>
             <div className={styles.headerArea}>
               <span className={styles.label}>Chef's Picks</span>
@@ -87,7 +87,7 @@ const SignatureMeals = () => {
             </div>
           </div>
 
-          {/* Right Column: Overlapping Image */}
+
           <div className={styles.rightCol}>
             <AnimatePresence mode="wait">
               <motion.div 
@@ -102,7 +102,7 @@ const SignatureMeals = () => {
               </motion.div>
             </AnimatePresence>
             
-            {/* Decorator Box overlapping */}
+
             <div className={styles.decoratorBox}>
               <p className={styles.decoratorText}>Hand-crafted daily.</p>
             </div>

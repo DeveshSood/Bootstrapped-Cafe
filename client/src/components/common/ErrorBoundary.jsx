@@ -1,12 +1,7 @@
 import React from 'react';
 import ErrorPage from '../../pages/ErrorPage';
 
-/**
- * ErrorBoundary — Catches unhandled React render errors and shows
- * a themed error page instead of a white screen.
- *
- * Must be a class component (React doesn't support error boundaries with hooks).
- */
+/** ErrorBoundary — Catches unhandled React render errors. Must be a class component. */
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);

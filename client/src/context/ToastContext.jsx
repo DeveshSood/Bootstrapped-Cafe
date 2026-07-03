@@ -5,6 +5,10 @@ const ToastContext = createContext(null);
 
 let idCounter = 0;
 
+/**
+ * ToastProvider — Global toast notification system.
+ * Usage: const toast = useToast(); toast.success('Saved!');
+ */
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 

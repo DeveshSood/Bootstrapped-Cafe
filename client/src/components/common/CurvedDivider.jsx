@@ -1,14 +1,8 @@
 import React from 'react';
 
 /**
- * CurvedDivider
- * 
- * Creates a smooth SVG curve to transition between two sections.
- * 
- * @param {string} topColor - CSS color value for the top section
- * @param {string} bottomColor - CSS color value for the bottom section
- * @param {string} direction - 'down' (bows down into bottom) or 'up' (bows up into top)
- * @param {string} height - CSS height (default 6vw for responsive curve)
+ * CurvedDivider — SVG curve transition between two colored sections.
+ * @param {string} direction - 'down' (bows into bottom) or 'up' (bows into top)
  */
 const CurvedDivider = ({
   topColor = 'var(--white)',
@@ -37,10 +31,8 @@ const CurvedDivider = ({
         style={{ width: '100%', height: '100%', display: 'block', transform: 'scale(1.05)' }}
       >
         {direction === 'down' ? (
-          // Bows downward from the top edge. Filled with topColor.
           <path d="M0,0 Q50,200 100,0 Z" fill={topColor} />
         ) : (
-          // Bows upward from the bottom edge. Filled with bottomColor.
           <path d="M0,100 Q50,-100 100,100 Z" fill={bottomColor} />
         )}
       </svg>

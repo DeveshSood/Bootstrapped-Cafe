@@ -15,8 +15,6 @@ const StoryRow = ({ step, index }) => {
 
   return (
     <div className={`${styles.storyRow} ${isReversed ? styles.reversed : ''}`}>
-      
-      {/* Image Side - Animated Entrance */}
       <motion.div 
         className={styles.imageSide}
         initial={{ opacity: 0, x: isReversed ? 50 : -50 }}
@@ -36,7 +34,6 @@ const StoryRow = ({ step, index }) => {
         </div>
       </motion.div>
 
-      {/* Text Side - Animated Entrance */}
       <motion.div 
         className={styles.textSide}
         initial={{ opacity: 0, y: 30 }}
@@ -48,15 +45,14 @@ const StoryRow = ({ step, index }) => {
         <h4 className={styles.stepTitle}>{step.title}</h4>
         <p className={styles.stepDesc}>{step.desc}</p>
       </motion.div>
-
     </div>
   );
 };
 
+/** HowWeCook — Alternating image/text timeline showcasing the ingredient story. */
 const HowWeCook = () => {
   return (
     <section className={styles.storySection} id="how-we-cook">
-      
       <motion.div 
         className={styles.introContainer}
         initial={{ opacity: 0, y: 30 }}
@@ -74,14 +70,11 @@ const HowWeCook = () => {
       </motion.div>
 
       <div className={styles.storyContainer}>
-        {/* Subtle connecting line down the middle */}
         <div className={styles.timelineConnector}></div>
-        
         {timelineSteps.map((step, index) => (
           <StoryRow key={index} step={step} index={index} />
         ))}
       </div>
-
     </section>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useVelocity, useSpring, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import styles from './ReelCarousel.module.css';
 
 const combinedRow = [
@@ -14,7 +14,7 @@ const combinedRow = [
 ];
 
 const MarqueeTrack = ({ items, direction = 1, speed = 40 }) => {
-  // Duplicate items 4 times to ensure absolutely seamless scrolling even on ultrawide monitors
+
   const scrollItems = [...items, ...items, ...items, ...items];
 
   return (

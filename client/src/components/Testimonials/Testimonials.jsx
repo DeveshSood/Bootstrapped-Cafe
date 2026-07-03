@@ -33,7 +33,7 @@ const variants = {
 const Testimonials = () => {
   const [[page, direction], setPage] = useState([0, 0]);
 
-  // Wrap around index
+
   const activeIndex = Math.abs(page % testimonials.length);
   const t = testimonials[activeIndex];
 
@@ -82,7 +82,7 @@ const Testimonials = () => {
             </motion.div>
           </AnimatePresence>
           
-          {/* Navigation Controls */}
+
           <div className={styles.navControls}>
             <button className={styles.navBtn} onClick={() => paginate(-1)} aria-label="Previous quote">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={styles.arrowIconPrev}>

@@ -1,6 +1,6 @@
 const MenuItem = require('../models/MenuItem');
 
-// GET /api/menu — All menu items
+
 exports.getAllItems = async (req, res) => {
   try {
     const items = await MenuItem.find({ isAvailable: true }).sort('category');
@@ -10,7 +10,7 @@ exports.getAllItems = async (req, res) => {
   }
 };
 
-// GET /api/menu/:category — Items by category
+
 exports.getByCategory = async (req, res) => {
   try {
     const items = await MenuItem.find({

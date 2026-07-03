@@ -7,12 +7,13 @@ import Button from '../common/Button';
 import SlotCounter from '../common/SlotCounter';
 import styles from './CartDrawer.module.css';
 
+/** CartDrawer — Slide-out cart panel with undo-remove functionality and animated item list. */
 const CartDrawer = ({ isOpen, onClose, onCheckout }) => {
   const { items, addItem, updateQuantity, removeItem, totalPrice, clearCart } = useCart();
   const { isAuthenticated } = useAuth();
   const [lastRemoved, setLastRemoved] = useState(null);
 
-  // Auto clear undo toast after 5 seconds
+  /* Auto-dismiss undo toast after 5 seconds */
   useEffect(() => {
     let timer;
     if (lastRemoved) {
@@ -39,14 +40,12 @@ const CartDrawer = ({ isOpen, onClose, onCheckout }) => {
     <div className={`${styles.overlay} ${isOpen ? styles['overlay--open'] : ''}`}>
       <div className={styles.backdrop} onClick={onClose} aria-hidden="true" />
       
-      {/* Floating Drawer */}
       <div className={styles.drawer}>
         <div className={styles.drawerHeader}>
           <h4 className={styles.drawerTitle}>Your Cart</h4>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close cart">✕</button>
         </div>
 
-        {/* Persistent list container so exit animations can fire when empty */}
         <div className={styles.itemsList}>
           <AnimatePresence mode="popLayout">
             {items.length === 0 ? (
@@ -75,6 +74,11 @@ const CartDrawer = ({ isOpen, onClose, onCheckout }) => {
                   <img src={item.image} alt={item.name} className={styles.itemImage} />
                   <div className={styles.itemInfo}>
                     <h5 className={styles.itemName}>{item.name}</h5>
+                    {item.isCustomBowl && item.customIngredients && (
+                      <p className={styles.itemCustomDetails}>
+                        {Object.values(item.customIngredients).flat().join(', ')}
+                      </p>
+                    )}
                     <span className={styles.itemPrice}>₹{item.price}</span>
                     <div className={styles.quantityControls}>
                       <button className={styles.qtyBtn} onClick={() => {
@@ -94,9 +98,7 @@ const CartDrawer = ({ isOpen, onClose, onCheckout }) => {
           </AnimatePresence>
         </div>
         
-        {/* Persistent footer */}
         <div className={styles.drawerFooter} style={{ position: 'relative' }}>
-          {/* Undo Toast */}
           <AnimatePresence>
             {lastRemoved && (
               <motion.div 

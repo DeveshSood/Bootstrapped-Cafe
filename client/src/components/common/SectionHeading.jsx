@@ -1,12 +1,8 @@
 import React from 'react';
 
 /**
- * SectionHeading — SAVORA-style section header
- * 
- * Renders:
- *  - Uppercase tracked label (e.g., "CHEF'S PICKS")
- *  - Large Playfair Display heading
- *  - Optional body text
+ * SectionHeading — Renders an uppercase label, large heading (with optional italic word),
+ * and optional description text. Supports light mode for dark backgrounds.
  */
 const SectionHeading = ({ 
   label, 
@@ -52,10 +48,8 @@ const SectionHeading = ({
     margin: align === 'center' ? '0 auto' : '0',
   };
 
-  // If italicWord is provided, wrap that word in italic Playfair
   const renderHeading = () => {
     if (!italicWord) return heading;
-    
     const parts = heading.split(italicWord);
     return (
       <>

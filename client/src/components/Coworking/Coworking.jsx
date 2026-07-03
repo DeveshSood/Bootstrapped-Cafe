@@ -10,7 +10,7 @@ const Coworking = () => {
     <section className={styles.coworking} id="coworking">
       <div className={styles.bentoGrid}>
         
-        {/* Intro Block (Spans 2 columns) */}
+
         <div className={`${styles.bentoBlock} ${styles.introBlock}`}>
           <SectionHeading
             label="Work & Eat"
@@ -24,7 +24,7 @@ const Coworking = () => {
           </div>
         </div>
 
-        {/* Large Image Block */}
+
         <div className={styles.imageBlock}>
           <img 
             src={cafeBg} 

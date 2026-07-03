@@ -171,6 +171,7 @@
   border-radius: var(--radius-sm);
   background: var(--cream-dark);
   color: var(--espresso-soft);
+  white-space: nowrap;
 }
 
 .paymentBadge {
@@ -179,6 +180,7 @@
   text-transform: uppercase;
   padding: 4px 8px;
   border-radius: var(--radius-sm);
+  white-space: nowrap;
   background: var(--forest-green);
   color: var(--white);
 }
@@ -390,4 +392,104 @@
 
 .btnSubmit:hover {
   box-shadow: 0 6px 16px rgba(200, 81, 45, 0.3);
+}
+
+.subscriptionsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+}
+
+.subsLegend {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--espresso-soft);
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.activeDot { background-color: var(--forest-green); }
+.expiredDot { background-color: var(--espresso-soft); }
+.cancelledDot { background-color: var(--terracotta); }
+
+.planGroup {
+  margin-bottom: var(--space-2xl);
+}
+
+.planGroupTitle {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--espresso);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-xs);
+  border-bottom: 2px solid var(--cream-dark);
+}
+
+.planCount {
+  font-size: 1rem;
+  color: var(--terracotta);
+  font-family: var(--font-body);
+}
+
+.planGroupGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+.subCard {
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  border-left: 4px solid var(--cream-dark);
+}
+
+.subStatus_active { border-left-color: var(--forest-green); }
+.subStatus_expired { border-left-color: var(--espresso-soft); opacity: 0.7; }
+.subStatus_cancelled { border-left-color: var(--terracotta); opacity: 0.7; }
+
+.subCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+  font-size: 1.1rem;
+}
+
+.subBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--cream-dark);
+}
+
+.subStatus_active .subBadge { background: var(--forest-green); color: white; }
+.subStatus_expired .subBadge { background: var(--espresso-soft); color: white; }
+.subStatus_cancelled .subBadge { background: var(--terracotta); color: white; }
+
+.subPhone {
+  color: var(--espresso-soft);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-sm);
+}
+
+.subDates {
+  font-size: 0.8rem;
+  color: var(--espresso-soft);
 }

@@ -16,7 +16,7 @@ const premiumVariants = {
     filter: 'blur(0px)',
     transition: {
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1], // Custom sleek ease-out
+      ease: [0.22, 1, 0.36, 1],
     },
     transitionEnd: {
       transform: 'none',
@@ -35,18 +35,20 @@ const premiumVariants = {
   },
 };
 
+/**
+ * PageTransition — Wraps pages with framer-motion enter/exit animations.
+ * Manages scroll position: restores on back/forward, resets on fresh navigation.
+ */
 const PageTransition = ({ children }) => {
   const location = useLocation();
   const navType = useNavigationType();
 
   useEffect(() => {
-    // Disable native browser scroll restoration to prevent conflicting jumps
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
 
     if (navType === 'POP') {
-      // Restore previous scroll position on Back/Forward navigation
       const savedY = sessionStorage.getItem(`scroll-${location.pathname}`);
       if (savedY !== null) {
         requestAnimationFrame(() => {
@@ -54,15 +56,14 @@ const PageTransition = ({ children }) => {
         });
       }
     } else {
-      // Fresh navigation (PUSH or REPLACE) -> Start at top
       requestAnimationFrame(() => {
         window.scrollTo(0, 0);
       });
     }
   }, [location.pathname, navType]);
 
+  /* Continuously save scroll position for the current path */
   useEffect(() => {
-    // Continuously save the scroll position for the current path
     let timeout;
     const handleScroll = () => {
       clearTimeout(timeout);

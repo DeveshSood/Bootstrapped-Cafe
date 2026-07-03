@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import styles from './PamphletMenu.module.css';
 
 const PamphletMenu = ({ items, onItemClick }) => {
-  // Group items by category
+
   const categories = items.reduce((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
     acc[item.category].push(item);

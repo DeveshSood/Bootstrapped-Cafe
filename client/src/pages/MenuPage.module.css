@@ -1,11 +1,11 @@
 .menuPage {
   min-height: 100vh;
   background-color: var(--warm-cream);
-  padding-bottom: var(--space-2xl);
+  padding-bottom: var(--space-lg);
 }
 
 .menuHero {
-  padding: calc(var(--navbar-height) + var(--space-lg)) var(--space-xl) var(--space-lg);
+  padding: calc(var(--navbar-height) + var(--space-sm)) var(--space-xl) var(--space-sm);
   text-align: center;
   position: relative;
 }
@@ -16,7 +16,7 @@
 .viewToggleContainer {
   display: flex;
   justify-content: center;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
   position: relative;
   z-index: 10;
 }
@@ -34,7 +34,7 @@
   background: transparent;
   border: none;
   border-radius: var(--radius-pill);
-  padding: 6px 16px;
+  padding: 4px 14px;
   font-family: var(--font-body);
   font-size: var(--fs-small);
   font-weight: 600;
@@ -58,21 +58,21 @@
 .menuContent {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 var(--space-xl);
+  padding: 0 var(--space-lg);
 }
 
 .filterBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-lg);
   flex-wrap: wrap;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   position: sticky;
   top: calc(var(--navbar-height) + 10px);
   z-index: 100;
   background-color: rgba(255, 255, 255, 0.9);
-  padding: var(--space-sm) var(--space-md);
+  padding: 6px var(--space-sm);
   border-radius: var(--radius-lg);
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow-md);
@@ -80,7 +80,7 @@
 
 .tabs {
   display: flex;
-  gap: var(--space-sm);
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -88,10 +88,10 @@
   background: var(--white);
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: var(--radius-pill);
-  padding: 0.5rem 1.25rem;
+  padding: 0.35rem 1rem;
   color: var(--espresso);
   font-family: var(--font-body);
-  font-size: var(--fs-body);
+  font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -111,20 +111,20 @@
 
 .vegLabel {
   font-family: var(--font-body);
-  font-size: var(--fs-body);
+  font-size: 0.8rem;
   color: var(--espresso);
 }
 
 .menuSections {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3xl);
-  padding-bottom: var(--space-4xl);
+  gap: var(--space-xl);
+  padding-bottom: var(--space-2xl);
 }
 
 .suggestionSection {
   background: linear-gradient(180deg, var(--white) 0%, rgba(250, 247, 242, 0.4) 100%);
-  padding: var(--space-xl);
+  padding: var(--space-md);
   border-radius: var(--radius-xl);
   border: 1.5px solid var(--border-light);
   box-shadow: 0 4px 20px rgba(30, 24, 21, 0.02);
@@ -132,30 +132,30 @@
 
 .suggestionHeading {
   font-family: var(--font-display);
-  font-size: var(--fs-h3);
+  font-size: 1.1rem;
   color: var(--terracotta);
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-md);
   padding-bottom: var(--space-sm);
   border-bottom: 2px dashed rgba(200, 81, 45, 0.2);
 }
 
 .categorySection {
-  padding-top: var(--space-xl);
+  padding-top: var(--space-sm);
 }
 
 .categoryHeading {
   font-family: var(--font-display);
-  font-size: var(--fs-h2);
+  font-size: 1.25rem;
   color: var(--espresso);
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-md);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding-bottom: var(--space-sm);
 }
 
 .menuGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-xl);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-md);
 }
 
 .noResults {
@@ -163,6 +163,19 @@
   padding: var(--space-4xl) 0;
   color: rgba(250, 247, 242, 0.5);
   font-family: var(--font-body);
+}
+
+@media (min-width: 1400px) {
+  .menuGrid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-md);
+  }
+}
+
+@media (min-width: 1800px) {
+  .menuGrid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
@@ -189,4 +202,130 @@
     font-size: var(--fs-body);
     padding: var(--space-sm) var(--space-lg);
   }
+  .menuGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .menuGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.customBowlBanner {
+  background-color: var(--warm-cream);
+  border-radius: 24px;
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  text-align: center;
+  border: 1px solid var(--cream-dark);
+}
+
+.bannerContent h3 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  color: var(--espresso);
+  margin-bottom: var(--space-xs);
+}
+
+.bannerContent p {
+  font-family: var(--font-body);
+  color: var(--espresso-soft);
+  margin-bottom: var(--space-lg);
+}
+
+.buildBtn {
+  display: inline-block;
+  background-color: var(--forest-green);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.buildBtn:hover {
+  background-color: #2a6a4a;
+  transform: translateY(-2px);
+}
+
+.savedBowlsSection {
+  margin-bottom: var(--space-2xl);
+}
+
+.savedBowlsTitle {
+  font-family: var(--font-display);
+  font-size: var(--fs-h4);
+  color: var(--espresso);
+  margin-bottom: var(--space-md);
+  text-align: center;
+}
+
+.savedBowlsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+.savedBowlCard {
+  background-color: var(--white);
+  border: 1px solid var(--cream-dark);
+  border-radius: 16px;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.savedBowlCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.savedBowlHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.savedBowlHeader h4 {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--espresso);
+}
+
+.savedBowlPrice {
+  font-weight: 700;
+  color: var(--terracotta);
+}
+
+.savedBowlActions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: auto;
+}
+
+.btnSecondary, .btnDelete {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.btnSecondary {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+.btnDelete {
+  background-color: var(--warm-cream);
+  color: var(--terracotta);
 }

@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 
 /**
- * useIntersectionObserver — Scroll-based visibility detection
- * 
- * Returns [ref, isIntersecting] for triggering scroll animations.
- * 
- * Usage:
- *   const [ref, isVisible] = useIntersectionObserver({ threshold: 0.2 });
+ * useIntersectionObserver — Returns [ref, isIntersecting] for scroll-triggered visibility detection.
+ * Triggers once by default; set triggerOnce: false for continuous tracking.
  */
 const useIntersectionObserver = (options = {}) => {
   const {
