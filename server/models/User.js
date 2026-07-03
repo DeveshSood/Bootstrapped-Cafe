@@ -11,6 +11,17 @@ const addressSchema = new mongoose.Schema({
   isDefault: { type: Boolean, default: false },
 }, { _id: true });
 
+const nutritionSchema = new mongoose.Schema({
+  calories: { type: Number, default: 0 },
+  protein: { type: Number, default: 0 },
+  carbs: { type: Number, default: 0 },
+  fat: { type: Number, default: 0 },
+  vitC: { type: Number, default: 0 },
+  vitE: { type: Number, default: 0 },
+  folate: { type: Number, default: 0 },
+  vitB6: { type: Number, default: 0 }
+}, { _id: false });
+
 const cartItemSchema = new mongoose.Schema({
   menuItem: { type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem' },
   name: String,
@@ -24,8 +35,10 @@ const cartItemSchema = new mongoose.Schema({
     protein: [String],
     toppings: [String],
     cheeseAndNuts: [String],
+    cheeseAndNuts: [String],
     dressing: [String]
   },
+  nutrition: nutritionSchema
 }, { _id: false });
 
 const savedBowlSchema = new mongoose.Schema({
@@ -37,8 +50,10 @@ const savedBowlSchema = new mongoose.Schema({
     protein: [String],
     toppings: [String],
     cheeseAndNuts: [String],
+    cheeseAndNuts: [String],
     dressing: [String]
   },
+  nutrition: nutritionSchema
 });
 
 const userSchema = new mongoose.Schema({

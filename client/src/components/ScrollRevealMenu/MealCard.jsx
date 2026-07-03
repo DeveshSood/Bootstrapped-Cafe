@@ -11,6 +11,39 @@ const MealCard = ({ meal, style, id, onDetailsClick, isDrink }) => {
   const { name, price, image, tags, isVeg } = meal;
   const { items, addItem, updateQuantity } = useCart();
 
+  const categorizeIngredients = (ingredients) => {
+    if (!ingredients || !Array.isArray(ingredients)) return {};
+    const categories = {
+      'Protein': [],
+      'Curry of the day': [],
+      'Salads': [],
+      'Phytos': [],
+      'Carbs': [],
+      'Base': []
+    };
+    ingredients.forEach(ing => {
+      const lower = ing.toLowerCase();
+      if (lower.includes('chicken') || lower.includes('paneer') || lower.includes('egg') || lower.includes('tofu') || lower.includes('fish')) {
+        categories['Protein'].push(ing.split(' -')[0]);
+      } else if (lower.includes('rice') || lower.includes('quinoa') || lower.includes('millets') || lower.includes('oats')) {
+        categories['Carbs'].push(ing.split(' -')[0]);
+      } else if (lower.includes('dal') || lower.includes('rajma') || lower.includes('chana') || lower.includes('chickpea') || lower.includes('curry') || lower.includes('stew')) {
+        categories['Curry of the day'].push(ing.split(' -')[0]);
+      } else if (lower.includes('salsa') || lower.includes('salad') || lower.includes('hummus') || lower.includes('beans') || lower.includes('cucumber') || lower.includes('lettuce') || lower.includes('tomato') || lower.includes('onion') || lower.includes('cabbage')) {
+        categories['Salads'].push(ing.split(' -')[0]);
+      } else if (lower.includes('broccoli') || lower.includes('capsicum') || lower.includes('zucchini') || lower.includes('carrot') || lower.includes('cauliflower') || lower.includes('mushroom') || lower.includes('bhindi') || lower.includes('gobi') || lower.includes('bell pepper') || lower.includes('bellpeper') || lower.includes('bellpeppers')) {
+        categories['Phytos'].push(ing.split(' -')[0]);
+      } else {
+        categories['Base'].push(ing.split(' -')[0]);
+      }
+    });
+    const result = {};
+    for (const [key, value] of Object.entries(categories)) {
+      if (value.length > 0) result[key] = value;
+    }
+    return result;
+  };
+
   const isHomeBrewed = meal.category === 'Home brewed drinks';
 
   const cartItem = items.find(i => i.id === meal.id);
@@ -33,7 +66,7 @@ const MealCard = ({ meal, style, id, onDetailsClick, isDrink }) => {
   };
 
   return (
-    <div className={styles.mealCardWrapper} style={{ ...style, minHeight: isDrink ? '330px' : '240px' }} id={id}>
+    <div className={styles.mealCardWrapper} style={{ ...style, minHeight: isDrink ? '330px' : '290px' }} id={id}>
       <div className={styles.flipCardInner}>
         
 
@@ -53,17 +86,17 @@ const MealCard = ({ meal, style, id, onDetailsClick, isDrink }) => {
               <div className={styles.mealPromoBar} style={{display: 'flex', justifyContent: 'space-evenly', gap: '4px', padding: '6px 4px', lineHeight: '1.2'}}>
                 <div style={{display: 'flex', flexDirection: 'column', color: 'var(--forest-green)', alignItems: 'center', flex: 1}}>
                   <span style={{fontSize: '0.6rem', fontWeight: 800, marginBottom: '2px'}}>PROTEIN</span>
-                  <span style={{fontSize: '0.75rem', fontWeight: 700}}>{meal.nutrition.protein.toUpperCase()}</span>
+                  <span style={{fontSize: '0.75rem', fontWeight: 700}}>{typeof meal.nutrition.protein === 'string' ? meal.nutrition.protein.toUpperCase() : `${meal.nutrition.protein}G`}</span>
                 </div>
                 <div style={{width: '1px', background: 'rgba(0,0,0,0.15)', margin: '2px 0'}}></div>
                 <div style={{display: 'flex', flexDirection: 'column', color: 'var(--espresso)', alignItems: 'center', flex: 1}}>
                   <span style={{fontSize: '0.6rem', fontWeight: 800, marginBottom: '2px'}}>CARBS</span>
-                  <span style={{fontSize: '0.75rem', fontWeight: 700}}>{meal.nutrition.carbs.toUpperCase()}</span>
+                  <span style={{fontSize: '0.75rem', fontWeight: 700}}>{typeof meal.nutrition.carbs === 'string' ? meal.nutrition.carbs.toUpperCase() : `${meal.nutrition.carbs}G`}</span>
                 </div>
                 <div style={{width: '1px', background: 'rgba(0,0,0,0.15)', margin: '2px 0'}}></div>
                 <div style={{display: 'flex', flexDirection: 'column', color: 'var(--terracotta)', alignItems: 'center', flex: 1}}>
                   <span style={{fontSize: '0.6rem', fontWeight: 800, marginBottom: '2px'}}>FAT</span>
-                  <span style={{fontSize: '0.75rem', fontWeight: 700}}>{meal.nutrition.fat.toUpperCase()}</span>
+                  <span style={{fontSize: '0.75rem', fontWeight: 700}}>{typeof meal.nutrition.fat === 'string' ? meal.nutrition.fat.toUpperCase() : `${meal.nutrition.fat}G`}</span>
                 </div>
               </div>
             ) : (
@@ -94,25 +127,30 @@ const MealCard = ({ meal, style, id, onDetailsClick, isDrink }) => {
           <h4 className={styles.mealTitleBack}>{name}</h4>
           <div className={styles.mealPriceBack}>₹{price}</div>
           {meal.ingredients ? (
-            <div className={styles.mealDescription} style={{ width: '100%' }}>
+            <div className={styles.mealDescription} style={{ width: '100%', overflowY: 'hidden', padding: '4px 0', flex: 1 }}>
               {isDrink ? (
                 <div style={{ 
-                  fontSize: '1.1em', 
+                  fontSize: '0.9em', 
                   opacity: 0.9, 
-                  lineHeight: '1.5', 
+                  lineHeight: '1.3', 
                   margin: '0 auto', 
                   textAlign: 'center', 
                   display: 'flex',
                   flexDirection: 'column'
                 }}>
                   {meal.ingredients.map((ing, idx) => (
-                    <div key={idx} style={{ marginBottom: '8px' }}>{ing.split(' -')[0]}</div>
+                    <div key={idx} style={{ marginBottom: '4px' }}>{ing.split(' -')[0]}</div>
                   ))}
                 </div>
               ) : (
-                <p style={{ fontSize: '0.95em', fontWeight: '500', opacity: 0.9, lineHeight: '1.5', margin: 0, textAlign: 'center' }}>
-                  {meal.ingredients.map(ing => ing.split(' -')[0]).join(', ')}
-                </p>
+                <div style={{ fontSize: '0.65rem', textAlign: 'left', display: 'flex', flexWrap: 'wrap', gap: '4px', alignContent: 'flex-start', width: '100%' }}>
+                  {Object.entries(categorizeIngredients(meal.ingredients)).map(([catName, items]) => (
+                    <div key={catName} style={{background: 'rgba(255,255,255,0.6)', padding: '2px 4px', borderRadius: '4px', width: '48%', boxSizing: 'border-box'}}>
+                      <span style={{fontWeight: '800', color: 'var(--forest-green)', display: 'block', fontSize: '0.55rem', textTransform: 'uppercase', marginBottom: '1px'}}>{catName}</span>
+                      <span style={{color: 'var(--espresso-soft)', fontWeight: '600', lineHeight: 1.1, display: 'block', fontSize: '0.6rem'}}>{items.join(', ')}</span>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           ) : (

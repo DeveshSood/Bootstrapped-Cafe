@@ -7,27 +7,23 @@ const premiumVariants = {
     opacity: 0,
     y: 10,
     scale: 0.99,
-    filter: 'blur(3px)',
   },
   enter: {
     opacity: 1,
     y: 0,
     scale: 1,
-    filter: 'blur(0px)',
     transition: {
-      duration: 0.5,
+      duration: 0.4,
       ease: [0.22, 1, 0.36, 1],
     },
     transitionEnd: {
       transform: 'none',
-      filter: 'none',
     }
   },
   exit: {
     opacity: 0,
     y: -8,
     scale: 0.99,
-    filter: 'blur(3px)',
     transition: {
       duration: 0.3,
       ease: [0.22, 1, 0.36, 1],

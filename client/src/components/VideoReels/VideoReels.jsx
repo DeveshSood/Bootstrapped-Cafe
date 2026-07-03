@@ -3,11 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../common/Button';
 import styles from './VideoReels.module.css';
 
-const v1Video = 'https://videos.pexels.com/video-files/4252948/4252948-sd_506_960_25fps.mp4';
-const v2Video = 'https://videos.pexels.com/video-files/3195394/3195394-sd_506_960_25fps.mp4';
-const v3Video = 'https://videos.pexels.com/video-files/3298572/3298572-sd_506_960_25fps.mp4';
-const chefVideo = 'https://videos.pexels.com/video-files/2257010/2257010-sd_506_960_30fps.mp4';
-const pastaVideo = 'https://videos.pexels.com/video-files/2911757/2911757-sd_506_960_25fps.mp4';
+const v1Video = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4';
+const v2Video = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4';
+const v3Video = 'https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4';
+const chefVideo = 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4';
+const pastaVideo = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
 
 const VIDEO_DATA = [
   {

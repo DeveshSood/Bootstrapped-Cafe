@@ -2,11 +2,10 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import foodBowl from '../assets/images/food-bowl.png';
-import { SALAD_CATEGORIES, INGREDIENTS } from '../data/ingredientsData';
 import { useCart } from '../components/Cart/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import { apiSaveCustomBowl } from '../utils/api';
+import { apiSaveCustomBowl, apiGetDailyMenu } from '../utils/api';
 import Button from '../components/common/Button';
 import styles from './CustomSaladPage.module.css';
 
@@ -23,51 +22,81 @@ export default function CustomSaladPage() {
   const editBowlData = location.state?.editBowlData;
   const [editingBowlId, setEditingBowlId] = useState(editBowlData?._id || null);
 
-  const [activeTab, setActiveTab] = useState(SALAD_CATEGORIES[0].id);
+  const [saladCategories, setSaladCategories] = useState([]);
+  const [ingredients, setIngredients] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const [activeTab, setActiveTab] = useState(null);
   const [isVegOnly, setIsVegOnly] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [bowlName, setBowlName] = useState(editBowlData?.name || 'My Custom Salad');
 
   // State structure: { base: [], essentials: [], ... }
-  const [selections, setSelections] = useState(() => {
-    const init = {};
-    SALAD_CATEGORIES.forEach(c => init[c.id] = []);
-    
-    if (editBowlData && editBowlData.customIngredients) {
-      Object.keys(editBowlData.customIngredients).forEach(catId => {
-        const catArray = editBowlData.customIngredients[catId];
-        const allItemsInCategory = INGREDIENTS[catId] || [];
-        const reconstructedItems = [];
-        
-        if (Array.isArray(catArray)) {
-          catArray.forEach(str => {
-            let name = str;
-            let count = 1;
-            const match = str.match(/(.*)\s\(x(\d+)\)$/);
-            if (match) {
-              name = match[1].trim();
-              count = parseInt(match[2], 10);
-            }
-            const foundItem = allItemsInCategory.find(i => i.name === name);
-            if (foundItem) {
-              for (let i = 0; i < count; i++) {
-                reconstructedItems.push(foundItem);
+  const [selections, setSelections] = useState({});
+
+  useEffect(() => {
+    const fetchDailyMenu = async () => {
+      try {
+        const data = await apiGetDailyMenu();
+        if (data.customSalad) {
+          const fetchedCats = data.customSalad.categories || [];
+          const fetchedIngs = data.customSalad.ingredients || {};
+          
+          setSaladCategories(fetchedCats);
+          setIngredients(fetchedIngs);
+          
+          if (fetchedCats.length > 0) {
+            setActiveTab(fetchedCats[0].id);
+          }
+          
+          const init = {};
+          fetchedCats.forEach(c => init[c.id] = []);
+          
+          if (editBowlData && editBowlData.customIngredients) {
+            Object.keys(editBowlData.customIngredients).forEach(catId => {
+              const catArray = editBowlData.customIngredients[catId];
+              const allItemsInCategory = fetchedIngs[catId] || [];
+              const reconstructedItems = [];
+              
+              if (Array.isArray(catArray)) {
+                catArray.forEach(str => {
+                  let name = str;
+                  let count = 1;
+                  const match = str.match(/(.*)\s\(x(\d+)\)$/);
+                  if (match) {
+                    name = match[1].trim();
+                    count = parseInt(match[2], 10);
+                  }
+                  const foundItem = allItemsInCategory.find(i => i.name === name);
+                  if (foundItem) {
+                    for (let i = 0; i < count; i++) {
+                      reconstructedItems.push(foundItem);
+                    }
+                  }
+                });
               }
-            }
-          });
+              init[catId] = reconstructedItems;
+            });
+          }
+          setSelections(init);
         }
-        init[catId] = reconstructedItems;
-      });
-    }
-    
-    return init;
-  });
+      } catch (err) {
+        toast.error("Failed to load daily custom bowl data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDailyMenu();
+  }, [editBowlData, toast]);
 
   const handleAddItem = (categoryId, item) => {
     setSelections(prev => {
-      const current = prev[categoryId];
-      const categoryLimit = SALAD_CATEGORIES.find(c => c.id === categoryId).limit;
+      const current = prev[categoryId] || [];
+      const catInfo = saladCategories.find(c => c.id === categoryId);
+      if (!catInfo) return prev;
+      
+      const categoryLimit = catInfo.limit;
       if (current.length >= categoryLimit) {
         toast.error(`You can only select up to ${categoryLimit} items in this category.`);
         return prev;
@@ -106,7 +135,7 @@ export default function CustomSaladPage() {
   }, [selections]);
 
   const totalNutrition = useMemo(() => {
-    let macros = { protein: 0, carbs: 0, fat: 0, calories: 0 };
+    let macros = { protein: 0, carbs: 0, fat: 0, calories: 0, vitC: 0, vitE: 0, folate: 0, vitB6: 0 };
     Object.values(selections).forEach(catArray => {
       catArray.forEach(item => {
         if (item.nutrition) {
@@ -114,6 +143,10 @@ export default function CustomSaladPage() {
           macros.carbs += item.nutrition.carbs || 0;
           macros.fat += item.nutrition.fat || 0;
           macros.calories += item.nutrition.calories || 0;
+          macros.vitC += item.nutrition.vitC || 0;
+          macros.vitE += item.nutrition.vitE || 0;
+          macros.folate += item.nutrition.folate || 0;
+          macros.vitB6 += item.nutrition.vitB6 || 0;
         }
       });
     });
@@ -153,7 +186,8 @@ export default function CustomSaladPage() {
       image: foodBowl, 
       quantity: quantity,
       isCustomBowl: true,
-      customIngredients: customIngredients
+      customIngredients: customIngredients,
+      nutrition: totalNutrition
     };
 
     addItem(cartItem);
@@ -183,13 +217,15 @@ export default function CustomSaladPage() {
         await updateCustomBowl(editingBowlId, {
           name: bowlName,
           price: totalPrice,
-          customIngredients
+          customIngredients,
+          nutrition: totalNutrition
         });
       } else {
         const newSavedBowls = await saveCustomBowl({
           name: bowlName,
           price: totalPrice,
-          customIngredients
+          customIngredients,
+          nutrition: totalNutrition
         });
         if (newSavedBowls && newSavedBowls.length > 0) {
           setEditingBowlId(newSavedBowls[newSavedBowls.length - 1]._id);
@@ -233,7 +269,7 @@ export default function CustomSaladPage() {
         {/* Header and Tabs */}
         <div className={styles.headerControls}>
           <div className={styles.tabs}>
-            {SALAD_CATEGORIES.map(cat => (
+            {saladCategories.map(cat => (
               <button
                 key={cat.id}
                 className={`${styles.tab} ${activeTab === cat.id ? styles.active : ''}`}
@@ -251,15 +287,15 @@ export default function CustomSaladPage() {
         </div>
 
         {/* Categories rendering */}
-        {SALAD_CATEGORIES.map(cat => {
+        {saladCategories.map(cat => {
           if (cat.id !== activeTab) return null;
           
-          let items = INGREDIENTS[cat.id];
+          let items = ingredients[cat.id] || [];
           if (isVegOnly) {
             items = items.filter(i => i.isVeg);
           }
 
-          const selectedCount = selections[cat.id].length;
+          const selectedCount = (selections[cat.id] || []).length;
 
           return (
             <motion.div 
@@ -341,8 +377,8 @@ export default function CustomSaladPage() {
         ) : (
           <div className={styles.previewList}>
             <AnimatePresence>
-              {SALAD_CATEGORIES.map(cat => {
-                const items = selections[cat.id];
+              {saladCategories.map(cat => {
+                const items = selections[cat.id] || [];
                 if (items.length === 0) return null;
                 return (
                   <motion.div 

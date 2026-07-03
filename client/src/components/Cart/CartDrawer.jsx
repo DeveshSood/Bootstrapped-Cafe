@@ -13,6 +13,8 @@ const CartDrawer = ({ isOpen, onClose, onCheckout }) => {
   const { isAuthenticated } = useAuth();
   const [lastRemoved, setLastRemoved] = useState(null);
 
+  const isWeekend = new Date().getDay() === 0 || new Date().getDay() === 6;
+
   /* Auto-dismiss undo toast after 5 seconds */
   useEffect(() => {
     let timer;
@@ -121,9 +123,20 @@ const CartDrawer = ({ isOpen, onClose, onCheckout }) => {
                 <SlotCounter value={totalPrice} className={styles.totalAmount} />
               </div>
               {isAuthenticated ? (
-                <Button variant="filled" size="lg" onClick={onCheckout} style={{ width: '100%', justifyContent: 'center' }}>
-                  Proceed to Checkout
-                </Button>
+                isWeekend ? (
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100%'}}>
+                    <Button variant="filled" size="lg" disabled style={{ width: '100%', justifyContent: 'center', opacity: 0.5, cursor: 'not-allowed' }}>
+                      Proceed to Checkout
+                    </Button>
+                    <span style={{color: 'var(--terracotta)', fontSize: '0.8rem', textAlign: 'center', fontWeight: 'bold'}}>
+                      ⛔ Checkout is closed on weekends
+                    </span>
+                  </div>
+                ) : (
+                  <Button variant="filled" size="lg" onClick={onCheckout} style={{ width: '100%', justifyContent: 'center' }}>
+                    Proceed to Checkout
+                  </Button>
+                )
               ) : (
                 <Link
                   to="/login"

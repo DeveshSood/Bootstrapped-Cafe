@@ -145,6 +145,45 @@ export async function apiGetCart(token) {
   return data;
 }
 
+/* ─── Daily Menu API ─────────────────────────────────────── */
+
+export const apiGetDailyMenu = async (dateStr = null) => {
+  const url = dateStr ? `/api/daily-menu?date=${dateStr}` : '/api/daily-menu';
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch daily menu');
+  return res.json();
+};
+
+export async function apiGetSchedule(token) {
+  const res = await safeFetch(`/api/daily-menu/schedule`, {
+    headers: authHeaders(token),
+  });
+  const data = await safeJson(res);
+  if (!res.ok) throw new Error(data.message || 'Failed to load schedule');
+  return data;
+}
+
+export async function apiSetOverride(token, overrideData) {
+  const res = await safeFetch(`/api/daily-menu/override`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(overrideData),
+  });
+  const data = await safeJson(res);
+  if (!res.ok) throw new Error(data.message || 'Failed to set override');
+  return data;
+}
+
+export async function apiDeleteOverride(token, date) {
+  const res = await safeFetch(`/api/daily-menu/override/${date}`, {
+    method: 'DELETE',
+    headers: authHeaders(token),
+  });
+  const data = await safeJson(res);
+  if (!res.ok) throw new Error(data.message || 'Failed to delete override');
+  return data;
+}
+
 /* ─── Custom Bowls API ─────────────────────────────────── */
 
 export async function apiSaveCustomBowl(token, bowlData) {

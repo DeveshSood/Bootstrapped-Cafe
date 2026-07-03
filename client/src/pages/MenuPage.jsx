@@ -6,14 +6,15 @@ import SectionHeading from '../components/common/SectionHeading';
 import Footer from '../components/Footer/Footer';
 import PamphletMenu from '../components/PamphletMenu/PamphletMenu';
 import { useCart } from '../components/Cart/CartContext';
+import SlotCounter from '../components/common/SlotCounter';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { apiGetUserOrders } from '../utils/api';
+import { apiGetUserOrders, apiGetDailyMenu } from '../utils/api';
 import foodBowl from '../assets/images/food-bowl.png';
 import liquidRootsLogo from '../assets/images/Liquid Roots Logo.png';
+import { allMenuItems as staticMenuItems } from '../data/menuData';
 import styles from './MenuPage.module.css';
 import scrollStyles from '../components/ScrollRevealMenu/ScrollRevealMenu.module.css';
-import { allMenuItems, categories } from '../data/menuData';
 
 const MarqueeText = ({ text, className, style }) => {
   const containerRef = React.useRef(null);
@@ -50,10 +51,107 @@ const MenuPage = () => {
   const [editNameValue, setEditNameValue] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [deletingIds, setDeletingIds] = useState([]);
-  const { addItem } = useCart();
+  const { items, addItem, updateQuantity } = useCart();
   const { user, token, deleteCustomBowl, saveCustomBowl, updateCustomBowl } = useAuth();
   const { showToast } = useToast();
   const [pastOrders, setPastOrders] = useState([]);
+
+  // Dynamic daily menu state
+  const [allMenuItems, setAllMenuItems] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loadingMenu, setLoadingMenu] = useState(true);
+  const [timeToNextMenu, setTimeToNextMenu] = useState('');
+  const [testDate, setTestDate] = useState('');
+
+  const categorizeIngredients = (ingredients) => {
+    if (!ingredients || !Array.isArray(ingredients)) return {};
+    const categories = {
+      'Protein': [],
+      'Curry of the day': [],
+      'Salads': [],
+      'Phytos': [],
+      'Complex Carbs': [],
+      'Base & Toppings': []
+    };
+    
+    ingredients.forEach(ing => {
+      const lower = ing.toLowerCase();
+      if (lower.includes('chicken') || lower.includes('paneer') || lower.includes('egg') || lower.includes('tofu') || lower.includes('fish')) {
+        categories['Protein'].push(ing);
+      } else if (lower.includes('rice') || lower.includes('quinoa') || lower.includes('millets') || lower.includes('oats')) {
+        categories['Complex Carbs'].push(ing);
+      } else if (lower.includes('dal') || lower.includes('rajma') || lower.includes('chana') || lower.includes('chickpea') || lower.includes('curry') || lower.includes('stew')) {
+        categories['Curry of the day'].push(ing);
+      } else if (lower.includes('salsa') || lower.includes('salad') || lower.includes('hummus') || lower.includes('beans') || lower.includes('cucumber') || lower.includes('lettuce') || lower.includes('tomato') || lower.includes('onion') || lower.includes('cabbage')) {
+        categories['Salads'].push(ing);
+      } else if (lower.includes('broccoli') || lower.includes('capsicum') || lower.includes('zucchini') || lower.includes('carrot') || lower.includes('cauliflower') || lower.includes('mushroom') || lower.includes('bhindi') || lower.includes('gobi') || lower.includes('bell pepper') || lower.includes('bellpeper') || lower.includes('bellpeppers')) {
+        categories['Phytos'].push(ing);
+      } else {
+        categories['Base & Toppings'].push(ing);
+      }
+    });
+    
+    const result = {};
+    for (const [key, value] of Object.entries(categories)) {
+      if (value.length > 0) result[key] = value;
+    }
+    return result;
+  };
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        setLoadingMenu(true);
+        const data = await apiGetDailyMenu(testDate || null);
+        const mergedItems = (data.menuItems || []).map(backendItem => {
+          const frontendItem = staticMenuItems.find(i => i.id === backendItem.id);
+          return {
+            ...backendItem,
+            image: frontendItem ? frontendItem.image : null
+          };
+        });
+        setAllMenuItems(mergedItems);
+        setCategories(data.categories || []);
+      } catch (err) {
+        console.error("Failed to load daily menu:", err);
+        showToast("Failed to load daily menu", "error");
+      } finally {
+        setLoadingMenu(false);
+      }
+    };
+    fetchMenu();
+  }, [showToast, testDate]);
+
+  useEffect(() => {
+    const calcTime = () => {
+      const now = new Date();
+      const dateObj = testDate ? new Date(testDate) : now;
+      const dayNum = dateObj.getDay();
+      
+      // Sunday (0) and Saturday (6) are closed
+      if (dayNum === 0 || dayNum === 6) {
+        setTimeToNextMenu('Closed Today');
+        return;
+      }
+      
+      const tomorrow = new Date(now);
+      tomorrow.setHours(24, 0, 0, 0); // Midnight tonight
+      const diff = tomorrow - now;
+      
+      if (diff <= 0) {
+        window.location.reload();
+      } else {
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+        setTimeToNextMenu(`${hours}h ${mins}m ${secs}s`);
+      }
+    };
+    
+    calcTime();
+    const interval = setInterval(calcTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (user && token) {
@@ -208,10 +306,72 @@ const MenuPage = () => {
 
 
 
+  const handleTestDayChange = (e) => {
+    setTestDate(e.target.value);
+  };
+
+  const isWeekend = testDate ? (new Date(testDate).getUTCDay() === 0 || new Date(testDate).getUTCDay() === 6) : (new Date().getDay() === 0 || new Date().getDay() === 6);
+
+  const customLabel = (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginBottom: 'var(--space-md)' }}>
+      <span style={{ 
+        fontFamily: 'var(--font-body)', fontSize: 'var(--fs-label)', fontWeight: 600, 
+        textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--terracotta)' 
+      }}>
+        Our Menu
+      </span>
+      {isWeekend ? (
+        <div style={{
+          backgroundColor: 'var(--terracotta)', color: 'white', padding: '6px 16px',
+          borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+          <span>⛔ Closed on Weekends (No Checkout)</span>
+        </div>
+      ) : timeToNextMenu && (
+        <div style={{
+          backgroundColor: 'var(--forest-green)', color: 'white', padding: '6px 16px',
+          borderRadius: '20px', fontSize: '0.85rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+          <span>🕒 Daily Menu changes in: {timeToNextMenu}</span>
+        </div>
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+        <span style={{ fontSize: '0.8rem', color: 'var(--espresso-soft)', fontWeight: 600 }}>TEST OVERRIDE:</span>
+        <select 
+          value={testDate} 
+          onChange={handleTestDayChange}
+          style={{
+            padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--border-light)',
+            fontSize: '0.8rem', background: 'white', color: 'var(--espresso)', cursor: 'pointer'
+          }}
+        >
+          <option value="">Today (Default)</option>
+          <option value="2024-01-01">Monday</option>
+          <option value="2024-01-02">Tuesday</option>
+          <option value="2024-01-03">Wednesday</option>
+          <option value="2024-01-04">Thursday</option>
+          <option value="2024-01-05">Friday</option>
+          <option value="2024-01-06">Saturday</option>
+          <option value="2024-01-07">Sunday</option>
+        </select>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <main className={styles.menuPage}>
-        <motion.div 
+
+        {loadingMenu ? (
+          <div style={{ textAlign: 'center', padding: '100px', color: 'var(--text-dark)', fontSize: '1.2rem' }}>
+            Loading today's menu...
+          </div>
+        ) : (
+          <>
+            <motion.div 
+
           className={styles.menuHero}
           custom={0}
           initial="hidden"
@@ -219,8 +379,8 @@ const MenuPage = () => {
           variants={fadeUpVariants}
         >
           <SectionHeading 
-            label="Our Menu" 
-            heading="Nourish your body, fuel your day." 
+            label={customLabel}
+            heading="Nourish your body, fuel your day."  
             italicWord="fuel" 
             align="center" 
           />
@@ -528,23 +688,31 @@ const MenuPage = () => {
 
         <AnimatePresence>
           {selectedItem && (
-            <div style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-md)'}} onClick={() => setSelectedItem(null)}>
+            <motion.div 
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              transition={{duration: 0.2}}
+              style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-md)', willChange: 'opacity'}} 
+              onClick={() => setSelectedItem(null)}
+            >
               <motion.div 
-                initial={{opacity: 0, y: 50, scale: 0.9}}
+                initial={{opacity: 0, y: 40, scale: 0.95}}
                 animate={{opacity: 1, y: 0, scale: 1}}
-                exit={{opacity: 0, scale: 0.9, y: 20}}
+                exit={{opacity: 0, scale: 0.95, y: 20}}
+                transition={{ type: 'spring', damping: 25, stiffness: 350 }}
                 onClick={e => e.stopPropagation()}
-                style={{background: 'var(--white)', borderRadius: '24px', width: '100%', maxWidth: '420px', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', display: 'flex', flexDirection: 'column', maxHeight: '90vh'}}
+                style={{background: 'var(--white)', borderRadius: '24px', width: '100%', maxWidth: '600px', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', display: 'flex', flexDirection: 'column', maxHeight: '90vh', willChange: 'transform, opacity'}}
               >
-                <div style={{position: 'relative', height: '180px', background: 'var(--cream-light)', overflow: 'hidden'}}>
+                <div style={{position: 'relative', height: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '350px' : '150px', background: 'var(--cream-light)', overflow: 'hidden', flexShrink: 0}}>
                   <button onClick={() => { setSelectedItem(null); setIsEditingName(false); }} style={{position: 'absolute', top: '12px', right: '12px', background: 'var(--white)', border: 'none', width: '36px', height: '36px', borderRadius: '50%', fontSize: '1.2rem', cursor: 'pointer', color: 'var(--espresso)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.5)', zIndex: 10, fontWeight: 'bold'}}>×</button>
                   <motion.div
-                    initial={{ scale: 1.1 }}
+                    initial={{ scale: 1.15 }}
                     animate={{ scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                    style={{width: '100%', height: '100%'}}
+                    transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                    style={{width: '100%', height: '100%', willChange: 'transform'}}
                   >
-                    <img src={selectedItem.image} alt={selectedItem.name} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                    <img src={selectedItem.image} alt={selectedItem.name} style={{width: '100%', height: '100%', objectFit: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? 'contain' : 'cover', padding: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '32px' : '0', mixBlendMode: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? 'multiply' : 'normal', willChange: 'transform', transform: 'translateZ(0)'}} />
                   </motion.div>
                   <div style={{position: 'absolute', bottom: 0, left: 0, width: '100%', height: '70%', background: 'linear-gradient(transparent, rgba(0,0,0,0.8))'}}></div>
                   <div style={{position: 'absolute', bottom: '16px', left: '20px', right: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end'}}>
@@ -575,19 +743,21 @@ const MenuPage = () => {
                     )}
                   </div>
                 </div>
-                <div style={{padding: 'var(--space-lg)', overflowY: 'auto', flex: 1}}>
+                <div style={{display: 'flex', flexWrap: 'wrap', overflowY: 'auto', flex: 1}}>
+                  {/* Left Side: Ingredients & Description */}
+                  <div style={{flex: '1 1 50%', minWidth: '250px', padding: 'var(--space-md)', borderRight: '1px solid var(--border-light)'}}>
                   
                   {(selectedItem.isCustomBowl || selectedItem.customIngredients) ? (
                     <>
                       <h4 style={{marginBottom: 'var(--space-sm)', color: 'var(--espresso-soft)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '1px'}}>Bowl Contents</h4>
                       <div style={{display: 'flex', flexDirection: 'column', gap: 'var(--space-md)'}}>
                         {[
-                          { id: 'base', label: 'Base' },
-                          { id: 'essentials', label: 'Essentials' },
+                          { id: 'complexCarbs', label: 'Complex carbs' },
                           { id: 'protein', label: 'Protein' },
-                          { id: 'toppings', label: 'Toppings' },
-                          { id: 'cheeseAndNuts', label: 'Cheese & Nuts' },
-                          { id: 'dressing', label: 'Dressing & Sides' }
+                          { id: 'phytos', label: 'Phytos' },
+                          { id: 'curry', label: 'Curry of the day' },
+                          { id: 'salads', label: 'Salads' },
+                          { id: 'dressing', label: 'Dressing (home made)' }
                         ].map(cat => {
                           const items = (selectedItem.customIngredients && selectedItem.customIngredients[cat.id]) || [];
                           return (
@@ -613,26 +783,21 @@ const MenuPage = () => {
                     <>
                       {selectedItem.ingredients && (
                         <div style={{marginBottom: 'var(--space-md)'}}>
-                          <h4 style={{margin: '0 0 4px 0', color: 'var(--espresso)'}}>Ingredients</h4>
-                          <p style={{color: 'var(--espresso-soft)', fontSize: '0.9rem', lineHeight: '1.4', margin: 0}}>{selectedItem.ingredients.join(', ')}</p>
-                        </div>
-                      )}
-                      
-                      {selectedItem.nutrition && (
-                        <div style={{marginBottom: 'var(--space-md)'}}>
-                          <h4 style={{margin: '0 0 8px 0', color: 'var(--espresso)'}}>Nutritional Info</h4>
-                          <div style={{display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px'}}>
-                            <span style={{background: 'rgba(44, 85, 48, 0.1)', color: 'var(--forest-green)', padding: '4px 10px', borderRadius: '16px', fontSize: '0.85rem', fontWeight: 'bold'}}>Protein: {selectedItem.nutrition.protein}</span>
-                            <span style={{background: 'rgba(61, 46, 38, 0.08)', color: 'var(--espresso-soft)', padding: '4px 10px', borderRadius: '16px', fontSize: '0.85rem', fontWeight: 'bold'}}>Carbs: {selectedItem.nutrition.carbs}</span>
-                            <span style={{background: '#ffebe6', color: 'var(--terracotta)', padding: '4px 10px', borderRadius: '16px', fontSize: '0.85rem', fontWeight: 'bold'}}>Fat: {selectedItem.nutrition.fat}</span>
+                          <h4 style={{margin: '0 0 12px 0', color: 'var(--espresso)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '1px'}}>Bowl Ingredients</h4>
+                          <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                            {Object.entries(categorizeIngredients(selectedItem.ingredients)).map(([catName, items]) => (
+                              <div key={catName}>
+                                <span style={{display: 'block', fontWeight: 'bold', color: 'var(--forest-green)', marginBottom: '4px', fontSize: '0.85rem'}}>{catName}</span>
+                                <div style={{display: 'flex', flexWrap: 'wrap', gap: '6px'}}>
+                                  {items.map((item, idx) => (
+                                    <span key={idx} style={{background: 'var(--cream-light)', border: '1px solid var(--border-light)', color: 'var(--espresso-soft)', padding: '4px 10px', borderRadius: '16px', fontSize: '0.8rem'}}>
+                                      {item}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                          {selectedItem.nutrition.vitamins && (
-                            <div style={{display: 'flex', gap: '4px', flexWrap: 'wrap'}}>
-                              {selectedItem.nutrition.vitamins.map(v => (
-                                <span key={v} style={{background: 'var(--cream-light)', color: 'var(--espresso-soft)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', border: '1px solid var(--border-light)'}}>{v}</span>
-                              ))}
-                            </div>
-                          )}
                         </div>
                       )}
                       
@@ -641,9 +806,9 @@ const MenuPage = () => {
                       )}
                       
                       {selectedItem.tags && selectedItem.tags.length > 0 && (
-                        <div style={{display: 'flex', flexWrap: 'wrap', gap: '6px'}}>
+                        <div style={{display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: 'var(--space-md)'}}>
                           {selectedItem.tags.map(tag => (
-                            <span key={tag} style={{background: 'var(--cream)', border: '1px solid var(--border-light)', color: 'var(--espresso-soft)', padding: '4px 10px', borderRadius: '16px', fontSize: '0.8rem'}}>
+                            <span key={tag} style={{background: 'var(--sage-light)', color: 'var(--forest-green)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold'}}>
                               {tag}
                             </span>
                           ))}
@@ -651,8 +816,59 @@ const MenuPage = () => {
                       )}
                     </>
                   )}
+                  </div>
 
-                  <div style={{marginTop: 'var(--space-xl)', display: 'flex', gap: 'var(--space-sm)'}}>
+                  {/* Right Side: Nutrition */}
+                  <div style={{flex: '1 1 50%', minWidth: '250px', padding: 'var(--space-md)', background: '#F8FAFC'}}>
+                    
+                    {selectedItem.nutrition ? (
+                      <div style={{marginBottom: 'var(--space-md)'}}>
+                        <h4 style={{margin: '0 0 12px 0', color: 'var(--espresso)'}}>Nutritional Info</h4>
+                        
+                        <h5 style={{margin: '0 0 6px 0', color: 'var(--espresso-soft)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px'}}>Macros</h5>
+                        <div style={{ display: 'flex', flexDirection: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? 'row' : 'column', flexWrap: 'wrap', gap: '8px', fontSize: '0.85rem', color: 'var(--text-dark)', marginBottom: '16px' }}>
+                          <div style={{display: 'flex', flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '1 1 45%' : '1', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.7)', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0'}}>
+                            <span><span style={{color: 'var(--terracotta)', fontWeight: 'bold'}}>🔥 Calories:</span></span> <span>{selectedItem.nutrition.calories || 0}kcal</span>
+                          </div>
+                          <div style={{display: 'flex', flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '1 1 45%' : '1', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.7)', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0'}}>
+                            <span><span style={{color: 'var(--forest-green)', fontWeight: 'bold'}}>🥩 Protein:</span></span> <span>{selectedItem.nutrition.protein || 0}g</span>
+                          </div>
+                          <div style={{display: 'flex', flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '1 1 45%' : '1', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.7)', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0'}}>
+                            <span><span style={{color: '#D4AF37', fontWeight: 'bold'}}>🌾 Carbs:</span></span> <span>{selectedItem.nutrition.carbs || 0}g</span>
+                          </div>
+                          <div style={{display: 'flex', flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '1 1 45%' : '1', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.7)', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0'}}>
+                            <span><span style={{color: 'var(--espresso-soft)', fontWeight: 'bold'}}>🥑 Fat:</span></span> <span>{selectedItem.nutrition.fat || 0}g</span>
+                          </div>
+                        </div>
+                        
+                        <h5 style={{margin: '12px 0 6px 0', color: 'var(--espresso-soft)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px'}}>Vitamins & Minerals</h5>
+                        <div style={{ display: 'flex', flexDirection: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? 'row' : 'column', flexWrap: 'wrap', gap: '8px', fontSize: '0.85rem', color: 'var(--text-dark)' }}>
+                          <div style={{display: 'flex', flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '1 1 45%' : '1', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.7)', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0'}}>
+                            <span><span style={{color: 'var(--terracotta)', fontWeight: 'bold'}}>💊 Vit C:</span></span> <span>{selectedItem.nutrition.vitC || 0}mg</span>
+                          </div>
+                          <div style={{display: 'flex', flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '1 1 45%' : '1', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.7)', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0'}}>
+                            <span><span style={{color: 'var(--forest-green)', fontWeight: 'bold'}}>💊 Vit E:</span></span> <span>{selectedItem.nutrition.vitE || 0}mg</span>
+                          </div>
+                          <div style={{display: 'flex', flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '1 1 45%' : '1', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.7)', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0'}}>
+                            <span><span style={{color: '#D4AF37', fontWeight: 'bold'}}>💊 Folate:</span></span> <span>{selectedItem.nutrition.folate || 0}mcg</span>
+                          </div>
+                          <div style={{display: 'flex', flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '1 1 45%' : '1', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.7)', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0'}}>
+                            <span><span style={{color: 'var(--espresso-soft)', fontWeight: 'bold'}}>💊 Vit B6:</span></span> <span>{selectedItem.nutrition.vitB6 || 0}mg</span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (selectedItem.isCustomBowl || selectedItem.customIngredients) ? (
+                      <div style={{marginBottom: 'var(--space-md)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--espresso-soft)', textAlign: 'center'}}>
+                        <span style={{fontSize: '2rem', marginBottom: '12px'}}>🥗</span>
+                        <p style={{fontSize: '0.9rem', fontStyle: 'italic', maxWidth: '200px'}}>Edit and save this bowl to generate its nutritional information!</p>
+                      </div>
+                    ) : null}
+                    
+                  </div>
+                </div>
+
+
+                  <div style={{padding: 'var(--space-md)', background: 'var(--white)', borderTop: '1px solid var(--border-light)', display: 'flex', gap: 'var(--space-sm)', flexShrink: 0}}>
                     {(selectedItem.isCustomBowl || selectedItem.customIngredients) && (
                       <>
                         <button 
@@ -669,18 +885,66 @@ const MenuPage = () => {
                         >Edit Bowl</button>
                       </>
                     )}
-                    <button 
-                      onClick={handleModalAddToCart}
-                      style={{flex: 1, padding: '12px', background: 'var(--forest-green)', border: 'none', borderRadius: '30px', color: 'var(--white)', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem', transition: 'transform 0.2s', boxShadow: 'var(--shadow-md)'}}
-                      onMouseOver={e => e.target.style.transform = 'translateY(-2px)'}
-                      onMouseOut={e => e.target.style.transform = 'translateY(0)'}
-                    >Add to Cart</button>
+                    {(() => {
+                      const itemId = selectedItem.id || selectedItem._id;
+                      const cartItem = items.find(i => (i.id === itemId || i._id === itemId));
+                      const quantity = cartItem ? cartItem.quantity : 0;
+                      
+                      const handleIncrease = (e) => {
+                        e.stopPropagation();
+                        if (quantity === 0) {
+                          addItem(selectedItem);
+                          showToast(`${selectedItem.name} added to cart!`);
+                        } else {
+                          updateQuantity(itemId, quantity + 1);
+                        }
+                      };
+
+                      const handleDecrease = (e) => {
+                        e.stopPropagation();
+                        if (quantity > 0) {
+                          updateQuantity(itemId, quantity - 1);
+                        }
+                      };
+
+                      return quantity === 0 ? (
+                        <button
+                          className={scrollStyles.mealOrderBtn}
+                          onClick={handleIncrease}
+                          style={{ 
+                            flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '0 0 auto' : 1, 
+                            margin: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '0 auto' : '0',
+                            height: '45px', 
+                            borderRadius: '30px',
+                            minWidth: '150px'
+                          }}
+                        >
+                          <span className={scrollStyles.mealOrderBtnIcon}>🛒</span>
+                          <span className={scrollStyles.mealOrderBtnText}>Add to Cart</span>
+                        </button>
+                      ) : (
+                        <div className={scrollStyles.mealQuantityControl} style={{ 
+                          height: '45px', 
+                          borderRadius: '30px', 
+                          flex: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '0 0 auto' : 1,
+                          margin: (selectedItem.category === 'Drinks' || selectedItem.category === 'Home brewed drinks') ? '0 auto' : '0',
+                          minWidth: '150px',
+                          justifyContent: 'space-between',
+                          padding: '0 8px'
+                        }}>
+                          <button className={scrollStyles.mqBtn} onClick={handleDecrease} style={{fontSize: '1.2rem', padding: '0 15px'}}>−</button>
+                          <SlotCounter value={quantity} className={scrollStyles.mqCount} prefix="" />
+                          <button className={scrollStyles.mqBtn} onClick={handleIncrease} style={{fontSize: '1.2rem', padding: '0 15px'}}>+</button>
+                        </div>
+                      );
+                    })()}
                   </div>
-                </div>
               </motion.div>
-            </div>
+            </motion.div>
           )}
         </AnimatePresence>
+          </>
+        )}
       </main>
       <Footer />
     </>

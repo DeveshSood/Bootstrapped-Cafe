@@ -28,6 +28,7 @@ import ContactPage from './pages/ContactPage';
 import CareersPage from './pages/CareersPage';
 import LegalPage from './pages/LegalPage';
 import CustomSaladPage from './pages/CustomSaladPage';
+import KitchenDashboard from './pages/KitchenDashboard';
 
 const AppContent = () => {
   const [cartOpen, setCartOpen] = useState(false);
@@ -115,6 +116,11 @@ const AppContent = () => {
           <Route path="/restaurant" element={
             <ProtectedRoute requireStaff>
               <PageTransition><RestaurantDashboard /></PageTransition>
+            </ProtectedRoute>
+          } />
+          <Route path="/kitchen" element={
+            <ProtectedRoute requireStaff>
+              <PageTransition><KitchenDashboard /></PageTransition>
             </ProtectedRoute>
           } />
           <Route path="/admin" element={

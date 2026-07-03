@@ -18,7 +18,7 @@ const UserMenu = () => {
       const fetchCount = async () => {
         try {
           const token = localStorage.getItem('token');
-          const res = await fetch('/api/orders', {
+          const res = await fetch('/api/orders/all', {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -32,7 +32,9 @@ const UserMenu = () => {
       };
       fetchCount();
 
-      const eventSource = new EventSource('/api/orders/stream');
+      // SSE with tokens in EventSource requires a polyfill or sending it in query. 
+      // For now, since it requires auth, we pass it via query if backend supports it, otherwise it fails 401.
+      const eventSource = new EventSource(`/api/orders/dashboard/stream?token=${localStorage.getItem('token')}`);
       eventSource.onmessage = (event) => {
         const payload = JSON.parse(event.data);
         if (payload.type === 'new_order' || payload.type === 'status_update') {
@@ -116,13 +118,19 @@ const UserMenu = () => {
             </Link>
 
             {isStaff && (
-              <Link to="/restaurant" className={styles.dropdownItem} onClick={() => setOpen(false)}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-                Kitchen Dashboard
-                {activeOrdersCount > 0 && (
-                  <span className={styles.dropdownBadge}>{activeOrdersCount}</span>
-                )}
-              </Link>
+              <>
+                <Link to="/restaurant" className={styles.dropdownItem} onClick={() => setOpen(false)}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                  Orders Dashboard
+                  {activeOrdersCount > 0 && (
+                    <span className={styles.dropdownBadge}>{activeOrdersCount}</span>
+                  )}
+                </Link>
+                <Link to="/kitchen" className={styles.dropdownItem} onClick={() => setOpen(false)}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  Menu Dashboard
+                </Link>
+              </>
             )}
 
             {isAdmin && (

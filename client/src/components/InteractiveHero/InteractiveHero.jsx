@@ -284,14 +284,15 @@ export default function InteractiveHero({ isLoaded = true }) {
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.0, delay: 0.2, ease: 'easeOut' }}
+                transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
                 style={{
                   color: '#f5d061',
                   fontSize: '0.85rem',
                   letterSpacing: '2px',
                   textTransform: 'uppercase',
                   fontWeight: '600',
-                  marginBottom: '16px'
+                  marginBottom: '16px',
+                  willChange: 'transform, opacity'
                 }}
               >
                 Work & Wellness Combined
@@ -299,7 +300,7 @@ export default function InteractiveHero({ isLoaded = true }) {
               <motion.h1
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.0, delay: 0.4, ease: 'easeOut' }}
+                transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
                 style={{
                   fontFamily: '"Playfair Display", serif',
                   fontSize: '4.5rem',
@@ -307,7 +308,8 @@ export default function InteractiveHero({ isLoaded = true }) {
                   margin: 0,
                   fontWeight: '700',
                   color: '#fff',
-                  textShadow: '0 4px 15px rgba(0,0,0,0.8)'
+                  textShadow: '0 4px 15px rgba(0,0,0,0.8)',
+                  willChange: 'transform, opacity'
                 }}
               >
                 HEALTHY FOOD MEETS <span style={{ color: '#f5d061', fontStyle: 'italic', fontWeight: '400' }}>COWORKING</span>
@@ -315,13 +317,14 @@ export default function InteractiveHero({ isLoaded = true }) {
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.0, delay: 0.6, ease: 'easeOut' }}
+                transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
                 style={{
                   marginTop: '24px',
                   fontSize: '1.1rem',
                   lineHeight: '1.6',
                   color: 'rgba(255,255,255,0.9)',
-                  maxWidth: '500px'
+                  maxWidth: '500px',
+                  willChange: 'transform, opacity'
                 }}
               >
                 A premium coworking space designed for students, freelancers, and teams who value wellness as much as productivity.
@@ -331,8 +334,8 @@ export default function InteractiveHero({ isLoaded = true }) {
               <motion.div 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.0, delay: 0.8, ease: 'easeOut' }}
-                style={{ marginTop: '40px', display: 'flex', gap: '16px' }}
+                transition={{ duration: 0.6, delay: 0.5, ease: 'easeOut' }}
+                style={{ marginTop: '40px', display: 'flex', gap: '16px', willChange: 'transform, opacity' }}
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
               >
