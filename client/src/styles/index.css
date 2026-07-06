@@ -289,3 +289,7 @@ input, textarea, select {
    Tablet:  768px – 1200px
    Desktop: > 1200px
    ============================================ */
+
+html {
+  scroll-behavior: smooth;
+}

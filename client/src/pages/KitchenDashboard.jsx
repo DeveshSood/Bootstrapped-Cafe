@@ -215,13 +215,15 @@ export default function KitchenDashboard() {
               </div>
             </div>
             
-            <Button 
-              variant="outlined" 
-              style={{ fontSize: '0.85rem', padding: '6px 20px', borderColor: 'var(--terracotta)', color: 'var(--terracotta)', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-              onClick={() => openOverrideModal(1)}
-            >
-              CREATE OVERRIDE
-            </Button>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <Button 
+                variant="outlined" 
+                style={{ fontSize: '0.85rem', padding: '6px 20px', borderColor: 'var(--terracotta)', color: 'var(--terracotta)', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                onClick={() => openOverrideModal(1)}
+              >
+                CREATE OVERRIDE
+              </Button>
+            </div>
           </div>
           
           {/* 5 Column Grid */}
@@ -252,7 +254,6 @@ export default function KitchenDashboard() {
 
         </div>
       </motion.div>
-      
       {/* Override Modal */}
       <AnimatePresence>
         {overrideModalOpen && (

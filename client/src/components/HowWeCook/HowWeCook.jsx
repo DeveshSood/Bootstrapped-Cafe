@@ -3,11 +3,16 @@ import { motion } from 'framer-motion';
 import SectionHeading from '../common/SectionHeading';
 import styles from './HowWeCook.module.css';
 
+import veganBowl from '../../assets/images/vegan bowl.jpg';
+import paneerBowl from '../../assets/images/paneer bowl.jpg';
+import chickenBowl from '../../assets/images/Chicken Trail Bowl.jpg';
+import eggBowl from '../../assets/images/egg bowl.jpg';
+
 const timelineSteps = [
-  { icon: '🌿', title: 'Sourced Responsibly', desc: 'We work with local farmers and ethical suppliers who care for our planet.', img: 'https://images.unsplash.com/photo-1595858801538-466d0ebf0f9c?auto=format&fit=crop&q=80&w=800' },
-  { icon: '⚖️', title: 'Nutritionally Balanced', desc: 'Every dish is designed to nourish your body and mind.', img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=800' },
-  { icon: '🗓️', title: 'Seasonal Ingredients', desc: "We celebrate nature's finest, handpicked each season.", img: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=800' },
-  { icon: '♻️', title: 'Zero Waste Philosophy', desc: 'We minimize waste and make mindful choices every day.', img: 'https://images.unsplash.com/photo-1505935428862-770b6f24f629?auto=format&fit=crop&q=80&w=800' },
+  { icon: '🌿', title: 'Sourced Responsibly', desc: 'We work with local farmers and ethical suppliers who care for our planet.', img: veganBowl },
+  { icon: '⚖️', title: 'Nutritionally Balanced', desc: 'Every dish is designed to nourish your body and mind.', img: paneerBowl },
+  { icon: '🗓️', title: 'Seasonal Ingredients', desc: "We celebrate nature's finest, handpicked each season.", img: chickenBowl },
+  { icon: '♻️', title: 'Zero Waste Philosophy', desc: 'We minimize waste and make mindful choices every day.', img: eggBowl },
 ];
 
 const StoryRow = ({ step, index }) => {

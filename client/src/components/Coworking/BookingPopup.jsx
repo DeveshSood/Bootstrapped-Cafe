@@ -13,24 +13,33 @@ const BookingPopup = ({ isOpen, onClose, defaultPlan }) => {
   const [quantity, setQuantity] = useState(1);
   const [days, setDays] = useState(1);
   const [startDate, setStartDate] = useState('');
+  const [startTime, setStartTime] = useState('');
   const [status, setStatus] = useState('idle'); // idle | processing | success | error
+
+  // Determine plan type from suffix
+  const isHourly = defaultPlan?.suffix === '/ hr';
+  const isMonthly = defaultPlan?.suffix === '/ mo';
 
   // Reset form when opened with a new plan
   useEffect(() => {
     if (isOpen) {
-      setType('one-time');
+      setType(isMonthly ? 'subscription' : 'one-time');
       setQuantity(1);
-      setDays(1);
+      setDays(1); // will be used as hours for hourly plans
       setStatus('idle');
       setStartDate('');
+      setStartTime('');
     }
-  }, [isOpen, defaultPlan]);
+  }, [isOpen, defaultPlan, isMonthly]);
 
-  const pricePerDay = defaultPlan?.basePrice || 0;
-  const durationDays = type === 'subscription' ? 30 : days;
-  // Apply a discount for monthly subscription if needed? Let's just use 20 days equivalent for monthly
-  const multiplier = type === 'subscription' ? 20 : days;
-  const totalPrice = pricePerDay * quantity * multiplier;
+  const pricePerUnit = defaultPlan?.basePrice || 0;
+  
+  // For hourly, days state variable is actually used as 'hours'
+  // For monthly, it's a fixed monthly price per person
+  const multiplier = isMonthly ? 1 : days; 
+  const durationDays = isMonthly ? 30 : days; // For backend subscription logic
+
+  const totalPrice = pricePerUnit * quantity * multiplier;
 
   const handlePayment = async () => {
     if (!isAuthenticated) {
@@ -52,8 +61,10 @@ const BookingPopup = ({ isOpen, onClose, defaultPlan }) => {
           planName: defaultPlan.title,
           price: totalPrice,
           startDate: startDate,
+          startTime: isHourly ? startTime : undefined,
           quantity: quantity,
-          durationDays: durationDays
+          durationDays: isHourly ? undefined : durationDays,
+          durationHours: isHourly ? days : undefined
         }),
       });
       
@@ -86,7 +97,7 @@ const BookingPopup = ({ isOpen, onClose, defaultPlan }) => {
         amount: rzpOrderData.amount || (totalPrice * 100),
         currency: rzpOrderData.currency || 'INR',
         name: 'Bootstrapped Cafe',
-        description: `${type === 'subscription' ? 'Subscription' : 'One-time Pass'}: ${defaultPlan.title}`,
+        description: `${isMonthly ? 'Subscription' : 'Booking'}: ${defaultPlan.title}`,
         order_id: rzpOrderData.id,
         handler: async (response) => {
           try {
@@ -155,7 +166,7 @@ const BookingPopup = ({ isOpen, onClose, defaultPlan }) => {
             <div className={styles.successState}>
               <div className={styles.checkIcon}>✓</div>
               <h2>Booking Confirmed!</h2>
-              <p>Your {type === 'subscription' ? 'monthly subscription' : 'one-time pass'} for <strong>{defaultPlan.title}</strong> is active.</p>
+              <p>Your {isMonthly ? 'monthly subscription' : 'booking'} for <strong>{defaultPlan.title}</strong> is active.</p>
               <Button variant="filled" onClick={() => { onClose(); navigate('/profile?tab=subscriptions'); }}>View in Profile</Button>
             </div>
           ) : (
@@ -168,23 +179,6 @@ const BookingPopup = ({ isOpen, onClose, defaultPlan }) => {
               <div className={styles.content}>
                 <p className={styles.desc}>{defaultPlan.desc}</p>
                 
-                <div className={styles.typeSelector}>
-                  <button 
-                    className={`${styles.typeBtn} ${type === 'one-time' ? styles.activeType : ''}`}
-                    onClick={() => setType('one-time')}
-                  >
-                    <span>Daily Pass</span>
-                    <small>₹{defaultPlan.basePrice} / day</small>
-                  </button>
-                  <button 
-                    className={`${styles.typeBtn} ${type === 'subscription' ? styles.activeType : ''}`}
-                    onClick={() => setType('subscription')}
-                  >
-                    <span>Monthly Subscription</span>
-                    <small>₹{defaultPlan.basePrice * 20} / month</small>
-                  </button>
-                </div>
-
                 <div className={styles.inputs}>
                   <div className={styles.inputGroup}>
                     <label>For how many people?</label>
@@ -195,15 +189,26 @@ const BookingPopup = ({ isOpen, onClose, defaultPlan }) => {
                     </div>
                   </div>
 
-                  {type === 'one-time' && (
+                  {isHourly && (
                     <div className={styles.inputGroup}>
-                      <label>For how many days?</label>
+                      <label>For how many hours?</label>
                       <div className={styles.qtyControl}>
                         <button onClick={() => setDays(Math.max(1, days - 1))}>-</button>
                         <span>{days}</span>
                         <button onClick={() => setDays(days + 1)}>+</button>
                       </div>
                     </div>
+                  )}
+
+                  {!isHourly && !isMonthly && (
+                     <div className={styles.inputGroup}>
+                       <label>For how many days?</label>
+                       <div className={styles.qtyControl}>
+                         <button onClick={() => setDays(Math.max(1, days - 1))}>-</button>
+                         <span>{days}</span>
+                         <button onClick={() => setDays(days + 1)}>+</button>
+                       </div>
+                     </div>
                   )}
 
                   <div className={styles.inputGroup}>
@@ -216,6 +221,18 @@ const BookingPopup = ({ isOpen, onClose, defaultPlan }) => {
                       className={styles.dateInput}
                     />
                   </div>
+
+                  {isHourly && (
+                    <div className={styles.inputGroup}>
+                      <label>Start Time</label>
+                      <input 
+                        type="time" 
+                        value={startTime} 
+                        onChange={e => setStartTime(e.target.value)} 
+                        className={styles.dateInput}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div className={styles.footer}>

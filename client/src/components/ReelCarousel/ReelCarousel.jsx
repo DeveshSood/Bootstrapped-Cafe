@@ -2,15 +2,24 @@ import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import styles from './ReelCarousel.module.css';
 
+import heroBg2 from '../../assets/images/hero-bg-2.jpg';
+import veganBowl from '../../assets/images/vegan bowl.jpg';
+import blackCoffee from '../../assets/images/BlackCoffee.jpeg';
+import coworkingSpace from '../../assets/images/Capsule Works - 3rd Floor - Bengaluru - 046.jpg';
+import blackTea from '../../assets/images/BlackTea.jpeg';
+import paneerBowl from '../../assets/images/paneer bowl.jpg';
+import heroBg3 from '../../assets/images/hero-bg-3.jpg';
+import cafeBg from '../../assets/images/cafe-bg.jpg';
+
 const combinedRow = [
-  { id: 1, title: 'Fresh Avocado', desc: 'Locally sourced', img: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&q=80&w=800' },
-  { id: 2, title: 'Protein Bowls', desc: 'Fuel your day', img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800' },
-  { id: 3, title: 'Matcha Moments', desc: 'Ceremonial grade', img: 'https://images.unsplash.com/photo-1515823662972-da6a2e4d3002?auto=format&fit=crop&q=80&w=800' },
-  { id: 4, title: 'Fire & Flavour', desc: 'Wood-fired perfection', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800' },
-  { id: 5, title: 'Finishing Touches', desc: 'Art on a plate', img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=800' },
-  { id: 6, title: 'Latte Art', desc: 'Poured with love', img: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=800' },
-  { id: 7, title: 'Morning Pastries', desc: 'Baked fresh daily', img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800' },
-  { id: 8, title: 'House Blend', desc: 'Rich and smooth', img: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=800' },
+  { id: 1, title: 'Coworking Spaces', desc: 'Work in peace', img: heroBg2 },
+  { id: 2, title: 'Fresh Bowls', desc: 'Locally sourced', img: veganBowl },
+  { id: 3, title: 'Signature Roasts', desc: 'Brewed to perfection', img: blackCoffee },
+  { id: 4, title: 'Collaborative Hubs', desc: 'Focus and create', img: coworkingSpace },
+  { id: 5, title: 'Kombucha & Tea', desc: 'Refresh your mind', img: blackTea },
+  { id: 6, title: 'Nutritious Meals', desc: 'Fuel your day', img: paneerBowl },
+  { id: 7, title: 'Community Events', desc: 'Connect & grow', img: heroBg3 },
+  { id: 8, title: 'Cafe Ambiance', desc: 'Relax and unwind', img: cafeBg },
 ];
 
 const MarqueeTrack = ({ items, direction = 1, speed = 40 }) => {

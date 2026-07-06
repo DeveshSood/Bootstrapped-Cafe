@@ -155,7 +155,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-xl); /* Increased for more separation */
 }
 
 .featureIcon {
@@ -171,15 +171,24 @@
 
 .featureTitle {
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   color: var(--espresso);
   margin: 0;
+  font-weight: 700;
+}
+
+.featureList {
+  flex: 1;
+  margin: 0 0 var(--space-md) 0;
+  padding-left: 1.25rem;
+  list-style-type: disc; /* Ensure bullets show */
 }
 
 .featureDesc {
   color: rgba(30, 24, 21, 0.7);
-  line-height: 1.6;
-  flex: 1;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  margin-bottom: 12px; /* Replaces flex gap */
 }
 
 .featureFooter {
@@ -197,6 +206,7 @@
   font-size: 1.5rem;
   color: var(--forest-green);
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .featurePrice span {

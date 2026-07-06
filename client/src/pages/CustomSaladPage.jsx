@@ -114,7 +114,7 @@ export default function CustomSaladPage() {
   const handleRemoveItem = (categoryId, item) => {
     setSelections(prev => {
       const current = [...prev[categoryId]];
-      const index = current.findIndex(i => i.id === item.id);
+      const index = current.findIndex(i => i.name === item.name);
       if (index !== -1) {
         current.splice(index, 1);
       }
@@ -160,11 +160,8 @@ export default function CustomSaladPage() {
       toast.error('Please select some ingredients first!');
       return;
     }
-    if (token) {
-      setIsAddModalOpen(true);
-    } else {
-      performAddToCart();
-    }
+    // Always show the modal so they have the option, and we prompt for login if needed
+    setIsAddModalOpen(true);
   };
 
   const performAddToCart = () => {
@@ -255,16 +252,14 @@ export default function CustomSaladPage() {
       {/* Left side content */}
       <div className={styles.mainContent}>
         
-        {user?.savedBowls?.length > 0 && (
-          <div style={{marginBottom: 'var(--space-xl)'}}>
-            <Button 
-              variant="outlined" 
-              onClick={() => navigate('/menu', { state: { viewMode: 'custom' } })}
-            >
-              ← Back to Saved Bowls
-            </Button>
-          </div>
-        )}
+        <div style={{marginBottom: 'var(--space-xl)'}}>
+          <Button 
+            variant="outlined" 
+            onClick={() => navigate('/menu', { state: { viewMode: 'custom' } })}
+          >
+            ← Back to My Saved Bowls
+          </Button>
+        </div>
 
         {/* Header and Tabs */}
         <div className={styles.headerControls}>
@@ -318,7 +313,7 @@ export default function CustomSaladPage() {
               <div className={styles.grid}>
 
                 {items.map(item => {
-                  const isSelected = selections[cat.id].some(i => i.id === item.id);
+                  const isSelected = selections[cat.id].some(i => i.name === item.name);
                   return (
                     <div 
                       key={item.id} 
@@ -327,7 +322,7 @@ export default function CustomSaladPage() {
                         if (isSelected) {
                           setSelections(prev => ({
                             ...prev,
-                            [cat.id]: prev[cat.id].filter(i => i.id !== item.id)
+                            [cat.id]: prev[cat.id].filter(i => i.name !== item.name)
                           }));
                         } else {
                           handleAddItem(cat.id, item);
@@ -350,23 +345,53 @@ export default function CustomSaladPage() {
       {/* Sidebar Preview */}
       <div className={styles.previewSidebar}>
         <div className={styles.previewHeader} style={{borderBottom: 'none', paddingBottom: 0}}>
-          <input 
-            type="text"
-            value={bowlName}
-            onChange={e => setBowlName(e.target.value)}
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1.5rem',
-              color: 'var(--espresso)',
-              background: 'transparent',
-              border: 'none',
-              borderBottom: '1px dashed var(--border-light)',
-              width: '100%',
-              textAlign: 'center',
-              outline: 'none',
-              paddingBottom: '4px'
-            }}
-          />
+          <div style={{display: 'flex', alignItems: 'center', gap: '8px', width: '100%'}}>
+            <div style={{position: 'relative', flex: 1}}>
+              <input 
+                type="text"
+                value={bowlName}
+                onChange={e => setBowlName(e.target.value)}
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1.5rem',
+                  color: 'var(--espresso)',
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: '1px dashed var(--border-light)',
+                  width: '100%',
+                  textAlign: 'center',
+                  outline: 'none',
+                  paddingBottom: '4px',
+                  paddingRight: '28px'
+                }}
+              />
+              <span style={{
+                position: 'absolute',
+                right: '4px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: '0.9rem',
+                color: 'var(--espresso-soft)',
+                opacity: 0.5,
+                pointerEvents: 'none'
+              }}>✏️</span>
+            </div>
+            <button 
+              onClick={() => {
+                if (!token) {
+                  toast.error('Please sign in to save bowls.');
+                  return;
+                }
+                handleSaveBowl();
+              }} 
+              title="Save Bowl" 
+              style={{background: 'none', border: 'none', fontSize: '1.4rem', cursor: 'pointer', opacity: 0.8, transition: 'opacity 0.2s'}}
+              onMouseOver={e => e.target.style.opacity = 1}
+              onMouseOut={e => e.target.style.opacity = 0.8}
+            >
+              ❤️
+            </button>
+          </div>
         </div>
 
         {!hasSelections ? (
@@ -389,11 +414,11 @@ export default function CustomSaladPage() {
                     exit={{ opacity: 0, x: -20 }}
                   >
                     <div className={styles.previewCatTitle}>{cat.label}</div>
-                    {Array.from(new Set(items.map(i => i.id))).map(id => {
-                      const item = items.find(i => i.id === id);
-                      const count = items.filter(i => i.id === id).length;
+                    {Array.from(new Set(items.map(i => i.name))).map(name => {
+                      const item = items.find(i => i.name === name);
+                      const count = items.filter(i => i.name === name).length;
                       return (
-                        <div key={item.id} className={styles.previewItem}>
+                        <div key={item.id + item.name} className={styles.previewItem}>
                           <div style={{display:'flex', flexDirection:'column', gap:'4px'}}>
                             <span>{item.name}</span>
                             <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
@@ -418,12 +443,12 @@ export default function CustomSaladPage() {
       {/* Bottom Bar */}
       <div className={styles.bottomBar} style={{flexDirection: 'column', gap: '12px'}}>
         <div style={{display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--forest-green)', background: 'var(--sage-light)', padding: '6px 16px', borderRadius: '20px'}}>
-          <span>Protein: {totalNutrition.protein}g</span>
-          <span>Carbs: {totalNutrition.carbs}g</span>
-          <span>Fat: {totalNutrition.fat}g</span>
-          <span>Cals: {totalNutrition.calories}</span>
+          <span>Protein ~ {totalNutrition.protein}g</span>
+          <span>Carbs ~ {totalNutrition.carbs}g</span>
+          <span>Fat ~ {totalNutrition.fat}g</span>
+          <span>Cals ~ {totalNutrition.calories}</span>
         </div>
-        <div style={{display: 'flex', width: '100%', gap: '16px', alignItems: 'stretch'}}>
+        <div style={{display: 'flex', width: '100%', gap: '16px', alignItems: 'center', justifyContent: 'center'}}>
           <div className={styles.qtyControls}>
             <button className={styles.qtyBtn} onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
             <span className={styles.qtyValue}>{quantity}</span>
@@ -439,7 +464,7 @@ export default function CustomSaladPage() {
       <AnimatePresence>
         {isAddModalOpen && (
           <motion.div 
-            className={styles.modalOverlay}
+            className={styles.saveModal}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -466,7 +491,13 @@ export default function CustomSaladPage() {
                 </button>
                 <button 
                   className={styles.saveBtn} 
-                  onClick={handleSaveAndAddToCart}
+                  onClick={() => {
+                    if (!token) {
+                      toast.error('Please sign in to save your custom bowl.');
+                      return;
+                    }
+                    handleSaveAndAddToCart();
+                  }}
                   style={{flex: 1, background: 'var(--forest-green)', padding: '12px', border: 'none', borderRadius: '30px', fontWeight: 'bold', cursor: 'pointer', color: 'var(--white)'}}
                 >
                   Save & Add

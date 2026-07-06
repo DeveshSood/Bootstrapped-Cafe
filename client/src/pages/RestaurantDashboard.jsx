@@ -6,6 +6,29 @@ import { apiGetAllOrders, apiUpdateOrderStatus, apiRequestCancellation } from '.
 import PrepTimer from '../components/PrepTimer/PrepTimer';
 import styles from './RestaurantDashboard.module.css';
 
+const LiveTimer = ({ endDate }) => {
+  const [timeLeft, setTimeLeft] = useState('');
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      const end = new Date(endDate);
+      const diff = end - now;
+      if (diff <= 0) {
+        setTimeLeft('Expired');
+        return;
+      }
+      const h = Math.floor(diff / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+      setTimeLeft(`${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [endDate]);
+  return <span style={{ fontWeight: 'bold', color: 'var(--forest-green)', marginLeft: '8px', fontFamily: 'monospace' }}>⏱ {timeLeft}</span>;
+};
+
 const TABS = ['active', 'all', 'completed', 'cancellations', 'cancelled', 'unpaid', 'subscriptions'];
 
 const STATUS_FLOW = {
@@ -261,40 +284,94 @@ const RestaurantDashboard = () => {
               <p>Loading...</p>
             ) : subscriptions?.length > 0 ? (
               <div className={styles.subscriptionGroups}>
-                {Object.entries(
-                  subscriptions
-                    .filter(sub => {
-                       if (!searchTerm) return true;
-                       const term = searchTerm.toLowerCase();
-                       const name = (sub.user?.name || '').toLowerCase();
-                       const phone = (sub.user?.phone || '').toLowerCase();
-                       const plan = (sub.planName || '').toLowerCase();
-                       return name.includes(term) || phone.includes(term) || plan.includes(term);
-                    })
-                    .reduce((acc, sub) => {
-                      acc[sub.planName] = acc[sub.planName] || [];
-                      acc[sub.planName].push(sub);
-                      return acc;
-                    }, {})
-                ).map(([planName, subs]) => (
-                  <div key={planName} className={styles.planGroup}>
-                    <h3 className={styles.planGroupTitle}>{planName} <span className={styles.planCount}>({subs.length})</span></h3>
-                    <div className={styles.planGroupGrid}>
-                       {subs.map(sub => (
-                         <div key={sub._id} className={`${styles.subCard} ${styles['subStatus_' + sub.status]}`}>
-                           <div className={styles.subCardHeader}>
-                             <strong>{sub.user?.name || 'Guest User'}</strong>
-                             <span className={styles.subBadge}>{sub.status}</span>
-                           </div>
-                           <p className={styles.subPhone}>{sub.user?.phone}</p>
-                           <p className={styles.subDates}>
-                             Started: {new Date(sub.startDate || sub.createdAt).toLocaleDateString()}
-                           </p>
-                         </div>
-                       ))}
+                {(() => {
+                  const term = searchTerm.toLowerCase();
+                  const matchedSubs = subscriptions.filter(sub => {
+                    if (!term) return true;
+                    const name = (sub.user?.name || '').toLowerCase();
+                    const phone = (sub.user?.phone || '').toLowerCase();
+                    const plan = (sub.planName || '').toLowerCase();
+                    return name.includes(term) || phone.includes(term) || plan.includes(term);
+                  });
+
+                  const now = new Date();
+                  const todayStart = new Date(now);
+                  todayStart.setHours(0,0,0,0);
+                  const tomorrowStart = new Date(todayStart);
+                  tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+
+                  const activeSubs = matchedSubs.filter(s => s.status === 'active' || s.status === 'pending');
+                  const expiredSubs = matchedSubs.filter(s => s.status === 'expired' || (s.status === 'active' && s.endDate && new Date(s.endDate) < now));
+                  const cancelledSubs = matchedSubs.filter(s => s.status === 'cancelled');
+                  
+                  // Active subs that are expiring today
+                  const expiringTodaySubs = activeSubs.filter(s => {
+                    if (!s.endDate || s.status !== 'active') return false;
+                    const end = new Date(s.endDate);
+                    return end >= now && end < tomorrowStart;
+                  });
+                  
+                  // Active subs that are NOT expiring today
+                  const otherActiveSubs = activeSubs.filter(s => !expiringTodaySubs.includes(s));
+
+                  const renderCard = (sub) => (
+                    <div key={sub._id} className={`${styles.subCard} ${styles['subStatus_' + sub.status]}`}>
+                      <div className={styles.subCardHeader}>
+                        <strong>{sub.planName} {sub.isHourly ? `(${sub.durationHours} Hours)` : ''}</strong>
+                        <span className={styles.subBadge}>{sub.status}</span>
+                      </div>
+                      <p className={styles.subPhone} style={{ marginBottom: '8px' }}>
+                        {sub.user?.name || 'Guest User'} <br/>
+                        <span style={{ fontSize: '0.85em', color: 'var(--text-light)' }}>{sub.user?.phone}</span>
+                      </p>
+                      <p className={styles.subDates} style={{ fontSize: '0.8rem', lineHeight: '1.4' }}>
+                        Purchased: {new Date(sub.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}<br/>
+                        Started: {new Date(sub.startDate || sub.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}<br/>
+                        {sub.endDate && <>Expires: {new Date(sub.endDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })} {sub.isHourly && sub.status === 'active' && <LiveTimer endDate={sub.endDate} />}</>}
+                      </p>
                     </div>
-                  </div>
-                ))}
+                  );
+
+                  return (
+                    <>
+                      {expiringTodaySubs.length > 0 && (
+                        <div className={styles.planGroup}>
+                          <h3 className={styles.planGroupTitle} style={{color: 'var(--terracotta)'}}>Expiring Today <span className={styles.planCount}>({expiringTodaySubs.length})</span></h3>
+                          <div className={styles.planGroupGrid}>
+                            {expiringTodaySubs.map(renderCard)}
+                          </div>
+                        </div>
+                      )}
+
+                      {otherActiveSubs.length > 0 && (
+                        <div className={styles.planGroup}>
+                          <h3 className={styles.planGroupTitle}>Active Subscriptions <span className={styles.planCount}>({otherActiveSubs.length})</span></h3>
+                          <div className={styles.planGroupGrid}>
+                            {otherActiveSubs.map(renderCard)}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {cancelledSubs.length > 0 && (
+                        <div className={styles.planGroup}>
+                          <h3 className={styles.planGroupTitle}>Cancelled <span className={styles.planCount}>({cancelledSubs.length})</span></h3>
+                          <div className={styles.planGroupGrid}>
+                            {cancelledSubs.map(renderCard)}
+                          </div>
+                        </div>
+                      )}
+
+                      {expiredSubs.length > 0 && (
+                        <div className={styles.planGroup}>
+                          <h3 className={styles.planGroupTitle}>Expired <span className={styles.planCount}>({expiredSubs.length})</span></h3>
+                          <div className={styles.planGroupGrid}>
+                            {expiredSubs.map(renderCard)}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             ) : (
               <p>No subscriptions found matching your search.</p>

@@ -1196,6 +1196,110 @@
 .subActions {
   display: flex;
   gap: var(--space-sm);
+  margin-top: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.mealTracker {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-top: 1px dashed var(--border-light);
+}
+
+.trackerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.trackerLabel {
+  font-size: var(--fs-small);
+  color: var(--espresso-muted);
+}
+
+.trackerValue {
+  font-weight: 700;
+  color: var(--espresso);
+  font-size: var(--fs-h4);
+}
+
+.redemptionHistory {
+  margin-top: var(--space-sm);
+  background: var(--warm-cream);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+}
+
+.historyTitle {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--espresso);
+  margin: 0 0 8px 0;
+}
+
+.historyList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.historyList li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.redemptionDate {
+  color: var(--espresso-muted);
+}
+
+.redemptionType {
+  color: var(--forest-green);
+  font-weight: 600;
+}
+
+.moreRedemptions {
+  color: var(--terracotta) !important;
+  font-weight: 600;
+  text-align: center;
+  justify-content: center !important;
+  margin-top: 4px;
+}
+
+.getMealBtn, .activeTicketBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.getMealBtn {
+  background: var(--forest-green);
+  color: var(--white);
+}
+
+.getMealBtn:hover {
+  background: #254a32;
+}
+
+.activeTicketBtn {
+  background: var(--terracotta);
+  color: var(--white);
+}
+
+.activeTicketBtn:hover {
+  background: var(--terracotta-hover);
 }
 
 /* Modals */

@@ -207,8 +207,8 @@ exports.getCart = async (req, res) => {
 // ─── Custom Bowls ───────────────────────────────────────
 exports.saveCustomBowl = async (req, res) => {
   try {
-    const { name, price, customIngredients } = req.body;
-    req.user.savedBowls.push({ name, price, customIngredients });
+    const { name, price, customIngredients, nutrition } = req.body;
+    req.user.savedBowls.push({ name, price, customIngredients, nutrition });
     await req.user.save();
     res.json({ savedBowls: req.user.savedBowls });
   } catch (error) {
@@ -230,7 +230,7 @@ exports.deleteCustomBowl = async (req, res) => {
 
 exports.updateCustomBowl = async (req, res) => {
   try {
-    const { name, price, customIngredients } = req.body;
+    const { name, price, customIngredients, nutrition } = req.body;
     const bowl = req.user.savedBowls.id(req.params.bowlId);
     if (!bowl) {
       return res.status(404).json({ message: 'Bowl not found' });
@@ -239,6 +239,7 @@ exports.updateCustomBowl = async (req, res) => {
     if (name) bowl.name = name;
     if (price !== undefined) bowl.price = price;
     if (customIngredients) bowl.customIngredients = customIngredients;
+    if (nutrition) bowl.nutrition = nutrition;
     
     await req.user.save();
     res.json({ savedBowls: req.user.savedBowls });

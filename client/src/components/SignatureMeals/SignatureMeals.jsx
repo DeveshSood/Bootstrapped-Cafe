@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../common/Button';
-import foodBowl from '../../assets/images/food-bowl.png';
+import fishBowl from '../../assets/images/fish bowl 2.jpg';
+import pestoChicken from '../../assets/images/pesto chicken bowl.jpg';
+import paneerBowl from '../../assets/images/paneer bowl better.jpg';
+import weightLossBowl from '../../assets/images/weight loss bolw.jpg';
+import veganBowl from '../../assets/images/vegan bowl.jpg';
 import styles from './SignatureMeals.module.css';
 
 const dishes = [
-  { id: 1, name: 'Teriyaki Salmon Bowl', macros: '42g Protein · High Omega · Gluten-Free', desc: 'Grilled salmon with quinoa, avocado, edamame, roasted veggies and miso dressing.', badges: ['HIGH PROTEIN', 'OMEGA RICH', 'GLUTEN FREE'], img: foodBowl },
-  { id: 2, name: 'Grilled Chicken Protein Plate', macros: '48g Protein · Low Carb · Fresh Daily', desc: 'Herb-marinated chicken breast with brown rice, steamed broccoli, and tzatziki.', badges: ['HIGH PROTEIN', 'LOW CARB', 'FRESH DAILY'], img: foodBowl },
-  { id: 3, name: 'Paneer Harvest Bowl', macros: '28g Protein · High Fibre · Vegetarian', desc: 'Grilled paneer with sweet potato, chickpeas, kale, and tahini drizzle.', badges: ['VEGETARIAN', 'HIGH FIBRE', 'FRESH DAILY'], img: foodBowl },
-  { id: 4, name: 'Kombucha Citrus Cooler', macros: '0g Fat · Probiotic · Low Sugar', desc: 'House-brewed orange and ginger kombucha with live cultures and citrus zest.', badges: ['PROBIOTIC', 'LOW SUGAR', 'LIVE CULTURE'], img: foodBowl },
-  { id: 5, name: 'Mediterranean Lunch Box', macros: '22g Protein · Balanced · Office Ready', desc: 'Hummus, falafel, tabbouleh, pita, olives, and feta cheese.', badges: ['BALANCED', 'OFFICE READY', 'FRESH DAILY'], img: foodBowl },
+  { id: 1, name: 'Desk Friendly Pesto Grilled Chicken Bowl', macros: '51-65g Protein · 120-140g Carbs · 30-40g Fat', desc: 'Pesto chicken, rice, cucumber, corn, black chana, hummus, zucchini, bellpeppers, tomato, lettuce, and rajma.', badges: ['HIGH PROTEIN', 'NON-VEG', 'FRESH DAILY'], img: pestoChicken },
+  { id: 2, name: 'Weight Loss Bowl', macros: '37-47g Protein · 50-65g Carbs · 30-40g Fat', desc: 'Grilled paneer, egg, cucumber, corn, hummus, broccoli, bellpeppers, zucchini, moong salad, cheese, and lettuce.', badges: ['WEIGHT LOSS', 'HIGH VITAMIN C', 'LOW CARB'], img: weightLossBowl },
+  { id: 3, name: 'Desk Friendly Grilled Paneer Bowl', macros: '43-55g Protein · 100-120g Carbs · 40-50g Fat', desc: 'Grilled paneer, silk tofu, cheese, black chana, chana & moong salad, hummus, rice, lettuce, bellpeppers, and peas.', badges: ['VEGETARIAN', 'HIGH PROTEIN', 'BALANCED'], img: paneerBowl },
+  { id: 4, name: 'Desk Friendly Fish Bowl', macros: '45-57g Protein · 90-110g Carbs · 20-30g Fat', desc: 'Grilled fish, quinoa, rajma, avocado, mango salsa, pineapple, red cabbage, broccoli, zucchini, mushroom, and feta cheese.', badges: ['HIGH PROTEIN', 'OMEGA RICH', 'FRESH DAILY'], img: fishBowl },
+  { id: 5, name: 'Vegan Bowl', macros: '22-28g Protein · 60-75g Carbs · 20-30g Fat', desc: 'Tofu, chickpea, pineapple salsa, moong salsa, corn salsa, avocado salsa, mango salsa, olives, pickled onion, and iceberg lettuce.', badges: ['VEGAN', 'PLANT BASED', 'FRESH DAILY'], img: veganBowl },
 ];
 
 const SignatureMeals = () => {

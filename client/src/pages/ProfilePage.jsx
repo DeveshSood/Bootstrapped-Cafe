@@ -7,6 +7,7 @@ import { useCart } from '../components/Cart/CartContext';
 import { generateAvatar } from '../utils/avatarGenerator';
 import { apiGetUserOrders } from '../utils/api';
 import Footer from '../components/Footer/Footer';
+import TicketModal from '../components/Coworking/TicketModal';
 import styles from './ProfilePage.module.css';
 
 const TABS = ['profile', 'addresses', 'orders', 'subscriptions'];
@@ -51,6 +52,8 @@ const ProfilePage = () => {
   const [subPage, setSubPage] = useState(1);
   const [cancelSubModal, setCancelSubModal] = useState(null); // id of subscription
   const [digitalPassModal, setDigitalPassModal] = useState(null); // full sub object
+  const [ticketModalData, setTicketModalData] = useState(null); // for meal ticket
+  const [confirmMealModal, setConfirmMealModal] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -58,6 +61,22 @@ const ProfilePage = () => {
       setProfileForm({ name: user.name, phone: user.phone || '', email: user.email });
     }
   }, [user]);
+
+  const fetchSubscriptions = async () => {
+    if (!token) return;
+    setLoadingSubscriptions(true);
+    try {
+      const res = await fetch('/api/subscriptions/my', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setSubscriptions(data);
+    } catch (err) {
+      toast.error('Failed to load subscriptions');
+    } finally {
+      setLoadingSubscriptions(false);
+    }
+  };
 
   useEffect(() => {
     if (activeTab === 'orders' && token) {
@@ -68,14 +87,7 @@ const ProfilePage = () => {
         .catch(() => toast.error('Failed to load orders'))
         .finally(() => setLoadingOrders(false));
     } else if (activeTab === 'subscriptions' && token) {
-      setLoadingSubscriptions(true);
-      fetch('/api/subscriptions/my', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(data => setSubscriptions(data))
-      .catch(() => toast.error('Failed to load subscriptions'))
-      .finally(() => setLoadingSubscriptions(false));
+      fetchSubscriptions();
     }
   }, [activeTab, token]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -148,6 +160,42 @@ const ProfilePage = () => {
       } else {
         const data = await res.json();
         toast.error(data.message || 'Failed to resume subscription.');
+        toast.error(data.message || 'Failed to resume subscription.');
+      }
+    } catch (err) {
+      toast.error('Network error');
+    }
+  };
+
+  const handleGetMeal = (sub) => {
+    if (sub.activeTicket && new Date(sub.activeTicket.expiresAt) > new Date()) {
+      setTicketModalData(sub);
+      return;
+    }
+    setConfirmMealModal(sub);
+  };
+
+  const confirmGetMeal = async () => {
+    if (!confirmMealModal) return;
+    const sub = confirmMealModal;
+    setConfirmMealModal(null);
+    try {
+      const res = await fetch(`/api/subscriptions/${sub._id}/ticket`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ mealType: sub.planName.includes('Super Bowl') ? 'Super Bowl' : 'Regular Bowl' })
+      });
+      
+      if (res.ok) {
+        const updatedSub = await res.json();
+        setSubscriptions(prev => prev.map(s => s._id === updatedSub._id ? updatedSub : s));
+        setTicketModalData(updatedSub);
+      } else {
+        const data = await res.json();
+        toast.error(data.message || 'Failed to generate ticket');
       }
     } catch (err) {
       toast.error('Network error');
@@ -609,14 +657,16 @@ const ProfilePage = () => {
                           >
                             <div className={styles.subHeader}>
                               <div>
-                                <h4 className={styles.subTitle}>
+                              <h4 className={styles.subTitle}>
                                   {sub.planName}{' '}
-                                  <span className={styles.subBadge}>{isOneTime ? `Daily Pass (${sub.durationDays} Days)` : 'Monthly'}</span>
+                                  <span className={styles.subBadge}>
+                                    {sub.isHourly ? `Hourly Pass (${sub.durationHours} Hours)` : isOneTime ? `Daily Pass (${sub.durationDays} Days)` : 'Monthly'}
+                                  </span>
                                 </h4>
                                 <p className={styles.subDates}>
                                   For {sub.quantity} {sub.quantity > 1 ? 'People' : 'Person'} • 
-                                  Started: {sub.startDate ? new Date(sub.startDate).toLocaleDateString() : 'Pending'}
-                                  {sub.endDate && ` • Expires: ${new Date(sub.endDate).toLocaleDateString()}`}
+                                  Started: {sub.startDate ? new Date(sub.startDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'Pending'}
+                                  {sub.endDate && ` • Expires: ${new Date(sub.endDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}`}
                                 </p>
                               </div>
                             <div className={styles.subStatusWrapper}>
@@ -636,10 +686,58 @@ const ProfilePage = () => {
                               <span className={styles.priceLabel}>Price</span>
                               <span className={styles.priceValue}>₹{sub.price}</span>
                             </div>
+                            
+                            {sub.totalMeals > 0 && (
+                              <div className={styles.mealTracker}>
+                                <div className={styles.trackerRow}>
+                                  <span className={styles.trackerLabel}>Meals Remaining</span>
+                                  <span className={styles.trackerValue}>{sub.mealsRemaining} / {sub.totalMeals}</span>
+                                </div>
+                                
+                                {sub.redemptions && sub.redemptions.length > 0 && (
+                                  <div className={styles.redemptionHistory}>
+                                    <h5 className={styles.historyTitle}>Redemption History</h5>
+                                    <ul className={styles.historyList}>
+                                      {sub.redemptions.map((r, idx) => ({...r, mealNo: idx + 1})).reverse().slice(0, 3).map((redemption, i) => (
+                                        <li key={i}>
+                                          <span className={styles.redemptionDate}>
+                                            <strong>Meal #{redemption.mealNo}</strong> • {new Date(redemption.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                          </span>
+                                          <span className={styles.redemptionType}>{redemption.mealType}</span>
+                                        </li>
+                                      ))}
+                                      {sub.redemptions.length > 3 && (
+                                        <li className={styles.moreRedemptions}>+{sub.redemptions.length - 3} more</li>
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
 
                           <div className={styles.subActions}>
-                            {isActive && (
+                            {isActive && sub.totalMeals > 0 && (
+                              <>
+                                {(!sub.activeTicket || new Date(sub.activeTicket.expiresAt) <= new Date()) && sub.mealsRemaining > 0 ? (
+                                  <button 
+                                    className={styles.getMealBtn}
+                                    onClick={() => handleGetMeal(sub)}
+                                  >
+                                    Get Meal
+                                  </button>
+                                ) : sub.activeTicket && new Date(sub.activeTicket.expiresAt) > new Date() ? (
+                                  <button 
+                                    className={styles.activeTicketBtn}
+                                    onClick={() => handleGetMeal(sub)}
+                                  >
+                                    View Active Ticket
+                                  </button>
+                                ) : null}
+                              </>
+                            )}
+
+                            {isActive && !sub.totalMeals && (
                               <button 
                                 className={styles.showPassBtn}
                                 onClick={() => setDigitalPassModal(sub)}
@@ -704,7 +802,12 @@ const ProfilePage = () => {
           </AnimatePresence>
         </div>
         </div>
-        
+        <TicketModal 
+          isOpen={!!ticketModalData} 
+          onClose={() => setTicketModalData(null)} 
+          subscription={ticketModalData}
+          onRedeemComplete={fetchSubscriptions}
+        /> 
         {/* Cancel Subscription Modal */}
         <AnimatePresence>
           {cancelSubModal && (
@@ -728,6 +831,35 @@ const ProfilePage = () => {
                 <div className={styles.modalActions}>
                   <button className={styles.cancelModalBtn} onClick={() => setCancelSubModal(null)}>Keep it</button>
                   <button className={styles.confirmCancelBtn} onClick={handleCancelSubscription}>Yes, Cancel</button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Confirm Get Meal Modal */}
+        <AnimatePresence>
+          {confirmMealModal && (
+            <motion.div 
+              className={styles.modalOverlay}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div 
+                className={styles.cancelModalCard}
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+              >
+                <div className={styles.modalIconWarning}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <h3>Generate Ticket?</h3>
+                <p>Are you sure you want to generate a meal ticket now? <strong>One meal will be deducted</strong> from your remaining balance and a 10-minute validity timer will start.</p>
+                <div className={styles.modalActions}>
+                  <button className={styles.cancelModalBtn} onClick={() => setConfirmMealModal(null)}>Cancel</button>
+                  <button className={styles.confirmCancelBtn} style={{background: 'var(--forest-green)'}} onClick={confirmGetMeal}>Yes, Generate Ticket</button>
                 </div>
               </motion.div>
             </motion.div>
@@ -763,16 +895,26 @@ const ProfilePage = () => {
                   <div className={styles.passDetails}>
                     <div className={styles.passDetailCol}>
                       <span>Valid From</span>
-                      <strong>{new Date(digitalPassModal.startDate).toLocaleDateString()}</strong>
+                      <strong>
+                        {(() => {
+                          const d = new Date(digitalPassModal.startDate);
+                          return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                        })()}
+                      </strong>
                     </div>
                     <div className={styles.passDetailCol}>
                       <span>Valid Until</span>
-                      <strong>{new Date(digitalPassModal.endDate).toLocaleDateString()}</strong>
+                      <strong>
+                        {(() => {
+                          const d = new Date(digitalPassModal.endDate);
+                          return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()} ${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                        })()}
+                      </strong>
                     </div>
                   </div>
                 </div>
                 <div className={styles.passFooter}>
-                  <p>Show this pass at the counter to claim your meal.</p>
+                  <p>Show this pass at the counter to claim your {digitalPassModal.planName.toLowerCase().includes('bowl') ? 'meal' : 'pass'}.</p>
                 </div>
               </motion.div>
             </motion.div>

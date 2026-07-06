@@ -35,10 +35,16 @@ const recalculateOverrideNutrition = (overrideObj) => {
     }
   });
   
-  const customSaladIngredients = overrideObj.customSaladIngredients || overrideObj.overrideData?.customSalad?.ingredients || {};
+  const rawIngredients = overrideObj.customSaladIngredients || overrideObj.overrideData?.customSalad?.ingredients || {};
+  // Handle Mongoose Map type - convert to plain object if needed
+  const customSaladIngredients = rawIngredients instanceof Map 
+    ? Object.fromEntries(rawIngredients) 
+    : (typeof rawIngredients.toObject === 'function' ? rawIngredients.toObject() : rawIngredients);
   
   Object.keys(customSaladIngredients).forEach(catId => {
-    customSaladIngredients[catId].forEach(ingObj => {
+    const items = customSaladIngredients[catId];
+    if (!Array.isArray(items)) return;
+    items.forEach(ingObj => {
       const macros = calculateNutrition(ingObj.name);
       ingObj.nutrition = {
          calories: macros.calories,
@@ -52,6 +58,7 @@ const recalculateOverrideNutrition = (overrideObj) => {
       };
     });
   });
+
   
   return overrideObj;
 };
@@ -63,7 +70,7 @@ exports.getDailyMenu = async (req, res) => {
     const dateStr = req.query.date || new Date().toLocaleDateString('en-CA'); // 'YYYY-MM-DD' format
 
     // Check for an override
-    const override = await MenuOverride.findOne({ date: dateStr });
+    const override = await MenuOverride.findOne({ date: dateStr }).lean();
     
     if (override) {
       const updatedOverride = recalculateOverrideNutrition(override);

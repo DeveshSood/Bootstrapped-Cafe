@@ -22,6 +22,13 @@ const subscriptionSchema = new mongoose.Schema({
     type: Number,
     default: 30 // defaults to 30 for monthly plans
   },
+  durationHours: {
+    type: Number
+  },
+  isHourly: {
+    type: Boolean,
+    default: false
+  },
   status: {
     type: String,
     enum: ['pending', 'active', 'cancelled', 'expired'],
@@ -43,6 +50,22 @@ const subscriptionSchema = new mongoose.Schema({
   remainingDays: {
     type: Number
   },
+  totalMeals: {
+    type: Number
+  },
+  mealsRemaining: {
+    type: Number
+  },
+  activeTicket: {
+    ticketId: String,
+    mealType: String,
+    createdAt: Date,
+    expiresAt: Date
+  },
+  redemptions: [{
+    date: Date,
+    mealType: String
+  }],
   razorpayOrderId: {
     type: String
   },

@@ -18,10 +18,10 @@ const cafePhotos = [
 ];
 
 const features = [
-  { id: 'hotdesk', type: 'small', icon: '💻', title: 'Hot Desk', desc: 'Flexible seating with fast WiFi and calm ambience.', basePrice: 299 },
-  { id: 'student', type: 'small', icon: '🎓', title: 'Student Pass', desc: 'All-day access with a healthy snack.', basePrice: 599 },
-  { id: 'team', type: 'wide', icon: '🍱', title: 'Team Lunch Plan', desc: 'Customized healthy lunches for your team, delivered to your meeting room.', basePrice: 249 },
-  { id: 'private', type: 'wide', icon: '🔇', title: 'Private Workspace', desc: 'Silent booths and private rooms for focused work or small meetings.', basePrice: 999 },
+  { id: 'focus_pod', type: 'small', icon: '💻', title: 'Focus Pod', desc: 'Ideal for individual deep work and privacy. Includes complimentary beverage & high-speed connectivity.', basePrice: 100, suffix: '/ hr' },
+  { id: 'meeting_pod', type: 'small', icon: '🤝', title: 'Meeting Pod', desc: 'Perfect for collaborative sessions and team calls. Includes complimentary beverage & ergonomic design.', basePrice: 300, suffix: '/ hr' },
+  { id: 'regular_sub', type: 'wide', icon: '🥗', title: 'Monthly Regular Bowl Subscription', desc: '20 Bowls Subscription. Duration 20 days with 3 days carried forward. Enjoy our healthy Regular Bowl (₹295 value) daily.', basePrice: 5040, suffix: '/ mo' },
+  { id: 'super_sub', type: 'wide', icon: '🌟', title: 'Super Bowl Monthly Promo', desc: 'Special 20 Bowls Subscription! Get the ₹350 Super Bowl for ₹300 (~15% OFF). Zero processing & additives. 3 days carried forward.', basePrice: 6000, suffix: '/ mo' },
 ];
 
 const CoworkingPage = () => {
@@ -105,9 +105,13 @@ const CoworkingPage = () => {
                   <span className={styles.featureIcon}>{f.icon}</span>
                   <h5 className={styles.featureTitle}>{f.title}</h5>
                 </div>
-                <p className={styles.featureDesc}>{f.desc}</p>
+                <ul className={styles.featureList}>
+                  {f.desc.split('.').map(s => s.trim()).filter(Boolean).map((sentence, idx) => (
+                    <li key={idx} className={styles.featureDesc}>{sentence}.</li>
+                  ))}
+                </ul>
                 <div className={styles.featureFooter}>
-                  <span className={styles.featurePrice}>₹{f.basePrice} <span>/ day</span></span>
+                  <span className={styles.featurePrice}>₹{f.basePrice} <span>{f.suffix || '/ day'}</span></span>
                   <Button variant="filled" size="sm" onClick={() => handleBookClick(f)}>
                     Book Now
                   </Button>

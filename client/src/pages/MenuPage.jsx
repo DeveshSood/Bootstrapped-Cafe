@@ -53,7 +53,7 @@ const MenuPage = () => {
   const [deletingIds, setDeletingIds] = useState([]);
   const { items, addItem, updateQuantity } = useCart();
   const { user, token, deleteCustomBowl, saveCustomBowl, updateCustomBowl } = useAuth();
-  const { showToast } = useToast();
+  const toast = useToast();
   const [pastOrders, setPastOrders] = useState([]);
 
   // Dynamic daily menu state
@@ -114,13 +114,13 @@ const MenuPage = () => {
         setCategories(data.categories || []);
       } catch (err) {
         console.error("Failed to load daily menu:", err);
-        showToast("Failed to load daily menu", "error");
+        toast.error("Failed to load daily menu");
       } finally {
         setLoadingMenu(false);
       }
     };
     fetchMenu();
-  }, [showToast, testDate]);
+  }, [toast, testDate]);
 
   useEffect(() => {
     const calcTime = () => {
@@ -260,10 +260,10 @@ const MenuPage = () => {
         isCustomBowl: true,
         customIngredients: customIngs
       });
-      showToast(`${selectedItem.name} added to cart!`, 'success');
+      toast.success(`${selectedItem.name} added to cart!`);
     } else {
       addItem(selectedItem);
-      showToast(`${selectedItem.name} added to cart!`, 'success');
+      toast.success(`${selectedItem.name} added to cart!`);
     }
     setSelectedItem(null);
   };
@@ -272,10 +272,10 @@ const MenuPage = () => {
     if (!selectedItem) return;
     try {
       await deleteCustomBowl(selectedItem._id);
-      showToast('Bowl removed from saved list.', 'success');
+      toast.success('Bowl removed from saved list.');
       setSelectedItem(null);
     } catch (err) {
-      showToast('Failed to delete bowl.', 'error');
+      toast.error('Failed to delete bowl.');
     }
   };
 
@@ -294,9 +294,9 @@ const MenuPage = () => {
     
     try {
       await updateCustomBowl(currentItem._id, { name: newName });
-      showToast('Bowl renamed successfully!', 'success');
+      toast.success('Bowl renamed successfully!');
     } catch (err) {
-      showToast('Failed to rename bowl.', 'error');
+      toast.error('Failed to rename bowl.');
     }
   };
 
@@ -572,8 +572,8 @@ const MenuPage = () => {
                     + Create New
                   </button>
                 </div>
-                <div className={styles.menuGrid}>
-                  {user?.savedBowls?.length > 0 ? (
+                {user?.savedBowls?.length > 0 ? (
+                  <div className={styles.menuGrid}>
                     <AnimatePresence>
                       {user.savedBowls.filter(b => !deletingIds.includes(b._id)).map(bowl => (
                         <motion.div 
@@ -605,10 +605,10 @@ const MenuPage = () => {
                                       setDeletingIds(prev => [...prev, bowl._id]);
                                       try {
                                         await deleteCustomBowl(bowl._id);
-                                        showToast('Bowl removed from saved list.', 'success');
+                                        toast.success('Bowl removed from saved list.');
                                         setConfirmDeleteId(null);
                                       } catch (err) {
-                                        showToast('Failed to delete bowl.', 'error');
+                                        toast.error('Failed to delete bowl.');
                                         setDeletingIds(prev => prev.filter(id => id !== bowl._id));
                                       }
                                     } else {
@@ -652,7 +652,7 @@ const MenuPage = () => {
                                       isCustomBowl: true,
                                       customIngredients: customIngs
                                     });
-                                    showToast(`${bowl.name} added to cart!`, 'success');
+                                    toast.success(`${bowl.name} added to cart!`);
                                   }}
                                   whileHover={{ scale: 1.05 }}
                                   whileTap={{ scale: 0.95 }}
@@ -665,19 +665,19 @@ const MenuPage = () => {
                       </motion.div>
                       ))}
                     </AnimatePresence>
-                  ) : (
-                    <div style={{gridColumn: '1 / -1', padding: 'var(--space-3xl) var(--space-xl)', textAlign: 'center', background: 'var(--cream-light)', borderRadius: '24px', border: '2px dashed var(--border-light)'}}>
-                      <h3 style={{fontFamily: 'var(--font-display)', color: 'var(--espresso)', marginBottom: 'var(--space-sm)'}}>No saved bowls yet</h3>
-                      <p style={{color: 'var(--espresso-soft)', marginBottom: 'var(--space-lg)'}}>You haven't created any custom bowls. Mix and match your favorite ingredients!</p>
-                      <button 
-                        onClick={() => navigate('/custom-salad')}
-                        style={{background: 'var(--forest-green)', color: 'white', border: 'none', padding: '12px 32px', borderRadius: '30px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem'}}
-                      >
-                        Build Your First Bowl
-                      </button>
-                    </div>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4xl) var(--space-xl)', textAlign: 'center', background: 'var(--cream-light)', borderRadius: '24px', border: '2px dashed var(--border-light)', width: '100%'}}>
+                    <h3 style={{fontFamily: 'var(--font-display)', color: 'var(--espresso)', marginBottom: 'var(--space-sm)'}}>No saved bowls yet</h3>
+                    <p style={{color: 'var(--espresso-soft)', marginBottom: 'var(--space-lg)'}}>You haven't created any custom bowls. Mix and match your favorite ingredients!</p>
+                    <button 
+                      onClick={() => navigate('/custom-salad')}
+                      style={{background: 'var(--forest-green)', color: 'white', border: 'none', padding: '12px 32px', borderRadius: '30px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1rem'}}
+                    >
+                      Build Your First Bowl
+                    </button>
+                  </div>
+                )}
               </section>
             </div>
           ) : (
@@ -894,7 +894,7 @@ const MenuPage = () => {
                         e.stopPropagation();
                         if (quantity === 0) {
                           addItem(selectedItem);
-                          showToast(`${selectedItem.name} added to cart!`);
+                          toast(`${selectedItem.name} added to cart!`);
                         } else {
                           updateQuantity(itemId, quantity + 1);
                         }

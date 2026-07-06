@@ -17,12 +17,7 @@ const menuOverrideSchema = new mongoose.Schema({
     isVeg: Boolean,
     image: String,
     ingredients: [String],
-    nutrition: {
-      protein: String,
-      carbs: String,
-      fat: String,
-      vitamins: [String]
-    }
+    nutrition: mongoose.Schema.Types.Mixed
   }],
   // Custom Salad ingredients categories for this specific day
   customSaladCategories: [{
@@ -39,12 +34,7 @@ const menuOverrideSchema = new mongoose.Schema({
       price: Number,
       isVeg: Boolean,
       image: String,
-      nutrition: {
-        protein: Number,
-        carbs: Number,
-        fat: Number,
-        calories: Number
-      }
+      nutrition: mongoose.Schema.Types.Mixed
     }]
   }
 }, { timestamps: true });

@@ -15,18 +15,33 @@ const razorpayInstance = process.env.RAZORPAY_KEY_ID ? new Razorpay({
 // Create a pending subscription and razorpay order
 router.post('/checkout', protect, async (req, res) => {
   try {
-    const { planName, price, startDate, quantity, durationDays } = req.body;
+    const { planName, price, startDate, startTime, quantity, durationDays, durationHours } = req.body;
     
     if (!planName || !price) {
       return res.status(400).json({ message: 'Plan name and price are required' });
     }
 
-    // Default to tomorrow if no start date is provided
+    // Default to today/now for hourly, tomorrow for daily/monthly if no start date is provided
     let targetStartDate = startDate ? new Date(startDate) : new Date();
-    if (!startDate) {
+    
+    if (!startDate && !durationHours) {
       targetStartDate.setDate(targetStartDate.getDate() + 1);
+      targetStartDate.setHours(0, 0, 0, 0);
     }
-    targetStartDate.setHours(0, 0, 0, 0);
+
+    if (startTime) {
+      const [hours, minutes] = startTime.split(':');
+      let h = parseInt(hours, 10);
+      const mStr = minutes.replace(/[^0-9]/g, '');
+      const m = parseInt(mStr || '0', 10);
+      if (minutes.toLowerCase().includes('pm') && h < 12) h += 12;
+      if (minutes.toLowerCase().includes('am') && h === 12) h = 0;
+      targetStartDate.setHours(h, m, 0, 0);
+    } else if (startDate) {
+      targetStartDate.setHours(0, 0, 0, 0);
+    }
+
+    const isBowlSub = planName.toLowerCase().includes('bowl');
 
     const subscription = new Subscription({
       user: req.user._id,
@@ -34,8 +49,12 @@ router.post('/checkout', protect, async (req, res) => {
       price,
       startDate: targetStartDate,
       quantity: quantity || 1,
-      durationDays: durationDays || (planName === 'Corporate Lunch' ? 1 : 30),
-      status: 'pending'
+      durationDays: durationHours ? undefined : (durationDays || (planName === 'Corporate Lunch' ? 1 : 30)),
+      durationHours: durationHours,
+      isHourly: !!durationHours,
+      status: 'pending',
+      totalMeals: isBowlSub ? 20 * (quantity || 1) : undefined,
+      mealsRemaining: isBowlSub ? 20 * (quantity || 1) : undefined
     });
     
     await subscription.save();
@@ -99,10 +118,13 @@ router.post('/verify', protect, async (req, res) => {
       subscription.status = 'active';
       subscription.razorpayPaymentId = razorpay_payment_id || 'demo_payment';
       
-      // Calculate end date exactly based on durationDays
+      // Calculate end date exactly based on duration
       const endDate = new Date(subscription.startDate);
-      endDate.setDate(endDate.getDate() + subscription.durationDays);
-      
+      if (subscription.isHourly) {
+        endDate.setHours(endDate.getHours() + subscription.durationHours);
+      } else {
+        endDate.setDate(endDate.getDate() + subscription.durationDays);
+      }
       subscription.endDate = endDate;
 
       await subscription.save();
@@ -203,6 +225,110 @@ router.post('/:id/resume', protect, async (req, res) => {
 
     res.json({ message: 'Subscription resumed', endDate: subscription.endDate });
   } catch (error) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// POST /api/subscriptions/:id/ticket
+// Generate a 10-minute meal redemption ticket
+router.post('/:id/ticket', protect, async (req, res) => {
+  try {
+    const subscription = await Subscription.findOne({ _id: req.params.id, user: req.user._id });
+    if (!subscription) return res.status(404).json({ message: 'Subscription not found' });
+    
+    if (subscription.status !== 'active') {
+      return res.status(400).json({ message: 'Subscription is not active' });
+    }
+
+    if (subscription.mealsRemaining <= 0) {
+      return res.status(400).json({ message: 'No meals remaining' });
+    }
+
+    if (subscription.activeTicket && new Date(subscription.activeTicket.expiresAt) > new Date()) {
+      return res.status(400).json({ message: 'A ticket is already active' });
+    }
+
+    const { mealType } = req.body;
+    
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 10 * 60000); // 10 minutes
+
+    subscription.activeTicket = {
+      ticketId: 'TKT-' + crypto.randomBytes(4).toString('hex').toUpperCase(),
+      mealType: mealType || 'Regular Bowl',
+      createdAt: now,
+      expiresAt: expiresAt
+    };
+
+    subscription.mealsRemaining = Math.max(0, subscription.mealsRemaining - 1);
+    subscription.redemptions.push({
+      date: now,
+      mealType: subscription.activeTicket.mealType
+    });
+
+    await subscription.save();
+    res.json(subscription);
+  } catch (error) {
+    console.error('Ticket generation error:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// POST /api/subscriptions/:id/redeem
+// Finalize ticket redemption after timer ends
+router.post('/:id/redeem', protect, async (req, res) => {
+  try {
+    const subscription = await Subscription.findOne({ _id: req.params.id, user: req.user._id });
+    if (!subscription) return res.status(404).json({ message: 'Subscription not found' });
+
+    if (!subscription.activeTicket || !subscription.activeTicket.ticketId) {
+      return res.status(400).json({ message: 'No active ticket found to redeem' });
+    }
+
+    // Process redemption
+    // Note: Meal is now deducted and added to redemptions when the ticket is initially generated.
+
+    
+    // Clear ticket
+    subscription.activeTicket = undefined;
+
+    await subscription.save();
+    res.json(subscription);
+  } catch (error) {
+    console.error('Ticket redemption error:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// GET /api/subscriptions/admin/expired-passes
+// Get all expired passes for kitchen/admin tracking
+router.get('/admin/expired-passes', protect, async (req, res) => {
+  try {
+    const now = new Date();
+    
+    // Find subscriptions that are explicitly 'expired' or where endDate has passed
+    // We only care about ones with valid user refs and some sort of pass (i.e. coworking or bowls)
+    const passes = await Subscription.find({
+      $or: [
+        { status: 'expired' },
+        { status: 'active', endDate: { $lt: now } }
+      ]
+    }).populate('user', 'name email').sort('-endDate');
+
+    // Group them into 'today' and 'all'
+    const today = new Date(now);
+    today.setHours(0,0,0,0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const expiredToday = passes.filter(p => p.endDate >= today && p.endDate < tomorrow);
+
+    res.json({
+      expiredToday,
+      allExpired: passes
+    });
+  } catch (error) {
+    console.error('Fetch expired passes error:', error);
     res.status(500).json({ message: 'Server Error' });
   }
 });
