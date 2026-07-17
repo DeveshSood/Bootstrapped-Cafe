@@ -3,11 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './Testimonials.module.css';
 
 const testimonials = [
-  { quote: '"The food is incredible and makes me feel so good every time."', name: 'Ananya R.', role: 'Student' },
-  { quote: '"Finally a place that combines health, taste and beautiful ambience."', name: 'Karan S.', role: 'Startup Founder' },
-  { quote: '"My go-to spot for clean, nourishing and delicious meals."', name: 'Megha V.', role: 'Fitness Coach' },
-  { quote: '"The coworking pass is a game changer — healthy food and a calm workspace."', name: 'Arjun P.', role: 'Freelancer' },
-  { quote: '"Our team lunch plans have transformed how we eat at the office."', name: 'Priya K.', role: 'HR Manager' },
+  { quote: '"They offer a daily surprise of international flavors — experiences you\'d typically spend ₹2,000 on at a 5-star hotel — now served in a perfectly portioned, high-quality bowl at an affordable price."', name: 'Jenny', role: 'Customer' },
+  { quote: '"A perfect balance of lean proteins, fibers, colorful salads mixed carbs, and complete nourishment — the food feels like the best meal of your life. I\'m addicted to their protein bowl."', name: 'Vishal', role: 'Customer' },
+  { quote: '"I was literally surprised to learn that restaurants don\'t serve fresh food, and this is the only place where you get food that\'s truly fresh and nutritious."', name: 'Rakesh', role: 'Customer' },
 ];
 
 const variants = {
@@ -53,8 +51,8 @@ const Testimonials = () => {
       <div className={styles.container}>
         
         <div className={styles.header}>
-          <span className={styles.label}>Loved by Many</span>
-          <h3 className={styles.heading}>Kind Words.</h3>
+          <span className={styles.label}>Highest Ratings in Google ⭐⭐⭐⭐⭐</span>
+          <h3 className={styles.heading}>Loved by Many.</h3>
         </div>
 
         <div className={styles.carouselWrapper}>

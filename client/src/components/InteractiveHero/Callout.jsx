@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Leaf, Utensils, CupSoda, Coffee } from 'lucide-react';
+import { Leaf, Utensils, CupSoda, Coffee, Monitor, Users } from 'lucide-react';
 
 const ICONS = {
-  Leaf, Utensils, CupSoda, Coffee
+  Leaf, Utensils, CupSoda, Coffee, Monitor, Users
 };
 
 export default function Callout({ data, isHovered, isDimmed, onHover, onLeave, onClick, isLoaded = true }) {
@@ -41,8 +41,8 @@ export default function Callout({ data, isHovered, isDimmed, onHover, onLeave, o
           initial={{ pathLength: 0, opacity: 0 }}
           animate={isLoaded ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
           transition={{ 
-            pathLength: { duration: 1.2, ease: "easeInOut", delay: 0.6 },
-            opacity: { duration: 0.8, delay: 0.6 }
+            pathLength: { duration: 1.5, ease: "easeOut", delay: 0.4 },
+            opacity: { duration: 0.5, delay: 0.4 }
           }}
         />
       </svg>
@@ -118,7 +118,7 @@ export default function Callout({ data, isHovered, isDimmed, onHover, onLeave, o
             fontWeight: '700', 
             color: '#fff', 
             letterSpacing: '0.5px',
-            textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,1), 0 0 50px rgba(0,0,0,1)'
+            textShadow: '0 2px 10px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.8)'
           }}>
             {data.title}
           </h3>
@@ -129,7 +129,7 @@ export default function Callout({ data, isHovered, isDimmed, onHover, onLeave, o
             fontWeight: '500', 
             lineHeight: '1.4', 
             maxWidth: '220px',
-            textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.9), 0 0 30px rgba(0,0,0,1), 0 0 50px rgba(0,0,0,1)'
+            textShadow: '0 2px 10px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.8)'
           }}>
             {data.description}
           </p>

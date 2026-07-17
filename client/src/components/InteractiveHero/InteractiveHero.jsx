@@ -4,9 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Callout from './Callout';
 import Button from '../common/Button';
 import homeBaseImg from '../../assets/images/Home base image.png';
-import cwImg1 from '../../assets/images/cafe-bg.jpg';
-import cwImg2 from '../../assets/images/Capsule Works - 3rd Floor - Bengaluru - 046.jpg';
-import cwImg3 from '../../assets/images/Capsule Works - 3rd Floor - Bengaluru - 047.jpg';
+import cwImg2 from '../../assets/images/CAFE 2.png';
 import { ChevronDown } from 'lucide-react';
 
 const calloutData = [
@@ -54,22 +52,54 @@ const calloutData = [
   }
 ];
 
+const coworkingCalloutData = [
+  {
+    id: 'focus-pods',
+    title: 'Focus Pods',
+    description: 'Ideal for individual deep work and privacy.',
+    side: 'left',
+    icon: 'Monitor',
+    textPos: { top: '50%', left: '74%' },
+    dotPos: { top: '38%', left: '59%' },
+    lineTarget: { x: 'calc(74% - 140px)', y: 'calc(50% - 15px)' },
+    menuState: { viewMode: 'coworking' }
+  },
+  {
+    id: 'meeting-pods',
+    title: 'Meeting Pods',
+    description: 'Perfect for collaborative sessions and team calls.',
+    side: 'left',
+    icon: 'Users',
+    textPos: { top: '70%', left: '21%' },
+    dotPos: { top: '48%', left: '13%' },
+    lineTarget: { x: 'calc(21% - 100px)', y: 'calc(70% - 30px)' },
+    menuState: { viewMode: 'coworking' }
+  }
+];
+
 export default function InteractiveHero({ isLoaded = true }) {
   const [hoveredId, setHoveredId] = useState(null);
   const [heroMode, setHeroMode] = useState('food'); // 'food' or 'coworking'
-  const [cwImageIndex, setCwImageIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
+  const hoverTimeoutRef = React.useRef(null);
   const navigate = useNavigate();
 
-  const cwImages = [cwImg1, cwImg2, cwImg3];
+  const handleCalloutHover = (id) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setHoveredId(id);
+  };
+
+  const handleCalloutLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredId(null);
+    }, 150);
+  };
 
   // Sync heroMode with Navbar
   useEffect(() => {
     const handleSet = (e) => {
       setHeroMode(e.detail);
-      if (e.detail === 'coworking') {
-          setCwImageIndex(0);
-      }
     };
     window.addEventListener('setHeroMode', handleSet);
     return () => window.removeEventListener('setHeroMode', handleSet);
@@ -79,31 +109,19 @@ export default function InteractiveHero({ isLoaded = true }) {
     window.dispatchEvent(new CustomEvent('heroModeChange', { detail: heroMode }));
   }, [heroMode]);
 
-  // Auto-switch mode every 10 seconds, unless scrolled or hovered
+  // Auto-switch mode every 7 seconds, unless scrolled or hovered
   useEffect(() => {
     if (isHovering || hoveredId !== null) return;
     const modeTimer = setInterval(() => {
       if (window.scrollY < 100) {
         setHeroMode(prev => {
           const next = prev === 'food' ? 'coworking' : 'food';
-          if (next === 'coworking') {
-            setCwImageIndex(0);
-          }
           return next;
         });
       }
-    }, 10000);
+    }, 7000);
     return () => clearInterval(modeTimer);
-  }, [isHovering, hoveredId]);
-
-  // Slideshow for Coworking (approx 3.3s per image = 10s total cycle)
-  useEffect(() => {
-    if (heroMode !== 'coworking' || isHovering || hoveredId !== null) return;
-    const slideTimer = setInterval(() => {
-      setCwImageIndex(prev => (prev + 1) % cwImages.length);
-    }, 3333);
-    return () => clearInterval(slideTimer);
-  }, [heroMode, cwImages.length, isHovering, hoveredId]);
+  }, [isHovering, hoveredId, heroMode]);
 
   return (
     <section
@@ -121,7 +139,7 @@ export default function InteractiveHero({ isLoaded = true }) {
       {/* Hidden preloader for all heavy images to prevent pop-in / lag */}
       <div style={{ display: 'none' }}>
         <img src={homeBaseImg} alt="preload" />
-        {cwImages.map((src) => <img key={src} src={src} alt="preload" />)}
+        <img src={cwImg2} alt="preload" />
       </div>
 
       <AnimatePresence>
@@ -145,7 +163,7 @@ export default function InteractiveHero({ isLoaded = true }) {
                 backgroundImage: `url(${homeBaseImg})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                filter: hoveredId ? 'brightness(0.35)' : 'brightness(0.7)',
+                filter: hoveredId ? 'brightness(0.4)' : 'brightness(0.7)',
                 transition: 'filter 0.3s ease'
               }}
             />
@@ -153,7 +171,7 @@ export default function InteractiveHero({ isLoaded = true }) {
             {/* Top Left Typography */}
             <div style={{
               position: 'absolute',
-              top: '25%',
+              top: '18%', // Moved up from 25%
               left: '8%',
               zIndex: 10,
               maxWidth: '500px',
@@ -166,17 +184,18 @@ export default function InteractiveHero({ isLoaded = true }) {
                 transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
                 style={{
                   position: 'relative',
-                  width: 'max-content',
+                  marginTop: '-15px', // Eased the negative margin since the whole container is higher
+                  width: '100%',
                   color: '#f5d061', // soft golden yellow
                   fontSize: '0.85rem',
                   letterSpacing: '2px',
                   textTransform: 'uppercase',
                   fontWeight: '600',
-                  marginBottom: '16px',
+                  marginBottom: '28px',
                   textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.9)'
                 }}
               >
-                Clean Ingredients. Real Results.
+                The Gourmet Lunch, Bold Flavors, Clean Nutrition at its best on MG Road
               </motion.p>
               <motion.h1
                 initial={{ opacity: 0, y: 15 }}
@@ -184,6 +203,7 @@ export default function InteractiveHero({ isLoaded = true }) {
                 transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
                 style={{
                   position: 'relative',
+                  marginTop: '-15px', // Move the H1 up as well
                   width: 'max-content',
                   fontFamily: '"Playfair Display", serif',
                   fontSize: '4.5rem',
@@ -229,8 +249,8 @@ export default function InteractiveHero({ isLoaded = true }) {
                 data={callout}
                 isHovered={hoveredId === callout.id}
                 isDimmed={hoveredId !== null && hoveredId !== callout.id}
-                onHover={() => setHoveredId(callout.id)}
-                onLeave={() => setHoveredId(null)}
+                onHover={() => handleCalloutHover(callout.id)}
+                onLeave={handleCalloutLeave}
                 onClick={() => navigate('/menu', { state: callout.menuState })}
                 isLoaded={isLoaded}
               />
@@ -245,33 +265,20 @@ export default function InteractiveHero({ isLoaded = true }) {
             transition={{ duration: 0.8, ease: 'easeInOut' }}
             style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: heroMode === 'coworking' ? 2 : 1 }}
           >
-            {/* Background Slideshow */}
-            {cwImages.map((src, idx) => (
-              <div
-                key={src}
-                style={{
-                  position: 'absolute',
-                  top: 0, left: 0, right: 0, bottom: 0,
-                  backgroundImage: `url(${src})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  filter: 'brightness(0.5)',
-                  opacity: idx === cwImageIndex ? 1 : 0,
-                  zIndex: idx === cwImageIndex ? 2 : 1,
-                  transition: 'opacity 1.5s ease-in-out'
-                }}
-              />
-            ))}
-
-            {/* Dark overlay for better text readability */}
+            {/* Background Image */}
             <div
               style={{
                 position: 'absolute',
                 top: 0, left: 0, right: 0, bottom: 0,
-                background: 'linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 100%)',
-                zIndex: 5
+                backgroundImage: `url(${cwImg2})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: hoveredId ? 'brightness(0.35)' : 'brightness(0.55)',
+                transition: 'filter 0.3s ease'
               }}
             />
+
+            {/* Dark overlay removed to rely on textShadow instead */}
 
             {/* Left Typography */}
             <div style={{
@@ -279,107 +286,116 @@ export default function InteractiveHero({ isLoaded = true }) {
               top: '25%',
               left: '8%',
               zIndex: 10,
-              maxWidth: '650px'
+              maxWidth: '650px',
+              opacity: hoveredId ? 0.2 : 1,
+              transition: 'opacity 0.3s ease'
             }}>
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
+                transition={{ duration: 0.9, delay: 0.2, ease: 'easeOut' }}
                 style={{
                   color: '#f5d061',
                   fontSize: '0.85rem',
                   letterSpacing: '2px',
                   textTransform: 'uppercase',
                   fontWeight: '600',
-                  marginBottom: '16px',
+                  marginBottom: '24px',
+                  textShadow: '0 2px 10px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.9)',
                   willChange: 'transform, opacity'
                 }}
               >
                 Work & Wellness Combined
               </motion.p>
-              <motion.h1
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
+              <h1
                 style={{
+                  position: 'relative',
+                  width: 'max-content',
                   fontFamily: '"Playfair Display", serif',
                   fontSize: '4.5rem',
-                  lineHeight: '1.1',
+                  lineHeight: '1.2',
                   margin: 0,
                   fontWeight: '700',
                   color: '#fff',
-                  textShadow: '0 4px 15px rgba(0,0,0,0.8)',
+                  textShadow: '0 4px 15px rgba(0,0,0,0.9)',
                   willChange: 'transform, opacity'
                 }}
               >
-                HEALTHY FOOD MEETS <span style={{ color: '#f5d061', fontStyle: 'italic', fontWeight: '400' }}>COWORKING</span>
-              </motion.h1>
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, delay: 0.5, ease: 'easeOut' }}
+                >
+                  Healthy food,
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, delay: 0.8, ease: 'easeOut' }}
+                >
+                  <span style={{ color: '#f5d061', fontStyle: 'italic', fontWeight: '400', textShadow: '0 4px 15px rgba(0,0,0,0.9)' }}>meets coworking.</span>
+                </motion.div>
+              </h1>
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+                transition={{ duration: 0.9, delay: 1.1, ease: 'easeOut' }}
                 style={{
-                  marginTop: '24px',
+                  marginTop: '32px',
                   fontSize: '1.1rem',
                   lineHeight: '1.6',
                   color: 'rgba(255,255,255,0.9)',
                   maxWidth: '500px',
+                  textShadow: '0 2px 10px rgba(0,0,0,0.9)',
                   willChange: 'transform, opacity'
                 }}
               >
                 A premium coworking space designed for students, freelancers, and teams who value wellness as much as productivity.
               </motion.p>
-
-              {/* Bottom Buttons */}
-              <motion.div 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5, ease: 'easeOut' }}
-                style={{ marginTop: '40px', display: 'flex', gap: '16px', willChange: 'transform, opacity' }}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                <Button variant="filled" size="md" href="/coworking">
-                  Explore Subscriptions
-                </Button>
-                <Button variant="outlined-light" size="md" href="/contact">
-                  Book a Desk
-                </Button>
-              </motion.div>
             </div>
 
-            {/* Slide Count Indicator */}
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              right: '6%',
-              transform: 'translateY(-50%)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              zIndex: 10
-            }}>
-              <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '3.5rem', fontWeight: '400', color: '#fff', lineHeight: '1' }}>
-                0{cwImageIndex + 1}
-              </span>
-              <span style={{ fontSize: '1.2rem', color: '#888', marginTop: '4px', marginBottom: '24px' }}>
-                /03
-              </span>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {cwImages.map((_, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      backgroundColor: idx === cwImageIndex ? '#fff' : 'rgba(255,255,255,0.3)',
-                      transition: 'background-color 0.3s ease'
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
+            {/* Bottom Buttons */}
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 1.4, ease: 'easeOut' }}
+              style={{
+                position: 'absolute',
+                bottom: '15%',
+                left: '8%',
+                zIndex: 10,
+                display: 'flex',
+                gap: '16px',
+                opacity: hoveredId ? 0.2 : 1,
+                transition: 'opacity 0.3s ease'
+              }}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+            >
+              <Button variant="filled" size="md" href="/coworking">
+                Explore Subscriptions
+              </Button>
+              <Button variant="outlined-light" size="md" href="/contact">
+                Book a Desk
+              </Button>
+            </motion.div>
+
+            {/* Coworking Callouts */}
+            {coworkingCalloutData.map((callout) => (
+              <Callout
+                key={callout.id}
+                data={callout}
+                isHovered={hoveredId === callout.id}
+                isDimmed={hoveredId !== null && hoveredId !== callout.id}
+                onHover={() => handleCalloutHover(callout.id)}
+                onLeave={handleCalloutLeave}
+                onClick={() => {
+                  navigate('/coworking', { state: { scrollTo: callout.id } });
+                }}
+                isLoaded={isLoaded}
+              />
+            ))}
+
           </motion.div>
         )}
       </AnimatePresence>
@@ -399,11 +415,9 @@ export default function InteractiveHero({ isLoaded = true }) {
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
       >
-        <StatCard value="50+" label="HEALTHY COMBOS" onClick={() => navigate('/menu')} />
-        <StatCard value="₹599" label="COWORKING PASS" onClick={() => {
-          document.getElementById('coworking')?.scrollIntoView({ behavior: 'smooth' });
-        }} />
-        <StatCard value="Custom" label="OFFICE MEALS" onClick={() => navigate('/contact')} />
+        <StatCard value="50% OFF" label="FIRST BOWL (12:30-3PM)" onClick={() => navigate('/menu')} />
+        <StatCard value="100%" label="NON REPETITIVE MENUS" onClick={() => navigate('/menu')} />
+        <StatCard value="5000+" label="TRUSTED CUSTOMERS" onClick={() => navigate('/about')} />
       </div>
 
       {/* Scroll Down Indicator */}

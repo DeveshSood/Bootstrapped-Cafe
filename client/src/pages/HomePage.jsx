@@ -4,12 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import InteractiveHero from '../components/InteractiveHero/InteractiveHero';
 import ReelCarousel from '../components/ReelCarousel/ReelCarousel';
-import VideoReels from '../components/VideoReels/VideoReels';
-import MenuPreview from '../components/MenuPreview/MenuPreview';
 import PamphletMenu from '../components/PamphletMenu/PamphletMenu';
 import { allMenuItems } from '../data/menuData';
 import MealCard from '../components/ScrollRevealMenu/MealCard';
-import Coworking from '../components/Coworking/Coworking';
+import MenuAndSpace from '../components/MenuAndSpace/MenuAndSpace';
 import HowWeCook from '../components/HowWeCook/HowWeCook';
 import SignatureMeals from '../components/SignatureMeals/SignatureMeals';
 import Membership from '../components/Membership/Membership';
@@ -128,18 +126,10 @@ const HomePage = ({ isLoaded }) => {
         )}
       </AnimatePresence>
       <InteractiveHero isLoaded={isLoaded} />
-      <VideoReels />
       <ReelCarousel />
-      <CurvedDivider topColor="var(--espresso)" bottomColor="var(--white)" direction="down" />
       <div id="menu">
-        <MenuPreview />
+        <MenuAndSpace />
       </div>
-      <div style={{ width: '100%', backgroundColor: 'var(--white)' }}>
-        <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '0 var(--space-xl)' }}>
-          <div style={{ height: '1px', backgroundColor: 'rgba(0,0,0,0.1)', width: '100%' }} />
-        </div>
-      </div>
-      <Coworking />
       <HowWeCook />
       <SignatureMeals />
       <CurvedDivider topColor="var(--white)" bottomColor="var(--warm-cream)" direction="down" />

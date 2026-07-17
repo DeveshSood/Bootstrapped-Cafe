@@ -9,15 +9,15 @@ const SCHEDULES = {
   1: { // Monday
     complexCarbs: ['Rice', 'Corn rice', 'Quinoa'],
     protein: ['Chipotle chicken/paneer', 'Cilantro jalapeno yogurt chicken/paneer', 'Egg'],
-    phytos: ['Grilled broccoli and carrot'],
+    phytos: ['Grilled broccoli', 'Grilled carrot'],
     curry: ['Rajma'],
     salads: ['Corn salsa', 'Black chana', 'Apple carrot', 'Beetroot hummus', 'Sweet potato', 'Lettuce', 'Curd onion'],
     dressing: ['Mango Chutney', 'Mint Chutney']
   },
-  2: { // Tuesday
+  2: { // Tuesdayf
     complexCarbs: ['Rice', 'Egg fried rice', 'Quinoa'],
     protein: ['Korean chicken/paneer', 'BBQi chicken/paneer', 'Egg'],
-    phytos: ['Yellow Capsicum and Green Zucchini'],
+    phytos: ['Grilled Yellow capsicum', 'Grilled Green Zucchini'],
     curry: ['Dal Makhani'],
     salads: ['Chickpea salad', 'Pineapple salsa', 'Cauliflower hummus', 'Sweet chili cucumber', 'Pumpkin salad', 'Lettuce', 'Masala onion'],
     dressing: ['Mango Chutney', 'Mint Chutney']
@@ -25,7 +25,7 @@ const SCHEDULES = {
   3: { // Wednesday
     complexCarbs: ['Rice', 'Chicken biryani', 'Quinoa'],
     protein: ['Plum chicken/paneer', 'Harisha chicken/paneer', 'Egg'],
-    phytos: ['Green capcicum/cauliflower'],
+    phytos: ['Grilled Green capsicum', 'Grilled Cauliflower'],
     curry: ['Chole ( Kabuli Chana)'],
     salads: ['Guava salsa', 'Bellpepper Hummus', 'Potato salad', 'Sweet potato', 'Watermelon+Muskmelon feta cheese', 'Lettuce', 'Mint onion'],
     dressing: ['Mango Chutney', 'Mint Chutney']
@@ -33,7 +33,7 @@ const SCHEDULES = {
   4: { // Thursday
     complexCarbs: ['Rice', 'Lemon rice', 'Quinoa'],
     protein: ['Achari chicken/paneer', 'Thai green curry coconut chicken/paneer', 'Egg'],
-    phytos: ['Yellow zucchini/mushroom'],
+    phytos: ['Grilled Yellow zucchini', 'Grilled Mushroom'],
     curry: ['Dal pappu'],
     salads: ['mango salad', 'Peas hummus', 'Avocado salsa', 'Balsamic cherry tomato', 'Cream cheese cabbage', 'Lettuce', 'Achari onion'],
     dressing: ['Mango Chutney', 'Mint Chutney']
@@ -41,7 +41,7 @@ const SCHEDULES = {
   5: { // Friday
     complexCarbs: ['Rice', 'Peas rice', 'Quinoa'],
     protein: ['Dragon chicken/paneer', 'Thai peanut chicken/paneer', 'Egg'],
-    phytos: ['red capsicum / Beans'],
+    phytos: ['Grilled Red capsicum', 'Grilled Beans'],
     curry: ['Panchmail dal'],
     salads: ['Plain hummus', 'Beetroot salad', 'Pickled red cabbage', 'Greek salad', 'Mix fruit salad', 'Lettuce', 'Curd onion'],
     dressing: ['Mango Chutney', 'Mint Chutney']
@@ -87,69 +87,138 @@ const generateDailyCustomBowlData = (dayIndex) => {
   return { categories, ingredients };
 };
 
-const mapIngredient = (ingredient, todaySchedule) => {
-    let newIng = ingredient;
-    
-    // Proteins
-    if (/chicken/i.test(newIng)) {
-        const dailyProtein = todaySchedule.protein[0].replace(/\/paneer/i, '').trim();
-        newIng = newIng.replace(/^.*?chicken/ig, dailyProtein); 
-    }
-    else if (/paneer|tofu/i.test(newIng)) {
-        const dailyProtein = todaySchedule.protein[0].replace(/chicken\//i, '').trim();
-        newIng = newIng.replace(/^.*?(paneer|tofu)/ig, dailyProtein);
-    }
-    // Curries / Beans
-    else if (/rajma|kidney beans/i.test(newIng)) {
-        newIng = newIng.replace(/^.*?(rajma|kidney beans)/ig, todaySchedule.curry[0]);
-    }
-    // Salads / Salsas / Hummus
-    else if (/black chana/i.test(newIng)) {
-        newIng = newIng.replace(/black chana/ig, todaySchedule.salads[1] || 'Salad');
-    }
-    else if (/chana salad/i.test(newIng)) {
-        newIng = newIng.replace(/chana salad/ig, todaySchedule.salads[0] || 'Salad');
-    }
-    else if (/corn salsa/i.test(newIng)) {
-        newIng = newIng.replace(/corn salsa/ig, todaySchedule.salads[0] || 'Salad');
-    }
-    else if (/moong (salsa|salad)/i.test(newIng)) {
-        newIng = newIng.replace(/moong (salsa|salad)/ig, todaySchedule.salads[2] || 'Salad');
-    }
-    else if (/beetroot hummus/i.test(newIng)) {
-        newIng = newIng.replace(/beetroot hummus/ig, todaySchedule.salads[3] || 'Salad');
-    }
-    else if (/hummus/i.test(newIng)) {
-        newIng = newIng.replace(/hummus/ig, todaySchedule.salads[2] || 'Salad');
-    }
-    else if (/pineapple salsa/i.test(newIng)) {
-        newIng = newIng.replace(/pineapple salsa/ig, todaySchedule.salads[1] || 'Salad');
-    }
-    else if (/mango salsa/i.test(newIng)) {
-        newIng = newIng.replace(/mango salsa/ig, todaySchedule.salads[0] || 'Salad');
-    }
-    // Phytos
-    else if (/broccoli/i.test(newIng)) {
-        newIng = newIng.replace(/^.*?broccoli/ig, todaySchedule.phytos[0]);
-    }
-    
-    return newIng;
-};
-
-// Generate standard menu items based on the day.
-// The bowls remain the same in name and image, but we swap specific ingredients accurately based on the schedule.
 const generateDailyMenuItems = (dayIndex) => {
   let items = JSON.parse(JSON.stringify(defaultMenuData.allMenuItems));
   
   const index = (dayIndex === 0 || dayIndex === 6) ? 5 : dayIndex;
   const todaySchedule = SCHEDULES[index];
   
+  const p1 = (todaySchedule.protein[0] || '').split(' chicken')[0].trim();
+  const p2 = (todaySchedule.protein[1] || '').split(' chicken')[0].trim();
+  const s = todaySchedule.salads;
+  const phytosText = todaySchedule.phytos.join(' and ');
+  const curry = todaySchedule.curry[0];
+  
+  // Mapping logic for each bowl based on PDF structure
   items = items.map(item => {
-    if (item.category === 'Healthy Bowls' || item.category === 'Mini Bowls') {
-      
-      // Update the specific ingredients in the bowl exactly based on the schedule mapping
-      // Update the specific ingredients in the bowl exactly based on the schedule mapping
-      item.ingredients = item.ingredients.map(ing => mapIngredient(ing, todaySchedule));
+    if (item.id === 1) { // Vegan Bowl
+      item.ingredients = [
+        'Tofu - 100gm', `${s[0]} - 40gm`, `${s[1]} - 40gm`, `${s[2]} - 40gm`,
+        `${s[3]} - 40gm`, `${s[4]} - 30gm`, `${phytosText} - 120gm`, `${s[5]} - 30gm`,
+        `Quinoa - 150gm`, `${curry} - 150gm`, 'Nuts - 20gm'
+      ];
+      if (s[6] && !s[6].toLowerCase().includes('curd')) item.ingredients.push(`${s[6]} - 15gm`);
+    }
+    else if (item.id === 2) { // Weight Gain Bowl
+      item.ingredients = [
+        '2 flavoured roast Chicken - 120gm', 'Egg - 1', `${s[0]} - 40gm`, `${s[1]} - 40gm`, `${s[2]} - 30gm`,
+        'Quinoa - 100gm', 'Cheese - 15gm', `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${curry} - 100gm`,
+        `${phytosText} - 120gm`, `${s[5]} - 20gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 3) { // Veg Weight Gain Bowl
+      item.ingredients = [
+        '2 flavoured roast Paneer - 120gm', 'Tofu - 25gm', `${s[0]} - 40gm`, `${s[1]} - 40gm`, `${s[2]} - 30gm`,
+        'Quinoa - 100gm', 'Cheese - 15gm', `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${curry} - 100gm`,
+        `${phytosText} - 120gm`, `${s[5]} - 20gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 4) { // Non Veg Weight Loss Bowl
+      item.ingredients = [
+        '2 flavoured roast Chicken - 140gm', 'Egg - 1', `${s[0]} - 40gm`, `${s[1]} - 40gm`, `${s[2]} - 30gm`,
+        'Cheese - 15gm', `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${phytosText} - 120gm`, `${s[5]} - 20gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 5) { // Weight Loss Veg Bowl
+      item.ingredients = [
+        '2 flavoured roast paneer - 140gm', 'Tofu - 25gm', `${s[0]} - 40gm`, `${s[1]} - 40gm`, `${s[2]} - 30gm`,
+        'Cheese - 15gm', `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${phytosText} - 120gm`, `${s[5]} - 20gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 6) { // Tandoori Chicken Bowl
+      item.name = `Desk friendly ${index === 2 ? 'BBQ' : 'Tandoori'} chicken bowl`;
+      item.ingredients = [
+        `${index === 2 ? 'BBQ' : 'Tandoori'} Chicken - 80gm`, `${s[2]} - 40gm`, `${s[1]} - 40gm`, `${s[0]} - 30gm`,
+        `Quinoa/Rice - 150gm`, `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${phytosText} - 90gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 7) { // Eggs Bowl
+      item.ingredients = [
+        'Eggs - 3 pcs', `${s[2]} - 40gm`, `${s[1]} - 40gm`, `${s[0]} - 30gm`,
+        `Quinoa/Rice - 150gm`, `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${phytosText} - 90gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 8) { // Fish Bowl
+      item.name = `Desk friendly ${index === 2 ? 'BBQ' : index === 4 ? 'Thai green' : 'Tandoori'} fish bowl`;
+      item.ingredients = [
+        `${index === 2 ? 'BBQ' : index === 4 ? 'Thai green curry' : 'Tandoori'} fish - 80gm`, `${s[2]} - 40gm`, `${s[1]} - 40gm`, `${s[0]} - 30gm`,
+        `Quinoa/Rice - 150gm`, `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${phytosText} - 90gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 9) { // Malai -> P1 Chicken Bowl
+      item.name = `Desk friendly ${p1} chicken bowl`;
+      item.ingredients = [
+        `${p1} Chicken - 80gm`, `${s[2]} - 40gm`, `${s[1]} - 40gm`, `${s[0]} - 30gm`,
+        `Quinoa/Rice - 150gm`, `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${phytosText} - 90gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 10) { // Paneer Bowl (Tandoori/BBQ base)
+      item.name = `Desk friendly ${index === 2 ? 'BBQ' : 'Tandoori'} paneer bowl`;
+      item.ingredients = [
+        `${index === 2 ? 'BBQ' : 'Tandoori'} Paneer - 80gm`, `${s[2]} - 40gm`, `${s[1]} - 40gm`, `${s[0]} - 30gm`,
+        `Quinoa/Rice - 150gm`, `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${phytosText} - 90gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 11) { // Pesto -> P2 Chicken Bowl
+      item.name = `Desk friendly ${p2} chicken bowl`;
+      item.ingredients = [
+        `${p2} Chicken - 80gm`, `${s[2]} - 40gm`, `${s[1]} - 40gm`, `${s[0]} - 30gm`,
+        `Quinoa/Rice - 150gm`, `${s[4]} - 40gm`, `${s[3]} - 40gm`, `${phytosText} - 90gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 12) { // Tandoori Chicken Mini Bowl
+      item.name = `${index === 2 ? 'BBQ' : 'Tandoori'} chicken mini bowl`;
+      item.ingredients = [
+        `${index === 2 ? 'BBQ' : 'Tandoori'} Chicken - 60gm`, `${s[2]} - 25gm`, `${s[1]} - 25gm`, `${s[0]} - 25gm`,
+        `Quinoa/Rice - 100gm`, `${phytosText} - 60gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 20) { // Egg Mini Bowl
+      item.ingredients = [
+        'Eggs - 2pcs', `${s[2]} - 25gm`, `${s[1]} - 25gm`, `${s[0]} - 25gm`,
+        `Quinoa/Rice - 100gm`, `${phytosText} - 60gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 21) { // Fish Mini Bowl
+      item.ingredients = [
+        `Grilled fish - 60gm`, `${s[2]} - 25gm`, `${s[1]} - 25gm`, `${s[0]} - 25gm`,
+        `Quinoa/Rice - 100gm`, `${phytosText} - 60gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 22) { // Malai -> P1 Mini Bowl
+      item.name = `${p1} chicken trail bowl`;
+      item.ingredients = [
+        `${p1} chicken - 60gm`, `${s[2]} - 25gm`, `${s[1]} - 25gm`, `${s[0]} - 25gm`,
+        `Quinoa/Rice - 100gm`, `${phytosText} - 60gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
+    }
+    else if (item.id === 23) { // Paneer Mini Bowl
+      item.name = `${index === 2 ? 'BBQ' : 'Grilled'} paneer mini bowl`;
+      item.ingredients = [
+        `${index === 2 ? 'BBQ' : 'Grilled'} paneer - 60gm`, `${s[2]} - 25gm`, `${s[1]} - 25gm`, `${s[0]} - 25gm`,
+        `Quinoa/Rice - 100gm`, `${phytosText} - 60gm`, `${s[5]} - 20gm`,
+        `${curry} - 120gm`, `${s[6]} - 15gm`
+      ];
     }
     
     // Calculate accurate nutrition dynamically for any item with ingredients

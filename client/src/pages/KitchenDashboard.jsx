@@ -147,7 +147,7 @@ export default function KitchenDashboard() {
     const ings = menu?.customSalad?.ingredients || {};
     
     return (
-      <div style={{ background: 'var(--white)', borderRadius: '12px', padding: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', flex: '1 1 200px', maxWidth: '280px', position: 'relative' }}>
+      <div style={{ background: 'var(--white)', borderRadius: '12px', padding: 'clamp(12px, 1.5vw, 24px)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', position: 'relative', minWidth: 0 }}>
         {isOverride && onDelete && (
           <button 
             onClick={onDelete}
@@ -158,11 +158,11 @@ export default function KitchenDashboard() {
           </button>
         )}
         <div style={{ borderBottom: '1px solid var(--cream-light)', paddingBottom: '8px', marginBottom: '12px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', color: isOverride ? '#E65100' : 'var(--espresso)', fontSize: '1.3rem', textAlign: 'center' }}>{title}</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', color: isOverride ? '#E65100' : 'var(--espresso)', fontSize: 'clamp(1.3rem, 2vw, 1.8rem)', textAlign: 'center' }}>{title}</h2>
         </div>
         
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <h3 style={{ fontSize: '0.65rem', textTransform: 'uppercase', color: 'var(--terracotta)', letterSpacing: '0.05em', marginBottom: '10px', fontWeight: 'bold' }}>Changing Ingredients</h3>
+          <h3 style={{ fontSize: 'clamp(0.65rem, 0.8vw, 0.8rem)', textTransform: 'uppercase', color: 'var(--terracotta)', letterSpacing: '0.05em', marginBottom: '10px', fontWeight: 'bold' }}>Changing Ingredients</h3>
           
           {cats.map(cat => {
             const catItems = ings[cat.id] || [];
@@ -170,8 +170,8 @@ export default function KitchenDashboard() {
             
             return (
               <div key={cat.id} style={{ marginBottom: '8px' }}>
-                <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--forest-green)', marginBottom: '2px' }}>{cat.label}</div>
-                <ul style={{ margin: 0, padding: 0, listStyle: 'none', fontSize: '0.75rem', color: 'var(--text-dark)', fontWeight: '600', lineHeight: '1.2' }}>
+                <div style={{ fontSize: 'clamp(0.7rem, 0.9vw, 0.9rem)', fontWeight: 'bold', color: 'var(--forest-green)', marginBottom: '2px' }}>{cat.label}</div>
+                <ul style={{ margin: 0, padding: 0, listStyle: 'none', fontSize: 'clamp(0.75rem, 0.95vw, 1rem)', color: 'var(--text-dark)', fontWeight: '600', lineHeight: '1.2' }}>
                   {catItems.map(item => (
                     <li key={item.id} style={{ paddingBottom: '1px' }}>{item.name}</li>
                   ))}
@@ -183,7 +183,7 @@ export default function KitchenDashboard() {
 
         <Button 
           variant="outlined"
-          style={{ marginTop: '12px', padding: '6px', fontSize: '0.75rem', width: '100%', justifyContent: 'center' }}
+          style={{ marginTop: '12px', padding: 'clamp(6px, 1vw, 10px)', fontSize: 'clamp(0.75rem, 0.9vw, 0.9rem)', width: '100%', justifyContent: 'center' }}
           onClick={() => onShowNutrition({ title, menu })}
         >
           View Nutrition
@@ -203,7 +203,7 @@ export default function KitchenDashboard() {
         transition={{ duration: 0.4, ease: 'easeOut' }}
         style={{ minHeight: '100vh', background: 'var(--cream)', paddingTop: '90px', paddingBottom: '20px' }}
       >
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px' }}>
+        <div style={{ maxWidth: '1800px', margin: '0 auto', padding: '0 20px', width: '100%' }}>
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px', gap: '10px' }}>
             <div style={{ textAlign: 'center' }}>
@@ -228,10 +228,9 @@ export default function KitchenDashboard() {
           
           {/* 5 Column Grid */}
           <div style={{ 
-            display: 'flex',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            gap: '20px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: 'clamp(15px, 2vw, 30px)',
             alignItems: 'stretch'
           }}>
             {displayDays.map((dayData) => (

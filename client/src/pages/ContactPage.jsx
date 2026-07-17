@@ -6,7 +6,7 @@ import Footer from '../components/Footer/Footer';
 import { useToast } from '../context/ToastContext';
 import styles from './ContactPage.module.css';
 
-import mapPlaceholder from '../assets/images/cafe-bg.jpg';
+import mapPlaceholder from '../assets/images/CAFE 1.png';
 
 const ContactPage = () => {
   const toast = useToast();
@@ -54,7 +54,7 @@ const ContactPage = () => {
             >
               <div className={styles.infoBlock}>
                 <h3>Visit Us</h3>
-                <p>123 Startup Boulevard<br />Innovation District, Tech City 400001</p>
+                <p>144, 3rd Floor, Shubharam Complex<br />Above HDFC Bank, Near Trinity Metro Station<br />MG Road, Bengaluru</p>
                 <div className={styles.mapWrapper}>
                   <img src={mapPlaceholder} alt="Cafe location map" className={styles.mapPlaceholder} />
                 </div>
@@ -69,7 +69,8 @@ const ContactPage = () => {
               <div className={styles.infoBlock}>
                 <h3>Get in Touch</h3>
                 <p><strong>Email:</strong> hello@bootstrappedcafe.com<br />
-                <strong>Phone:</strong> +91 85804 80030</p>
+                <strong>Phone:</strong> +91 6364 365637 / +91 8284 879989<br />
+                <strong>Instagram:</strong> @PROTEYNS.CAFE</p>
               </div>
             </motion.div>
 

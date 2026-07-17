@@ -6,8 +6,8 @@ import Footer from '../components/Footer/Footer';
 import SlotCounter from '../components/common/SlotCounter';
 import styles from './OurStoryPage.module.css';
 
-import heroBg from '../assets/images/hero-bg-2.jpg';
-import philosophyImg from '../assets/images/cafe-bg.jpg';
+import heroBg from '../assets/images/HERO BG 2.png';
+import philosophyImg from '../assets/images/CAFE 1.png';
 
 const OurStoryPage = () => {
   const heroRef = useRef(null);
@@ -59,7 +59,7 @@ const OurStoryPage = () => {
               transition={{ duration: 0.8 }}
             >
               <p>
-                At Bootstrapped Cafe, we don't believe in compromises. 
+                Established in 2023, Bootstrapped Cafe started as a fast-casual chain of Mediterranean restaurants. We don't believe in compromises. 
                 Fast food shouldn't mean sacrificing your health, and healthy food shouldn't mean sacrificing flavor.
               </p>
               <p>
@@ -90,12 +90,12 @@ const OurStoryPage = () => {
           />
           <div className={styles.ingredientBento}>
             {[
-              { icon: '🌱', title: '100% Organic Greens', desc: 'Sourced directly from local partner farms ensuring maximum crispness and zero pesticides.' },
-              { icon: '🐟', title: 'Wild-Caught Proteins', desc: 'Sustainable, clean proteins that are never farmed and completely free of antibiotics.' },
-              { icon: '🏺', title: 'Cold-Pressed Oils', desc: 'We cook exclusively with cold-pressed olive and avocado oils. No seed oils, ever.' },
-              { icon: '🌾', title: 'Ancient Grains', desc: 'Quinoa, farro, and wild rice provide complex, slow-burning carbs for sustained energy.' },
-              { icon: '🍋', title: 'House-made Dressings', desc: 'Crafted daily from scratch using fresh herbs, citrus, and raw honey.' },
-              { icon: '🧊', title: 'Unprocessed', desc: 'If it comes in a box with ingredients you can\'t pronounce, it doesn\'t enter our kitchen.' },
+              { icon: '🌿', title: 'Fresh & High-Quality', desc: 'Fresh, locally-sourced ingredients with zero preservatives.' },
+              { icon: '💪', title: 'High-Protein & Balanced', desc: 'Customisable Mediterranean bowls with lean proteins and fibers.' },
+              { icon: '🎯', title: 'Personalized Plans', desc: 'Provides personalized meal plans with 100% non-repetitive menus.' },
+              { icon: '👨‍🍳', title: 'Experienced Experts', desc: 'Employs food experts offering daily fresh prepared items, no stocking.' },
+              { icon: '✨', title: 'Quality & Satisfaction', desc: 'Quality and freshness guaranteed to ensure your complete satisfaction.' },
+              { icon: '🏢', title: 'Perfect for Teams', desc: 'Ideal for office lunches, events, workshops, and corporate partnerships.' },
             ].map((item, i) => (
               <motion.div 
                 key={i} 
@@ -113,29 +113,29 @@ const OurStoryPage = () => {
           </div>
         </section>
 
-        <section className={styles.sustainabilitySection} id="sustainability">
+        <section className={styles.sustainabilitySection} id="impact">
           <SectionHeading 
-            label="Sustainability"
-            heading="Taking care of our home."
-            italicWord="home"
+            label="Our Impact"
+            heading="Trusted by our community."
+            italicWord="community"
             align="center"
           />
           <div className={styles.statsGrid}>
             <motion.div className={styles.statItem} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <SlotCounter value={0} className={styles.statNumber} prefix="" />
-              <span className={styles.statLabel}>Single-Use Plastics</span>
+              <SlotCounter value={2023} className={styles.statNumber} prefix="" />
+              <span className={styles.statLabel}>Established</span>
             </motion.div>
             <motion.div className={styles.statItem} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}>
-              <SlotCounter value={100} className={styles.statNumber} prefix="" />
-              <span className={styles.statLabel}>% Compostable Packaging</span>
+              <SlotCounter value={5000} className={styles.statNumber} prefix="+" />
+              <span className={styles.statLabel}>Trusted Customers</span>
             </motion.div>
             <motion.div className={styles.statItem} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}>
-              <SlotCounter value={85} className={styles.statNumber} prefix="" />
-              <span className={styles.statLabel}>% Local Produce</span>
+              <SlotCounter value={100} className={styles.statNumber} prefix="" />
+              <span className={styles.statLabel}>% Non-Repetitive Menus</span>
             </motion.div>
             <motion.div className={styles.statItem} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}>
-              <SlotCounter value={120} className={styles.statNumber} prefix="+" />
-              <span className={styles.statLabel}>Trees Planted Monthly</span>
+              <span className={styles.statNumber}>Top</span>
+              <span className={styles.statLabel}>Rated on Google</span>
             </motion.div>
           </div>
         </section>

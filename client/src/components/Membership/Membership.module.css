@@ -4,13 +4,13 @@
 
 .membershipSection {
   background-color: var(--warm-cream); /* Warm cafe background */
-  padding: var(--space-5xl) 0;
+  padding: var(--space-3xl) 0;
   position: relative;
   overflow: hidden;
 }
 
 .container {
-  max-width: var(--max-width);
+  max-width: 92%;
   margin: 0 auto;
   padding: 0 var(--space-xl);
   position: relative;
@@ -20,7 +20,7 @@
 .header {
   text-align: center;
   max-width: 600px;
-  margin: 0 auto var(--space-4xl);
+  margin: 0 auto var(--space-2xl);
 }
 
 .label {
@@ -50,7 +50,8 @@
 
 .planGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(280px, 420px));
+  justify-content: space-evenly;
   gap: var(--space-xl);
   align-items: center; /* Center to allow middle card to be naturally taller */
 }
@@ -60,7 +61,7 @@
   background-color: var(--white);
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: var(--radius-xl);
-  padding: var(--space-3xl);
+  padding: var(--space-2xl) var(--space-xl);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -73,7 +74,7 @@
   background-color: var(--white);
   border: 1px solid rgba(226, 125, 96, 0.3); /* Subtle terracotta border */
   box-shadow: var(--shadow-md);
-  padding: var(--space-4xl) var(--space-3xl); /* Taller */
+  padding: var(--space-3xl) var(--space-xl); /* Taller */
 }
 
 .popularBadge {
@@ -98,11 +99,11 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--espresso);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 .planPrice {
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-md);
   display: flex;
   align-items: baseline;
 }
@@ -122,7 +123,7 @@
 }
 
 .planFeatures {
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-lg);
   flex-grow: 1;
 }
 
@@ -130,7 +131,7 @@
   font-family: var(--font-body);
   font-size: var(--fs-small);
   color: var(--espresso-soft);
-  padding: var(--space-xs) 0;
+  padding: 4px 0;
   display: flex;
   align-items: flex-start;
   gap: var(--space-sm);

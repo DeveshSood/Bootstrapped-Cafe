@@ -1,17 +1,20 @@
 /* ============================================
-   Reel Carousel — Cinematic Velocity Marquee
+   Reel Carousel — Cinematic Video Slider
    ============================================ */
 
 .cinematicSection {
-  background-color: var(--espresso);
-  padding: var(--space-3xl) 0;
+  background-color: var(--warm-cream);
+  padding: var(--space-2xl) 0;
   overflow: hidden;
   position: relative;
+  perspective: 1000px;
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .header {
   text-align: center;
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
   padding: 0 var(--space-xl);
 }
 
@@ -29,133 +32,163 @@
 .heading {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 5vw, 4rem);
-  color: var(--white);
+  color: var(--espresso);
   line-height: 1.1;
 }
 
-/* Marquee Layout */
-.marqueeWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
+/* Carousel Layout */
+.carouselContainer {
   position: relative;
-  width: 100vw;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-}
-
-.trackContainer {
+  height: 560px;
   width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
+  max-width: 100%;
   display: flex;
-  padding: var(--space-lg) 0; /* padding for hover scale */
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+  margin: 0 auto;
+  touch-action: pan-y pinch-zoom;
 }
 
-.track {
-  display: flex;
-  white-space: nowrap;
-  flex-wrap: nowrap;
-  /* Will-change helps framer motion run smoothly on GPU */
-  will-change: transform;
-}
-
-/* Individual Card Styling */
-.card {
-  flex-shrink: 0;
-  width: 250px;
-  height: 350px;
-  margin-right: var(--space-lg);
-  border-radius: var(--radius-2xl);
-  position: relative;
+.videoCard {
+  position: absolute;
+  width: 280px;
+  height: 480px;
+  border-radius: 32px;
   cursor: pointer;
-  background-color: var(--espresso);
+  transform-origin: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
-/* Mobile responsiveness for cards */
+.activeCard {
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
 @media (max-width: 768px) {
-  .card {
-    width: 200px;
-    height: 280px;
-    margin-right: var(--space-md);
+  .videoCard {
+    width: 240px;
+    height: 420px;
   }
-  .marqueeWrapper {
-    gap: var(--space-md);
+  .carouselContainer {
+    height: 500px;
   }
 }
 
-.imageWrapper {
+.videoWrapper {
   width: 100%;
   height: 100%;
   position: relative;
+  border-radius: 32px;
   overflow: hidden;
-  border-radius: var(--radius-2xl);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  /* Fix WebKit border-radius clipping bug with transformed children */
+  background-color: #050505;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
   mask-image: radial-gradient(white, black);
   transform: translateZ(0);
 }
 
-.image {
+.videoElement {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), filter 0.8s ease;
-  filter: brightness(0.85); /* Slightly darker initially for cinematic feel */
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Hover effect on the image */
-.card:hover .image {
-  transform: scale(1.1);
-  filter: brightness(1);
-}
-
-/* Overlay and Text */
-.overlay {
+.controlsOverlay {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(30, 24, 21, 0.95) 0%, rgba(30, 24, 21, 0.2) 50%, transparent 100%);
-  display: flex;
-  align-items: flex-end;
-  padding: var(--space-2xl);
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  pointer-events: none;
-}
-
-.card:hover .overlay {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.overlayContent {
-  width: 100%;
-  white-space: normal;
+  top: 20px;
+  right: 20px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
+  gap: 12px;
+  z-index: 20;
 }
 
-.title {
+.iconButton {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.iconButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.titleOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px 24px 24px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.titleContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.titleOverlay h4 {
   color: var(--white);
   font-family: var(--font-display);
-  font-size: var(--fs-h3);
+  font-size: 1.5rem;
   margin: 0;
-  line-height: 1.2;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
-.desc {
-  color: var(--terracotta-light);
+.description {
+  color: rgba(255, 255, 255, 0.9);
   font-family: var(--font-body);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin: 0 0 6px 0;
-  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: var(--space-xl);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(30, 24, 21, 0.15);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.activeDot {
+  background: var(--terracotta);
+  transform: scale(1.4);
+}
+

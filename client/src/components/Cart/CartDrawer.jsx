@@ -12,8 +12,18 @@ const CartDrawer = ({ isOpen, onClose, onCheckout }) => {
   const { items, addItem, updateQuantity, removeItem, totalPrice, clearCart } = useCart();
   const { isAuthenticated } = useAuth();
   const [lastRemoved, setLastRemoved] = useState(null);
+  const [testDate, setTestDate] = useState(localStorage.getItem('testDate') || '');
 
-  const isWeekend = new Date().getDay() === 0 || new Date().getDay() === 6;
+  useEffect(() => {
+    const handleTestDate = () => {
+      setTestDate(localStorage.getItem('testDate') || '');
+    };
+    window.addEventListener('testDateChanged', handleTestDate);
+    return () => window.removeEventListener('testDateChanged', handleTestDate);
+  }, []);
+
+  const effectiveDate = testDate ? new Date(testDate) : new Date();
+  const isWeekend = effectiveDate.getDay() === 0 || effectiveDate.getDay() === 6;
 
   /* Auto-dismiss undo toast after 5 seconds */
   useEffect(() => {

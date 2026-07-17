@@ -12,6 +12,7 @@ import ScrollProgress from './components/common/ScrollProgress';
 import PageTransition from './components/common/PageTransition';
 import ActiveOrderWidget from './components/ActiveOrderWidget/ActiveOrderWidget';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import TestOverrideWidget from './components/TestOverrideWidget/TestOverrideWidget';
 
 import HomePage from './pages/HomePage';
 import MenuPage from './pages/MenuPage';
@@ -65,6 +66,7 @@ const AppContent = () => {
         <>
           <ScrollProgress />
           <ActiveOrderWidget />
+          <TestOverrideWidget />
         </>
       )}
       

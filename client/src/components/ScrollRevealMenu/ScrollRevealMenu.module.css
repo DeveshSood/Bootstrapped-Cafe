@@ -428,6 +428,37 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
+
+  .mealCardWrapper {
+    height: 230px !important;
+    min-height: 230px !important;
+  }
+  
+  .mealImageContainer {
+    flex: none;
+    height: 120px;
+  }
+
+  .mealTitle {
+    font-size: 0.8rem;
+  }
+
+  .mealPrice {
+    font-size: 0.9rem;
+  }
+
+  .nutritionGrid {
+    gap: 4px;
+    padding: 6px 4px;
+  }
+
+  .nutriLabel {
+    font-size: 0.45rem;
+  }
+
+  .nutriValue {
+    font-size: 0.65rem;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1200px) {

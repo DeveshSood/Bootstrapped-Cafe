@@ -23,15 +23,15 @@ const MealCard = ({ meal, style, id, onDetailsClick, isDrink }) => {
     };
     ingredients.forEach(ing => {
       const lower = ing.toLowerCase();
-      if (lower.includes('chicken') || lower.includes('paneer') || lower.includes('egg') || lower.includes('tofu') || lower.includes('fish')) {
+      if (/\b(chicken|paneer|eggs?|tofu|fish)\b/i.test(lower)) {
         categories['Protein'].push(ing.split(' -')[0]);
-      } else if (lower.includes('rice') || lower.includes('quinoa') || lower.includes('millets') || lower.includes('oats')) {
+      } else if (/\b(rice|quinoa|millets|oats)\b/i.test(lower)) {
         categories['Carbs'].push(ing.split(' -')[0]);
-      } else if (lower.includes('dal') || lower.includes('rajma') || lower.includes('chana') || lower.includes('chickpea') || lower.includes('curry') || lower.includes('stew')) {
+      } else if (/\b(dal|rajma|chole|stew)\b/i.test(lower)) {
         categories['Curry of the day'].push(ing.split(' -')[0]);
-      } else if (lower.includes('salsa') || lower.includes('salad') || lower.includes('hummus') || lower.includes('beans') || lower.includes('cucumber') || lower.includes('lettuce') || lower.includes('tomato') || lower.includes('onion') || lower.includes('cabbage')) {
+      } else if (/\b(salsa|salad|hummus|chana|chickpea|potato|cucumber|lettuce|tomato|onion|cabbage|beetroot|peas|watermelon|muskmelon|apple)\b/i.test(lower)) {
         categories['Salads'].push(ing.split(' -')[0]);
-      } else if (lower.includes('broccoli') || lower.includes('capsicum') || lower.includes('zucchini') || lower.includes('carrot') || lower.includes('cauliflower') || lower.includes('mushroom') || lower.includes('bhindi') || lower.includes('gobi') || lower.includes('bell pepper') || lower.includes('bellpeper') || lower.includes('bellpeppers')) {
+      } else if (/\b(broccoli|capsicum|zucchini|carrot|cauliflower|mushroom|bhindi|gobi|bell pepper|beans|veggies)\b/i.test(lower)) {
         categories['Phytos'].push(ing.split(' -')[0]);
       } else {
         categories['Base'].push(ing.split(' -')[0]);

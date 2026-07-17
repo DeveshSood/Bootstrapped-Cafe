@@ -12,6 +12,7 @@ import { useToast } from '../context/ToastContext';
 import { apiGetUserOrders, apiGetDailyMenu } from '../utils/api';
 import foodBowl from '../assets/images/food-bowl.png';
 import liquidRootsLogo from '../assets/images/Liquid Roots Logo.png';
+import foodFinalVideo from '../assets/videos/foodfinal.mp4';
 import { allMenuItems as staticMenuItems } from '../data/menuData';
 import styles from './MenuPage.module.css';
 import scrollStyles from '../components/ScrollRevealMenu/ScrollRevealMenu.module.css';
@@ -61,7 +62,16 @@ const MenuPage = () => {
   const [categories, setCategories] = useState([]);
   const [loadingMenu, setLoadingMenu] = useState(true);
   const [timeToNextMenu, setTimeToNextMenu] = useState('');
-  const [testDate, setTestDate] = useState('');
+  const [testDate, setTestDate] = useState(localStorage.getItem('testDate') || '');
+
+  useEffect(() => {
+    const handleTestDate = () => {
+      setTestDate(localStorage.getItem('testDate') || '');
+    };
+    window.addEventListener('testDateChanged', handleTestDate);
+    return () => window.removeEventListener('testDateChanged', handleTestDate);
+  }, []);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const categorizeIngredients = (ingredients) => {
     if (!ingredients || !Array.isArray(ingredients)) return {};
@@ -76,15 +86,15 @@ const MenuPage = () => {
     
     ingredients.forEach(ing => {
       const lower = ing.toLowerCase();
-      if (lower.includes('chicken') || lower.includes('paneer') || lower.includes('egg') || lower.includes('tofu') || lower.includes('fish')) {
+      if (/\b(chicken|paneer|eggs?|tofu|fish)\b/i.test(lower)) {
         categories['Protein'].push(ing);
-      } else if (lower.includes('rice') || lower.includes('quinoa') || lower.includes('millets') || lower.includes('oats')) {
+      } else if (/\b(rice|quinoa|millets|oats)\b/i.test(lower)) {
         categories['Complex Carbs'].push(ing);
-      } else if (lower.includes('dal') || lower.includes('rajma') || lower.includes('chana') || lower.includes('chickpea') || lower.includes('curry') || lower.includes('stew')) {
+      } else if (/\b(dal|rajma|chole|stew)\b/i.test(lower)) {
         categories['Curry of the day'].push(ing);
-      } else if (lower.includes('salsa') || lower.includes('salad') || lower.includes('hummus') || lower.includes('beans') || lower.includes('cucumber') || lower.includes('lettuce') || lower.includes('tomato') || lower.includes('onion') || lower.includes('cabbage')) {
+      } else if (/\b(salsa|salad|hummus|chana|chickpea|potato|cucumber|lettuce|tomato|onion|cabbage|beetroot|peas|watermelon|muskmelon|apple)\b/i.test(lower)) {
         categories['Salads'].push(ing);
-      } else if (lower.includes('broccoli') || lower.includes('capsicum') || lower.includes('zucchini') || lower.includes('carrot') || lower.includes('cauliflower') || lower.includes('mushroom') || lower.includes('bhindi') || lower.includes('gobi') || lower.includes('bell pepper') || lower.includes('bellpeper') || lower.includes('bellpeppers')) {
+      } else if (/\b(broccoli|capsicum|zucchini|carrot|cauliflower|mushroom|bhindi|gobi|bell pepper|beans|veggies)\b/i.test(lower)) {
         categories['Phytos'].push(ing);
       } else {
         categories['Base & Toppings'].push(ing);
@@ -337,26 +347,6 @@ const MenuPage = () => {
           <span>🕒 Daily Menu changes in: {timeToNextMenu}</span>
         </div>
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-        <span style={{ fontSize: '0.8rem', color: 'var(--espresso-soft)', fontWeight: 600 }}>TEST OVERRIDE:</span>
-        <select 
-          value={testDate} 
-          onChange={handleTestDayChange}
-          style={{
-            padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--border-light)',
-            fontSize: '0.8rem', background: 'white', color: 'var(--espresso)', cursor: 'pointer'
-          }}
-        >
-          <option value="">Today (Default)</option>
-          <option value="2024-01-01">Monday</option>
-          <option value="2024-01-02">Tuesday</option>
-          <option value="2024-01-03">Wednesday</option>
-          <option value="2024-01-04">Thursday</option>
-          <option value="2024-01-05">Friday</option>
-          <option value="2024-01-06">Saturday</option>
-          <option value="2024-01-07">Sunday</option>
-        </select>
-      </div>
     </div>
   );
 
@@ -384,6 +374,63 @@ const MenuPage = () => {
             italicWord="fuel" 
             align="center" 
           />
+        </motion.div>
+
+        <motion.div
+          custom={0.5}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUpVariants}
+          style={{
+            width: '100%',
+            maxWidth: '1200px',
+            margin: '0 auto 2rem auto',
+            padding: '0 1rem',
+            position: 'relative'
+          }}
+        >
+          {!videoLoaded && (
+            <div style={{
+              width: '100%', 
+              height: '400px', 
+              background: 'var(--cream-light)', 
+              borderRadius: '24px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center'
+            }}>
+              <span style={{ color: 'var(--espresso-soft)' }}>Loading video...</span>
+            </div>
+          )}
+          <div style={{
+            width: '100%',
+            maxWidth: '1000px',
+            maxHeight: '55vh',
+            aspectRatio: '16/9',
+            margin: '0 auto',
+            borderRadius: '24px',
+            boxShadow: 'var(--shadow-lg)',
+            overflow: 'hidden',
+            display: videoLoaded ? 'flex' : 'none',
+            backgroundColor: '#000',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <video
+              src={foodFinalVideo}
+              autoPlay
+              loop
+              muted
+              controls
+              playsInline
+              onCanPlay={() => setVideoLoaded(true)}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain'
+              }}
+            />
+          </div>
         </motion.div>
 
 

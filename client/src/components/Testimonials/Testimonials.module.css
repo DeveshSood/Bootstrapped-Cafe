@@ -41,19 +41,16 @@
   position: relative;
   max-width: 900px;
   margin: 0 auto;
-  height: 400px; /* Fixed height to contain animated cards */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-areas: "card";
+  padding-bottom: 80px; /* Space for nav controls */
 }
 
 .quoteCard {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  grid-area: card;
   text-align: center;
-  padding: var(--space-2xl);
+  padding: var(--space-xl) var(--space-md);
+  position: relative;
 }
 
 .quoteMark {
@@ -72,11 +69,13 @@
 
 .quoteText {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem); /* Reduced size */
   font-weight: 400;
   color: var(--espresso);
-  line-height: 1.4;
+  line-height: 1.6; /* Increased line height */
   margin-bottom: var(--space-2xl);
+  max-width: 800px;
+  margin-inline: auto;
 }
 
 .authorArea {
@@ -128,6 +127,7 @@
   align-items: center;
   gap: var(--space-2xl);
   z-index: 10;
+  margin-top: var(--space-2xl);
 }
 
 .dots {
@@ -188,10 +188,10 @@
 
 @media (max-width: 768px) {
   .carouselWrapper {
-    height: 450px;
+    padding-bottom: 100px;
   }
   
   .quoteCard {
-    padding: var(--space-xl) 0;
+    padding: var(--space-md) 0;
   }
 }

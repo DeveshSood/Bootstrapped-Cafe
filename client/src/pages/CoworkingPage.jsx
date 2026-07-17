@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from '../components/common/Button';
 import SectionHeading from '../components/common/SectionHeading';
@@ -7,9 +8,10 @@ import Footer from '../components/Footer/Footer';
 import CurvedDivider from '../components/common/CurvedDivider';
 import styles from './CoworkingPage.module.css';
 
-import cafeBg from '../assets/images/cafe-bg.jpg';
-import heroBg2 from '../assets/images/hero-bg-2.jpg';
-import heroBg3 from '../assets/images/hero-bg-3.jpg';
+import cafeBg from '../assets/images/CAFE 1.png';
+import heroBg2 from '../assets/images/CAFE 2.png';
+import heroBg3 from '../assets/images/CAFE 3.png';
+import heroBg4 from '../assets/images/CAFE 4.png';
 
 const cafePhotos = [
   cafeBg,
@@ -18,14 +20,34 @@ const cafePhotos = [
 ];
 
 const features = [
-  { id: 'focus_pod', type: 'small', icon: '💻', title: 'Focus Pod', desc: 'Ideal for individual deep work and privacy. Includes complimentary beverage & high-speed connectivity.', basePrice: 100, suffix: '/ hr' },
-  { id: 'meeting_pod', type: 'small', icon: '🤝', title: 'Meeting Pod', desc: 'Perfect for collaborative sessions and team calls. Includes complimentary beverage & ergonomic design.', basePrice: 300, suffix: '/ hr' },
+  { id: 'focus-pods', type: 'small', icon: '💻', title: 'Focus Pod', desc: 'Ideal for individual deep work and privacy. Includes complimentary beverage & high-speed connectivity.', basePrice: 100, suffix: '/ hr' },
+  { id: 'meeting-pods', type: 'small', icon: '🤝', title: 'Meeting Pod', desc: 'Perfect for collaborative sessions and team calls. Includes complimentary beverage & ergonomic design.', basePrice: 300, suffix: '/ hr' },
   { id: 'regular_sub', type: 'wide', icon: '🥗', title: 'Monthly Regular Bowl Subscription', desc: '20 Bowls Subscription. Duration 20 days with 3 days carried forward. Enjoy our healthy Regular Bowl (₹295 value) daily.', basePrice: 5040, suffix: '/ mo' },
   { id: 'super_sub', type: 'wide', icon: '🌟', title: 'Super Bowl Monthly Promo', desc: 'Special 20 Bowls Subscription! Get the ₹350 Super Bowl for ₹300 (~15% OFF). Zero processing & additives. 3 days carried forward.', basePrice: 6000, suffix: '/ mo' },
 ];
 
 const CoworkingPage = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      setTimeout(() => {
+        const targetCard = document.getElementById(location.state.scrollTo);
+        const section = document.getElementById('pricing');
+        
+        if (targetCard && section) {
+          const y = section.getBoundingClientRect().top + window.scrollY - 60;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+          
+          targetCard.classList.add(styles.highlightedCard);
+          setTimeout(() => targetCard.classList.remove(styles.highlightedCard), 2000);
+        }
+      }, 300);
+      
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   const handleBookClick = (plan) => {
     setSelectedPlan(plan);
@@ -99,6 +121,7 @@ const CoworkingPage = () => {
             {features.map((f) => (
               <motion.div 
                 key={f.id}
+                id={f.id}
                 className={`${styles.bentoBlock} ${f.type === 'wide' ? styles.featureWide : styles.featureSmall}`}
               >
                 <div className={styles.featureHeader}>

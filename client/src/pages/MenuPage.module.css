@@ -166,19 +166,35 @@
 }
 
 @media (min-width: 1400px) {
+  .menuContent {
+    max-width: 1400px;
+  }
   .menuGrid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: var(--space-md);
   }
 }
 
+@media (min-width: 1600px) {
+  .menuContent {
+    max-width: 1600px;
+  }
+}
+
 @media (min-width: 1800px) {
+  .menuContent {
+    max-width: 1800px;
+  }
   .menuGrid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
 }
 
 @media (max-width: 768px) {
+  .menuHero {
+    padding: calc(var(--navbar-height-mobile) + 1rem) 1rem 1rem;
+    --fs-h1: clamp(1.8rem, 6vw, 2.5rem);
+  }
   .menuContent {
     padding: 0 var(--space-md);
   }
@@ -210,7 +226,8 @@
 
 @media (max-width: 480px) {
   .menuGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xs);
   }
 }
 

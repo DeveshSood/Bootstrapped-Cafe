@@ -48,21 +48,48 @@
 /* Image Block */
 .imageBlock {
   grid-column: span 2;
-  /* Remove background so the image fills cleanly */
   background-color: transparent; 
+  height: 100%;
 }
 
-.bentoImage {
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: var(--space-md);
+  height: 100%;
+  width: 100%;
+}
+
+.gridItemContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  /* The mask fixes border-radius clipping bugs on Safari */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+}
+
+.gridImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-2xl);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s ease;
+}
+
+.gridItemContainer:hover .gridImage {
+  transform: scale(1.05);
+  filter: brightness(1.1);
 }
 
 /* Responsive Grid */
 @media (max-width: 1024px) {
   .bentoGrid {
     grid-template-columns: repeat(2, 1fr);
+    height: auto;
   }
   
   .introBlock {
@@ -72,6 +99,10 @@
   .imageBlock {
     grid-column: span 2;
     aspect-ratio: 16 / 9;
+  }
+  
+  .imageGrid {
+    gap: var(--space-sm);
   }
 }
 
@@ -90,5 +121,13 @@
   .introBlock,
   .imageBlock {
     grid-column: span 1;
+  }
+  
+  .imageBlock {
+    aspect-ratio: 1; /* Square grid on mobile */
+  }
+  
+  .gridItemContainer {
+    border-radius: var(--radius-xl);
   }
 }
